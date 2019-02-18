@@ -9,27 +9,29 @@ DATADIR = "../Imagesfiles"
 #Result = ["CB55/pixel-level-gt/training", "CS18/pixel-level-gt/training", "CS863/pixel-level-gt/training"]
 Training = ["DeansTestmap/img/training"]
 Result = ["DeansTestmap/pixel-level-gt/training"]
-#Loader.ImageLoader.saveImages(DATADIR,Training,Result,[0,2000,2000],[1,128,128],True,"Testsavehere.x","TestSaveHere.y","../PickleSave/");
+Xsize = 128
+Ysize= 128
+Loader.ImageLoader.saveImages(DATADIR,Training,Result,[1,2000,2000],[1,Xsize,Ysize],True,"Testsavehere.x","TestSaveHere.y","../PickleSave/");
 [x_train,y_train] = Loader.ImageLoader.loadSavedImage("../PickleSave/","Testsavehere.x","TestSaveHere.y")
 
-x_train = x_train.reshape(y_train.shape[0],128*128*3)
+x_train = x_train.reshape(y_train.shape[0],Xsize*Ysize*3)
 x_train = x_train.astype('float32') / 255
-y_train = y_train.reshape(y_train.shape[0],128*128*3)
+y_train = y_train.reshape(y_train.shape[0],Xsize*Ysize*3)
 y_train = y_train.astype('float32') / 255
 
-Model = model.ModelClass.build_Standard_NN_model(128*128*3,128*128*3)
-Model.fit(x_train,y_train, epochs = 8,batch_size=20)
+Model = model.ModelClass.build_Standard_NN_model(Xsize*Ysize*3,Xsize*Ysize*3)
+Model.fit(x_train,y_train, epochs = 20,batch_size=20)
 ynew = Model.predict(x_train)
 
 
 
 
-x_train = x_train.reshape(x_train.shape[0],128,128,3)
+x_train = x_train.reshape(x_train.shape[0],Xsize,Ysize,3)
 x_train = x_train.astype('float32') * 255
-y_train = y_train.reshape(y_train.shape[0],128,128,3)
+y_train = y_train.reshape(y_train.shape[0],Xsize,Ysize,3)
 y_train = y_train.astype('float32') * 255
 
-ynew = ynew.reshape(ynew.shape[0],128,128,3)
+ynew = ynew.reshape(ynew.shape[0],Xsize,Ysize,3)
 ynew = ynew.astype('float32') * 255
 
 img=Loader.ImageLoader.combine_imgs(ynew,6496,4872)
