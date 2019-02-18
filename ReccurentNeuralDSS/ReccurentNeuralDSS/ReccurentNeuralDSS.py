@@ -8,7 +8,7 @@ DATADIR = "../Imagesfiles"
 #Result = ["CB55/pixel-level-gt/training", "CS18/pixel-level-gt/training", "CS863/pixel-level-gt/training"]
 Training = ["DeansTestmap/img/training"]
 Result = ["DeansTestmap/pixel-level-gt/training"]
-Loader.ImageLoader.saveImages(DATADIR,Training,Result,[0,2000,2000],True,"Testsavehere.x","TestSaveHere.y","../PickleSave/");
+Loader.ImageLoader.saveImages(DATADIR,Training,Result,[0,2000,2000],[1,128,128],True,"Testsavehere.x","TestSaveHere.y","../PickleSave/");
 [x_train,y_train] = Loader.ImageLoader.loadSavedImage("../PickleSave/","Testsavehere.x","TestSaveHere.y")
 
 

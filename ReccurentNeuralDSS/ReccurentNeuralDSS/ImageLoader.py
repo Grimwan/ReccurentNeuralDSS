@@ -41,8 +41,8 @@ class ImageLoader(object):
                     pass
         return training_data
 
-    def saveImages(dataDir, trainingDir, resultDir, resize,shuffleData,pickleOutX,pickleOutY,WheretosavePickleData):
-        training_data = ImageLoader.imageReader(dataDir, trainingDir, resultDir, resize,[1,128,128])
+    def saveImages(dataDir, trainingDir, resultDir, resize,Crop,shuffleData,pickleOutX,pickleOutY,WheretosavePickleData):
+        training_data = ImageLoader.imageReader(dataDir, trainingDir, resultDir, resize,Crop)
         if(bool(shuffleData)):
             random.shuffle(training_data)
         x = [] #trainingdata
