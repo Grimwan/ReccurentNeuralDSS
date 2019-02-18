@@ -19,6 +19,9 @@ class ImageLoader(object):
                     imgTraining_array = cv2.imread(os.path.join(path,img), cv2.IMREAD_COLOR)
                     imgResult_array = cv2.imread(os.path.join(secondPath,newImg[i]),cv2.IMREAD_COLOR)
                     max_y,max_x = imgTraining_array.shape[:2]
+                    if resize[0] != 0:
+                        imgTraining_array = cv2.resize(imgTraining_array, (resize[1],resize[2]))
+                        imgResult_array = cv2.resize(imgResult_array, (resize[1],resize[2]))
                     if Crop[0] != 0:
                         border_y = 0
                         if max_y % Crop[2] != 0:
@@ -30,10 +33,14 @@ class ImageLoader(object):
                             border_x = (Crop[1] - (max_x % Crop[1]) + 1) // 2
                             imgTraining_array = cv2.copyMakeBorder(imgTraining_array,0,0,border_x,border_x, cv2.BORDER_CONSTANT, value=[255, 255, 255])
                             imgResult_array = cv2.copyMakeBorder(imgResult_array,0,0,border_x,border_x, cv2.BORDER_CONSTANT, value=[255, 255, 255])
-                    if resize[0] != 0:
-                        newTraining_array = cv2.resize(imgTraining_array, (resize[1],resize[2]))
-                        newResult_array = cv2.resize(imgResult_array, (resize[1],resize[2]))
-                        training_data.append([newTraining_array,newResult_array])
+                        curr_y = 0                   
+                        parts = []
+                        while(curr_y + Crop[2])<= max_y:
+                            curr_x = 0
+                            while(curr_x + Crop[1]) <= max_x:
+                                training_data.append([imgTraining_array[curr_y:curr_y+Crop[2],curr_x:curr_x + Crop[1]],imgResult_array[curr_y:curr_y+Crop[2],curr_x:curr_x + Crop[1]]])
+                                curr_x += Crop[1]
+                            curr_y += Crop[2]
                     else:
                         training_data.append([imgTraining_array,imgResult_array])
                     i= i+1

@@ -19,6 +19,7 @@ Loader.ImageLoader.saveImages(DATADIR,Training,Result,[0,2000,2000],[1,128,128],
 max_y,max_x = x_train[0].shape[:2]
 print(max_y)
 print(max_x)
+print(x_train.shape)
 plt.imshow(x_train[0])
 plt.show()
 
