@@ -24,6 +24,9 @@
     <Compile Include="ImageLoader.py">
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Model.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="ReccurentNeuralDSS.py" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />

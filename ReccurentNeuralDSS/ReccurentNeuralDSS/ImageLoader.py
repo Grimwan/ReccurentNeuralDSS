@@ -19,6 +19,8 @@ class ImageLoader(object):
                     imgTraining_array = cv2.imread(os.path.join(path,img), cv2.IMREAD_COLOR)
                     imgResult_array = cv2.imread(os.path.join(secondPath,newImg[i]),cv2.IMREAD_COLOR)
                     max_y,max_x = imgTraining_array.shape[:2]
+            #        print(max_x)
+            #        print(max_y)
                     if resize[0] != 0:
                         imgTraining_array = cv2.resize(imgTraining_array, (resize[1],resize[2]))
                         imgResult_array = cv2.resize(imgResult_array, (resize[1],resize[2]))
@@ -50,8 +52,8 @@ class ImageLoader(object):
 
     def saveImages(dataDir, trainingDir, resultDir, resize,Crop,shuffleData,pickleOutX,pickleOutY,WheretosavePickleData):
         training_data = ImageLoader.imageReader(dataDir, trainingDir, resultDir, resize,Crop)
-        if(bool(shuffleData)):
-            random.shuffle(training_data)
+       # if(bool(shuffleData)):
+        #    random.shuffle(training_data)
         x = [] #trainingdata
         y = [] #labels
         for features, label in training_data:
@@ -88,31 +90,21 @@ class ImageLoader(object):
         y_train = pickle.load(pickle_in)
         return [x_train,y_train]
 
-    def imageReaderCrop(dataDir,trainingDir,resultDir,Crop):
-        training_data = []
-        for category in trainingDir:
-            path = os.path.join(dataDir, category) # path to img/training or pixel-level-gt/training dir
-            secondPath = os.path.join(dataDir,resultDir[trainingDir.index(category)])
-            #class_num = CATEGORIES.index(category)
-            newImg =  os.listdir(secondPath)
-            i = 0;
-            for img in os.listdir(path):
+    def combine_imgs(imgs, max_y: int, max_x: int) -> np.array:
+        img = np.zeros((max_y,max_x,3),np.int)#Img = np.zeros((max_y, max_x), np.float)
+        #np.array(x).reshape(-1,resize[1],resize[2],3)
+        size_y, size_x,nope = imgs[0].shape
+        curr_y = 0
+        i = 0
+        # TODO: rewrite with generators.
+        while (curr_y + size_y) <= max_y:
+            curr_x = 0
+            while (curr_x + size_x) <= max_x:
                 try:
-                    imgTraining_array = cv2.imread(os.path.join(path,img), cv2.IMREAD_COLOR)
-                    imgResult_array = cv2.imread(os.path.join(secondPath,newImg[i]),cv2.IMREAD_COLOR)
-                    max_y,max_x = imgTraining_array.shape[:2]
-                    border_y = 0
-                    if max_y % Crop.y != 0:
-                        border_y = (Crop.y - (max_y % Crop.y) + 1) // 2
-                        imgTraining_array = cv2.copyMakeBorder(imgTraining_array,border_y,border_y,0,0, cv2.BORDER_CONSTANT, value=[255, 255, 255])
-                        imgResult_array = cv2.copyMakeBorder(imgResult_array,border_y,border_y,0,0, cv2.BORDER_CONSTANT, value=[255, 255, 255])
-                    border_x = 0
-                    if max_x % Crop.x != 0:
-                        border_x = (Crop.x - (max_x % Crop.x) + 1) // 2
-                        imgTraining_array = cv2.copyMakeBorder(imgTraining_array,0,0,border_x,border_x, cv2.BORDER_CONSTANT, value=[255, 255, 255])
-                        imgResult_array = cv2.copyMakeBorder(imgResult_array,0,0,border_x,border_x, cv2.BORDER_CONSTANT, value=[255, 255, 255])
-                    training_data.append([imgTraining_array,imgResult_array])
-                    i= i+1
-                except Exception as e:
-                    pass
-        return training_data
+                    img[curr_y:curr_y + size_y, curr_x:curr_x + size_x] = imgs[i]
+                except:
+                    i -= 1
+                i += 1
+                curr_x += size_x
+            curr_y += size_y
+        return img
