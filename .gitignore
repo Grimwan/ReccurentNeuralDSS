@@ -335,3 +335,6 @@ PetImages/*
 Imagesfiles/*
 ReccurentNeuralDSS/Imagesfiles/*
 ReccurentNeuralDSS/PickleSave/*
+*.pickle
+*.png
+*.jpg

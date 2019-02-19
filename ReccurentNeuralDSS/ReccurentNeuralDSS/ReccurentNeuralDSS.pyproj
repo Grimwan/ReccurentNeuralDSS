@@ -22,22 +22,35 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="dataset\dataset.py">
+    <Compile Include="model\__init__.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ImageLoader.py">
+    <Compile Include="train.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model.py">
+    <Compile Include="utils\config.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="utils\imageLoader.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="model\model.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="main.py" />
+    <Compile Include="utils\preprocessing.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="utils\__init__.py">
+      <SubType>Code</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.6" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="dataset\" />
+    <Folder Include="model\" />
+    <Folder Include="utils\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
