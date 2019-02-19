@@ -2,22 +2,30 @@
 #liten bokstav på funktioner
 #liten bokstav på variabler
 import matplotlib.pyplot as plt
-import ImageLoader as Loader
-import Model as model
+import imageLoader as Loader
+import model as model
 DATADIR = "../Imagesfiles"
 #Training = ["CB55/img/training", "CS18/img/training","CS863/img/training"]
 #Result = ["CB55/pixel-level-gt/training", "CS18/pixel-level-gt/training", "CS863/pixel-level-gt/training"]
 Training = ["DeansTestmap/img/training"]
 Result = ["DeansTestmap/pixel-level-gt/training"]
-Xsize = 128
-Ysize= 128
-Loader.ImageLoader.saveImages(DATADIR,Training,Result,[1,2000,2000],[1,Xsize,Ysize],True,"Testsavehere.x","TestSaveHere.y","../PickleSave/");
+Xsize = 32
+Ysize= 32
+
+
+Loader.ImageLoader.saveImages(DATADIR,Training,Result,[0,2000,2000],[1,Xsize,Ysize],True,"Testsavehere.x","TestSaveHere.y","../PickleSave/");
 [x_train,y_train] = Loader.ImageLoader.loadSavedImage("../PickleSave/","Testsavehere.x","TestSaveHere.y")
+
+print(x_train.shape)
 
 x_train = x_train.reshape(y_train.shape[0],Xsize*Ysize*3)
 x_train = x_train.astype('float32') / 255
 y_train = y_train.reshape(y_train.shape[0],Xsize*Ysize*3)
 y_train = y_train.astype('float32') / 255
+
+
+
+Loader.ImageLoader.removingOnlyDarkpictures(y_train,0)
 
 Model = model.ModelClass.build_Standard_NN_model(Xsize*Ysize*3,Xsize*Ysize*3)
 Model.fit(x_train,y_train, epochs = 20,batch_size=20)

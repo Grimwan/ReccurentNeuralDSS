@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f1c89ed0-379c-4c28-8101-e83c7998c3cc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>dataset\dataset.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -25,10 +25,10 @@
     <Compile Include="dataset\dataset.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="imageLoader.py">
+    <Compile Include="ImageLoader.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="model.py">
+    <Compile Include="Model.py">
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="main.py" />
