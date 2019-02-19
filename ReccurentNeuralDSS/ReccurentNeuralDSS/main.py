@@ -2,7 +2,7 @@
 #liten bokstav på funktioner
 #liten bokstav på variabler
 import matplotlib.pyplot as plt
-import imageLoader as Loader
+import ImageLoader as Loader
 import model as model
 DATADIR = "../Imagesfiles"
 #Training = ["CB55/img/training", "CS18/img/training","CS863/img/training"]
