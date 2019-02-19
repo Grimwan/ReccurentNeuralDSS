@@ -59,13 +59,16 @@ class ImageLoader(object):
         for features, label in training_data:
             x.append(features)
             y.append(label)
-        if(bool(resize[0])):
+
+            
+        if(resize[0]==1 and Crop[0] == 0):
             x = np.array(x).reshape(-1,resize[1],resize[2],3)
             y = np.array(y).reshape(-1,resize[1],resize[2],3)
         else:
             x = np.array(x)
             y = np.array(y)
 
+        print(x.shape)
         im2 = x.copy()
         im2[:,:, :, 0] = x[:, :, :, 2]
         im2[:,:, :, 2] = x[:, :, :, 0]
@@ -108,3 +111,14 @@ class ImageLoader(object):
                 curr_x += size_x
             curr_y += size_y
         return img
+
+
+    def removingOnlyDarkpictures(picturesArray,Dimension):
+        amountofblackpictures=0
+        for i in range(len(picturesArray)):
+            thisarray=np.asarray(picturesArray[i])
+            arrayflow = np.all(thisarray < 0.1, Dimension)
+            if(arrayflow.all()):
+                amountofblackpictures = amountofblackpictures + 1
+        print(amountofblackpictures)
+     
