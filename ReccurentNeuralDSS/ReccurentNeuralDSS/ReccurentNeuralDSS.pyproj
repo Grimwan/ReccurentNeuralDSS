@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f1c89ed0-379c-4c28-8101-e83c7998c3cc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>ReccurentNeuralDSS.py</StartupFile>
+    <StartupFile>dataset\dataset.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -22,16 +22,22 @@
     <EnableUnmanagedDebugging>false</EnableUnmanagedDebugging>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="ImageLoader.py">
+    <Compile Include="dataset\dataset.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Model.py">
+    <Compile Include="imageLoader.py">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="ReccurentNeuralDSS.py" />
+    <Compile Include="model.py">
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="main.py" />
   </ItemGroup>
   <ItemGroup>
     <InterpreterReference Include="Global|PythonCore|3.6" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="dataset\" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\Python Tools\Microsoft.PythonTools.targets" />
   <!-- Uncomment the CoreCompile target to enable the Build command in
