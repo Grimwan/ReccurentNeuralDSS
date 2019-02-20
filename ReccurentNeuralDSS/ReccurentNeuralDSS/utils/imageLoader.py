@@ -121,15 +121,22 @@ class ImageLoader(object):
         return image
 
 
-    def removingOnlyDarkpictures(picturesArray,Dimension):
+    def removingOnlyDarkpictures(img,gt):
         amountofblackpictures=0
-        for i in range(len(picturesArray)):
-            thisarray=np.asarray(picturesArray[i])
-            arrayflow = np.all(thisarray < 0.1, Dimension)
+        newimg=[]
+        newgt=[]
+        Dimension = 0
+        for i in range(len(gt)):
+            thisarray=np.asarray(gt[i])
+            arrayflow = np.all(thisarray < 10, Dimension)
             if(arrayflow.all()):
-                ImageLoader.save_Image_ToFolder("../OnlyblackImages",thisarray,"picture"+'amountofblackpictures')
                 amountofblackpictures = amountofblackpictures + 1
-        print(amountofblackpictures)
+            else:
+                newimg.append(img[i])
+                newgt.append(gt[i])
+#        print(amountofblackpictures)
+        return [newimg,newgt]
+
     
     def addBorder(array,dimensionX,dimensionY,BoarderColor,max_x,max_y):
         #Takes in the prefer Images and adds a border if nessesary based on dimensions
@@ -157,7 +164,7 @@ class ImageLoader(object):
 
     def save_Image_ToFolder(Folder:str,image:[np.array],ImageName:str):
         ImageLoader.mkdir_safe(Folder)
-        cv2.imwrite(Folder,image)
+        cv2.imwrite(os.path.join(Folder,ImageName+'.png'),image)
     
     def mkdir_safe(path: str):
         if not os.path.exists(path):
@@ -200,10 +207,17 @@ def main():
     gt = ImageLoader.turnListInToNp(gt)
     gt=ImageLoader.fixColorError(gt)
     img = ImageLoader.fixColorError(img)
+    print(gt.shape)
+    gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
     img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
-    img = img.astype('float32') / 255
-
-
-
+    [img,gt] = ImageLoader.removingOnlyDarkpictures(img,gt)
+    img = ImageLoader.turnListInToNp(img)
+    gt = ImageLoader.turnListInToNp(gt)
+    
+    gt = gt.reshape(gt.shape[0],conf.Xsize,conf.Ysize,3)
+    img = img.reshape(img.shape[0],conf.Xsize,conf.Ysize,3)
+    print(gt.shape)
+    plt.imshow(gt[1])
+    plt.show()
 if __name__=="__main__":
     main()
