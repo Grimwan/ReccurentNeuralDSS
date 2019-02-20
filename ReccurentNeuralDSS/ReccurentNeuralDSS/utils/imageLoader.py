@@ -102,7 +102,7 @@ class ImageLoader(object):
         pickle_out.close()
 
     def loadFromPickle(WheretoLoad:str,FileName:str):
-         pickle_in = open(WheretoLoad+FileName,"rb")
+         pickle_in = open(WheretoLoad+"/"+FileName,"rb")
          return pickle.load(pickle_in)
 
     def loadtwodarrayFromPickle(WhereToload:str,inX,inY):

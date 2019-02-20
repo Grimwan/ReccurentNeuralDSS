@@ -6,23 +6,28 @@ import utils.config as conf
 
 
 def main():
-#    loader.ImageLoader.loadandsaveImagesToPickle(conf.DATADIR, conf.Training, conf.Result, [0,2000,2000], [1,conf.Xsize,conf.Ysize], False, "X.pickle", "y.pickle", "../output");
-#    [x_train,y_train] = loader.ImageLoader.loadtwodarrayFromPickle("../output", "X.pickle", "y.pickle")    
-    print(x_train.shape)    
+    #first run imageLoaders main for this to work. 
+    x_train=loader.ImageLoader.loadFromPickle(conf.Picklefiles,"TraingImages")
+    y_train=loader.ImageLoader.loadFromPickle(conf.Picklefiles,"GroundTruthImages")
+
     x_train = x_train.reshape(y_train.shape[0], conf.Xsize*conf.Ysize*3)
     x_train = x_train.astype('float32') / 255
     y_train = y_train.reshape(y_train.shape[0], conf.Xsize*conf.Ysize*3)
     y_train = y_train.astype('float32') / 255
     model = Model.build_model(conf.Xsize*conf.Ysize*3)
-    model.fit(x_train,y_train, epochs=1, batch_size=20)
-    ynew = model.predict(x_train)
-    
-    
+    model.fit(x_train,y_train, epochs=200, batch_size=20)
+
     x_train = x_train.reshape(x_train.shape[0],conf.Xsize,conf.Ysize,3)
     x_train = x_train.astype('float32') * 255
     y_train = y_train.reshape(y_train.shape[0],conf.Xsize,conf.Ysize,3)
     y_train = y_train.astype('float32') * 255
     
+
+    validation=loader.ImageLoader.loadFromPickle(conf.Picklefiles,"Completeimg")
+    validation = validation.reshape(validation.shape[0], conf.Xsize*conf.Ysize*3)
+    validation = validation.astype('float32') / 255
+
+    ynew = model.predict(validation)
     ynew = ynew.reshape(ynew.shape[0],conf.Xsize,conf.Ysize,3)
     ynew = ynew.astype('float32') * 255
     
