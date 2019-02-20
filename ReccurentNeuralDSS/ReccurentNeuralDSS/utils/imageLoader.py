@@ -127,6 +127,7 @@ class ImageLoader(object):
             thisarray=np.asarray(picturesArray[i])
             arrayflow = np.all(thisarray < 0.1, Dimension)
             if(arrayflow.all()):
+                ImageLoader.save_Image_ToFolder("../OnlyblackImages",thisarray,"picture"+'amountofblackpictures')
                 amountofblackpictures = amountofblackpictures + 1
         print(amountofblackpictures)
     
@@ -155,22 +156,54 @@ class ImageLoader(object):
         return smallerImages
 
     def save_Image_ToFolder(Folder:str,image:[np.array],ImageName:str):
-        mkdir_safe(Folder)
+        ImageLoader.mkdir_safe(Folder)
         cv2.imwrite(Folder,image)
     
     def mkdir_safe(path: str):
         if not os.path.exists(path):
             os.makedirs(path)
 
+    def turnCombinedListInToCombinedNp(Array:list):
+        x = [] #TrainImage
+        y = [] #TrainimageResult
+        for startPicture, groundTruth in Array:
+            x.append(startPicture)
+            y.append(groundTruth)
+        x = np.array(x)
+        y = np.array(y)
+        return [x,y]
 
+    def turnListInToNp(Array:list):
+        numpyArray = [] 
+        for eachArrayElement in Array:
+            numpyArray.append(eachArrayElement)
+        numpyArray = np.array(numpyArray)
+        return numpyArray
 
-
-
+    def fixColorError(array : np.array):
+        coppiedarray = array.copy()
+        coppiedarray[:,:, :, 0] = array[:, :, :, 2]
+        coppiedarray[:,:, :, 2] = array[:, :, :, 0]
+        return coppiedarray
 
 
 def main():
     #First we read all data from the folders and add a boarder if necsary. then we splice the images in to smaller images 
-    ImageData = ImageLoader.imageReader(conf.DATADIR,conf.Training,conf.Result)
-    print(ImageData.shape)
+    TrainingData = ImageLoader.readImagesResizeCrop(conf.DATADIR,conf.Training,conf.Result,[0,0,0],[1,conf.Xsize,conf.Ysize])
+    img = []
+    gt = []
+    for eachArrayElement in TrainingData:
+        img.append(eachArrayElement[0])
+        gt.append(eachArrayElement[1])
+    #lets turn the list in to npArrays
+    img = ImageLoader.turnListInToNp(img)
+    gt = ImageLoader.turnListInToNp(gt)
+    gt=ImageLoader.fixColorError(gt)
+    img = ImageLoader.fixColorError(img)
+    img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
+    img = img.astype('float32') / 255
+
+
+
 if __name__=="__main__":
     main()

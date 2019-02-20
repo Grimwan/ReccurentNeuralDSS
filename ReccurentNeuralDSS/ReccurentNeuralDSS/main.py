@@ -23,7 +23,7 @@ x_train = x_train.astype('float32') / 255
 y_train = y_train.reshape(y_train.shape[0], Xsize*Ysize*3)
 y_train = y_train.astype('float32') / 255
 
-loader.ImageLoader.removingOnlyDarkpictures(y_train,0)
+#loader.ImageLoader.removingOnlyDarkpictures(y_train,0)
 
 Model = model.Model.build_Standard_NN_model(Xsize*Ysize*3,Xsize*Ysize*3)
 Model.fit(x_train,y_train, epochs = 5, batch_size=20)
