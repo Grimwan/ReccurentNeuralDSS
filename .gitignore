@@ -339,3 +339,5 @@ ReccurentNeuralDSS/PickleSave/*
 *.png
 *.jpg
 *.ini
+*.h5
+*.json
