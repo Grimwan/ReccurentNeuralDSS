@@ -13,8 +13,8 @@ Result = ["DeansTestmap/pixel-level-gt/training"]
 Xsize = 32
 Ysize= 32
 
-loader.ImageLoader.saveImagesToPickle(DATADIR, Training, Result, [0,2000,2000], [1,Xsize,Ysize], True, "Testsavehere.x", "TestSaveHere.y", "../PickleSave/");
-[x_train,y_train] = loader.ImageLoader.loadSavedImageFromPickle("../PickleSave/", "Testsavehere.x", "TestSaveHere.y")
+loader.ImageLoader.loadandsaveImagesToPickle(DATADIR, Training, Result, [0,2000,2000], [1,Xsize,Ysize], True, "Testsavehere.x", "TestSaveHere.y", "../PickleSave/");
+[x_train,y_train] = loader.ImageLoader.loadtwodarrayFromPickle("../PickleSave/", "Testsavehere.x", "TestSaveHere.y")
 
 print(x_train.shape)
 

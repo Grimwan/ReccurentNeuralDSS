@@ -58,7 +58,7 @@ class ImageLoader(object):
                     pass
         return training_data
 
-    def saveImagesToPickle(dataDir:str, trainingDir:str, resultDir:str, resize,Crop,shuffleData,pickleOutX,pickleOutY,WheretosavePickleData):
+    def loadandsaveImagesToPickle(dataDir:str, trainingDir:str, resultDir:str, resize,Crop,shuffleData,pickleOutX,pickleOutY,WheretosavePickleData):
         training_data = ImageLoader.readImagesResizeCrop(dataDir, trainingDir, resultDir, resize,Crop)
        # if(bool(shuffleData)):
         #    random.shuffle(training_data)
@@ -94,7 +94,17 @@ class ImageLoader(object):
         pickle_out.close()
         print("Finished saving images to pickle x for "+pickleOutX+"  y for "+pickleOutY)
 
-    def loadSavedImageFromPickle(WhereToload:str,inX,inY):
+    def saveToPickle(array,pickleOut:str,WheretosavePickleData:str):
+        ImageLoader.mkdir_safe(WheretosavePickleData)
+        pickle_out = open(WheretosavePickleData+"/"+pickleOut,"wb")
+        pickle.dump(array,pickle_out)
+        pickle_out.close()
+
+    def loadFromPickle(WheretoLoad:str,FileName:str):
+         pickle_in = open(WheretoLoad+FileName,"rb")
+         return pickle.load(pickle_in)
+
+    def loadtwodarrayFromPickle(WhereToload:str,inX,inY):
         pickle_in = open(WhereToload+inX,"rb")
         x_train = pickle.load(pickle_in)
         pickle_in = open(WhereToload+inY,"rb")
@@ -207,17 +217,19 @@ def main():
     gt = ImageLoader.turnListInToNp(gt)
     gt=ImageLoader.fixColorError(gt)
     img = ImageLoader.fixColorError(img)
-    print(gt.shape)
+    #print(gt.shape)
+    ImageLoader.saveToPickle(img,"Completeimg",conf.Picklefiles)
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
     img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
     [img,gt] = ImageLoader.removingOnlyDarkpictures(img,gt)
     img = ImageLoader.turnListInToNp(img)
     gt = ImageLoader.turnListInToNp(gt)
-    
     gt = gt.reshape(gt.shape[0],conf.Xsize,conf.Ysize,3)
     img = img.reshape(img.shape[0],conf.Xsize,conf.Ysize,3)
-    print(gt.shape)
-    plt.imshow(gt[1])
-    plt.show()
+    ImageLoader.saveToPickle(img,"TraingImages",conf.Picklefiles)
+    ImageLoader.saveToPickle(gt,"GroundTruthImages",conf.Picklefiles)
+    #print(gt.shape)
+#    plt.imshow(gt[1])
+#    plt.show()
 if __name__=="__main__":
     main()
