@@ -85,11 +85,12 @@ class ImageLoader(object):
         ANotherImg[:,:, :, 0] = y[:,:, :, 2]
         ANotherImg[:,:, :, 2] = y[:,:, :, 0]
         y = ANotherImg
-        pickle_out = open(WheretosavePickleData+pickleOutX,"wb")
+        ImageLoader.mkdir_safe(WheretosavePickleData)
+        pickle_out = open(WheretosavePickleData+"/"+pickleOutX,"wb")
         pickle.dump(x,pickle_out)
         pickle_out.close()
 
-        pickle_out = open(WheretosavePickleData+pickleOutY,"wb")
+        pickle_out = open(WheretosavePickleData+"/"+pickleOutY,"wb")
         pickle.dump(y,pickle_out)
         pickle_out.close()
         print("Finished saving images to pickle x for "+pickleOutX+"  y for "+pickleOutY)
@@ -105,9 +106,9 @@ class ImageLoader(object):
          return pickle.load(pickle_in)
 
     def loadtwodarrayFromPickle(WhereToload:str,inX,inY):
-        pickle_in = open(WhereToload+inX,"rb")
+        pickle_in = open(WhereToload+"/"+inX,"rb")
         x_train = pickle.load(pickle_in)
-        pickle_in = open(WhereToload+inY,"rb")
+        pickle_in = open(WhereToload+"/"+inY,"rb")
         y_train = pickle.load(pickle_in)
         return [x_train,y_train]
 

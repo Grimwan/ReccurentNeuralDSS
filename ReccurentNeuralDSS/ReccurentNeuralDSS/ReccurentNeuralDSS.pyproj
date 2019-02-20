@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>f1c89ed0-379c-4c28-8101-e83c7998c3cc</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>utils\imageLoader.py</StartupFile>
+    <StartupFile>main.py</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>

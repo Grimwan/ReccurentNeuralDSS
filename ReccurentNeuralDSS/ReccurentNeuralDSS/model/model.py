@@ -1,7 +1,7 @@
 import tensorflow as tf
 from keras.models import Sequential, model_from_json
 from keras.layers import Dense, Flatten
-
+import utils.imageLoader as loader
 class Model:
     """Utility class to represent a model."""
     
@@ -37,3 +37,4 @@ class Model:
         loaded_model = model_from_json(loaded_model_json)
         loaded_model.load_weights("..output/model.h5")
         return loaded_model
+
