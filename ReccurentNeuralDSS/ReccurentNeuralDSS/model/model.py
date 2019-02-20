@@ -1,21 +1,39 @@
 import tensorflow as tf
+from keras.models import Sequential, model_from_json
+from keras.layers import Dense, Flatten
 
+class Model:
+    """Utility class to represent a model."""
+    
+    model = 0
+        
+    def build_model(dataSize):
+        Model.model = Sequential()
+        #model.add(Flatten()) # flattens array to 1D
+        
+        # hidden layers
+        Model.model.add(Dense(200, activation='relu', input_shape=(dataSize,)))
+        Model.model.add(Dense(200, activation='relu'))
+        Model.model.add(Dense(200, activation='relu'))
+        
+        # output layer
+        Model.model.add(Dense(dataSize, activation='sigmoid')) 
 
-class Model(object):
-    Model = 0
-    def build_Standard_NN_model(input,output):
-        model = tf.keras.models.Sequential() # feed forward one of two
-        #model.add(tf.keras.layers.Flatten()) # flattens a mutli array in to single array from 3d to 1d basically
-        #First hidden layer
-        model.add(tf.keras.layers.Dense(200, activation = tf.nn.relu, input_shape=(input,))) # tf.nn.relu = a kind of activation like sigmoid function
-        #second hidden layer 
-        model.add(tf.keras.layers.Dense(200, activation = tf.nn.relu))
-        model.add(tf.keras.layers.Dense(200, activation = tf.nn.relu))
-        #output layer of neural network
-        model.add(tf.keras.layers.Dense(output, activation = tf.nn.sigmoid)) 
-        #nn done set up 
+        # compile settings
+        Model.model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+        return Model.model
 
-        #setting up how to train the neural network specifiyng optimiser and loss function
-        model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy']) #lossfunction the degree of error minimise loss, optimizer is the backprogation type. keras supports alot, adam is one of them. for loss the most popular one is categorical crossentropy  
-        Model = model
-        return model
+    def save_model():
+        model_json = Model.model.to_json()
+        
+        with open("../output/model.json", "w") as json_file:
+            json_file.write(model_json)
+        Model.model.save_weights("../output/model.h5")
+        
+    def load_model():
+        json_file = open('../ouput/model.json', 'r')
+        loaded_model_json = json_file.read()
+        json_file.close()
+        loaded_model = model_from_json(loaded_model_json)
+        loaded_model.load_weights("..output/model.h5")
+        return loaded_model
