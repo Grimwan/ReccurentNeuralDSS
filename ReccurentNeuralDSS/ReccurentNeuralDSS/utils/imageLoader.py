@@ -4,10 +4,10 @@ import os
 import cv2
 import random
 import pickle 
-
+import utils.config as conf
 
 class ImageLoader(object):
-    def imageReader(dataDir, trainingDir, resultDir, resize,Crop):
+    def readImagesResizeCrop(dataDir:str, trainingDir:str, resultDir:str, resize,Crop):
         training_data = []
         for category in trainingDir:
             path = os.path.join(dataDir, category) # path to img/training or pixel-level-gt/training dir
@@ -38,9 +38,28 @@ class ImageLoader(object):
                 except Exception as e:
                     pass
         return training_data
+       
+    def imageReader(dataDir:str, trainingDir:str, resultDir:str):
+        training_data = []
+        for category in trainingDir:
+            path = os.path.join(dataDir, category) # path to img/training or pixel-level-gt/training dir
+            secondPath = os.path.join(dataDir,resultDir[trainingDir.index(category)])
+            #class_num = CATEGORIES.index(category)
+            newImg =  os.listdir(secondPath)
+            i = 0;
+            for img in os.listdir(path):
+                try:
+                    imgTraining_array = cv2.imread(os.path.join(path,img), cv2.IMREAD_COLOR)
+                    imgResult_array = cv2.imread(os.path.join(secondPath,newImg[i]),cv2.IMREAD_COLOR)
+                    #first Resize
+                    training_data.append([imgTraining_array,imgResult_array])
+                    i= i+1
+                except Exception as e:
+                    pass
+        return training_data
 
-    def saveImagesToPickle(dataDir, trainingDir, resultDir, resize,Crop,shuffleData,pickleOutX,pickleOutY,WheretosavePickleData):
-        training_data = ImageLoader.imageReader(dataDir, trainingDir, resultDir, resize,Crop)
+    def saveImagesToPickle(dataDir:str, trainingDir:str, resultDir:str, resize,Crop,shuffleData,pickleOutX,pickleOutY,WheretosavePickleData):
+        training_data = ImageLoader.readImagesResizeCrop(dataDir, trainingDir, resultDir, resize,Crop)
        # if(bool(shuffleData)):
         #    random.shuffle(training_data)
         x = [] #trainingdata
@@ -75,7 +94,7 @@ class ImageLoader(object):
         pickle_out.close()
         print("Finished saving images to pickle x for "+pickleOutX+"  y for "+pickleOutY)
 
-    def loadSavedImage(WhereToload,inX,inY):
+    def loadSavedImageFromPickle(WhereToload:str,inX,inY):
         pickle_in = open(WhereToload+inX,"rb")
         x_train = pickle.load(pickle_in)
         pickle_in = open(WhereToload+inY,"rb")
@@ -135,3 +154,23 @@ class ImageLoader(object):
             current_y += dimensionY
         return smallerImages
 
+    def save_Image_ToFolder(Folder:str,image:[np.array],ImageName:str):
+        mkdir_safe(Folder)
+        cv2.imwrite(Folder,image)
+    
+    def mkdir_safe(path: str):
+        if not os.path.exists(path):
+            os.makedirs(path)
+
+
+
+
+
+
+
+def main():
+    #First we read all data from the folders and add a boarder if necsary. then we splice the images in to smaller images 
+    ImageData = ImageLoader.imageReader(conf.DATADIR,conf.Training,conf.Result)
+    print(ImageData.shape)
+if __name__=="__main__":
+    main()
