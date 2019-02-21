@@ -2,76 +2,85 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import cv2
-import random
 import pickle 
-import utils.config as conf
+import utils.config as conf 
 
-class ImageLoader(object):
-    def readImagesResizeCrop(dataDir:str, trainingDir:str, resultDir:str, resize,Crop):
+class ImageLoader():
+    """Load dataset images, split them inte chunks and write them to pickle files."""
+    
+    def read_images_resize_crop(dataDir: str, trainingDir: str, resultDir: str, resize, crop):
         training_data = []
+        
         for category in trainingDir:
             path = os.path.join(dataDir, category) # path to img/training or pixel-level-gt/training dir
-            secondPath = os.path.join(dataDir,resultDir[trainingDir.index(category)])
+            secondPath = os.path.join(dataDir, resultDir[trainingDir.index(category)])
             #class_num = CATEGORIES.index(category)
             newImg =  os.listdir(secondPath)
             i = 0;
             for img in os.listdir(path):
                 try:
-                    imgTraining_array = cv2.imread(os.path.join(path,img), cv2.IMREAD_COLOR)
-                    imgResult_array = cv2.imread(os.path.join(secondPath,newImg[i]),cv2.IMREAD_COLOR)
+                    imgTraining_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_COLOR)
+                    imgResult_array = cv2.imread(os.path.join(secondPath, newImg[i]), cv2.IMREAD_COLOR)
                     #first Resize
                     if resize[0] != 0:
-                        imgTraining_array = cv2.resize(imgTraining_array, (resize[1],resize[2]))
-                        imgResult_array = cv2.resize(imgResult_array, (resize[1],resize[2]))
-                    if Crop[0] != 0:
+                        imgTraining_array = cv2.resize(imgTraining_array, (resize[1], resize[2]))
+                        imgResult_array = cv2.resize(imgResult_array, (resize[1], resize[2]))
+                    if crop[0] != 0:
                         #First Try to add a boarder
-                        max_y,max_x = imgTraining_array.shape[:2] # this value is taken out from the original picture and used later for setting the max values
-                        imgTraining_array = ImageLoader.addBorder(imgTraining_array,Crop[1],Crop[2],[0,0,0],max_x,max_y)
-                        imgResult_array = ImageLoader.addBorder(imgResult_array,Crop[1],Crop[2],[0,0,0],max_x,max_y)
+                        max_y, max_x = imgTraining_array.shape[:2] # this value is taken out from the original picture and used later for setting the max values
+                        imgTraining_array = ImageLoader.add_border(imgTraining_array, crop[1], 
+                                                                  crop[2], [0,0,0], max_x, max_y)
+                        imgResult_array = ImageLoader.add_border(imgResult_array, crop[1], 
+                                                                crop[2], [0,0,0], max_x, max_y)
                         #Lets Split the images
-                        imgTraining_array =ImageLoader.splitImage(imgTraining_array,Crop[1],Crop[2],max_x,max_y)
-                        imgResult_array = ImageLoader.splitImage(imgResult_array,Crop[1],Crop[2],max_x,max_y)
-                        training_data += list(zip(imgTraining_array,imgResult_array))
+                        imgTraining_array = ImageLoader.split_image(imgTraining_array, crop[1], crop[2], 
+                                                                   max_x, max_y)
+                        imgResult_array = ImageLoader.split_image(imgResult_array, crop[1], crop[2], 
+                                                                 max_x, max_y)
+                        training_data += list(zip(imgTraining_array, imgResult_array))
                     else:
-                        training_data.append([imgTraining_array,imgResult_array])
+                        training_data.append([imgTraining_array, imgResult_array])
                     i= i+1
                 except Exception as e:
                     pass
         return training_data
        
-    def imageReader(dataDir:str, trainingDir:str, resultDir:str):
+    def image_reader(dataDir: str, trainingDir: str, resultDir: str):
         training_data = []
+        
         for category in trainingDir:
             path = os.path.join(dataDir, category) # path to img/training or pixel-level-gt/training dir
-            secondPath = os.path.join(dataDir,resultDir[trainingDir.index(category)])
+            secondPath = os.path.join(dataDir, resultDir[trainingDir.index(category)])
             #class_num = CATEGORIES.index(category)
             newImg =  os.listdir(secondPath)
             i = 0;
             for img in os.listdir(path):
                 try:
-                    imgTraining_array = cv2.imread(os.path.join(path,img), cv2.IMREAD_COLOR)
-                    imgResult_array = cv2.imread(os.path.join(secondPath,newImg[i]),cv2.IMREAD_COLOR)
+                    imgTraining_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_COLOR)
+                    imgResult_array = cv2.imread(os.path.join(secondPath, newImg[i]), cv2.IMREAD_COLOR)
                     #first Resize
-                    training_data.append([imgTraining_array,imgResult_array])
-                    i= i+1
+                    training_data.append([imgTraining_array, imgResult_array])
+                    i = i+1
                 except Exception as e:
                     pass
         return training_data
 
-    def loadandsaveImagesToPickle(dataDir:str, trainingDir:str, resultDir:str, resize,Crop,shuffleData,pickleOutX,pickleOutY,WheretosavePickleData):
-        training_data = ImageLoader.readImagesResizeCrop(dataDir, trainingDir, resultDir, resize,Crop)
-       # if(bool(shuffleData)):
+    def load_and_save_images_to_pickle(dataDir: str, trainingDir: str, resultDir: str, resize, 
+                                  crop, shuffleData, pickleOutX, pickleOutY, WheretosavePickleData):
+        training_data = ImageLoader.read_images_resize_crop(dataDir, trainingDir, resultDir, resize,crop)
+       
+        # if(bool(shuffleData)):
         #    random.shuffle(training_data)
         x = [] #trainingdata
         y = [] #labels
+        
         for features, label in training_data:
             x.append(features)
             y.append(label)
-
-            
-        if(resize[0]==1 and Crop[0] == 0):
-            x = np.array(x).reshape(-1,resize[1],resize[2],3)
-            y = np.array(y).reshape(-1,resize[1],resize[2],3)
+     
+        if(resize[0] == 1 and crop[0] == 0):
+            x = np.array(x).reshape(-1, resize[1], resize[2], 3)
+            y = np.array(y).reshape(-1, resize[1], resize[2], 3)
         else:
             x = np.array(x)
             y = np.array(y)
@@ -81,36 +90,39 @@ class ImageLoader(object):
         im2[:,:, :, 0] = x[:, :, :, 2]
         im2[:,:, :, 2] = x[:, :, :, 0]
         x = im2
+        
         ANotherImg = y.copy()
-        ANotherImg[:,:, :, 0] = y[:,:, :, 2]
-        ANotherImg[:,:, :, 2] = y[:,:, :, 0]
+        ANotherImg[:, :, :, 0] = y[:, :, :, 2]
+        ANotherImg[:, :, :, 2] = y[:, :, :, 0]
         y = ANotherImg
+        
         ImageLoader.mkdir_safe(WheretosavePickleData)
-        pickle_out = open(WheretosavePickleData+"/"+pickleOutX,"wb")
-        pickle.dump(x,pickle_out)
+        pickle_out = open(WheretosavePickleData + "/" + pickleOutX, "wb")
+        pickle.dump(x, pickle_out)
         pickle_out.close()
 
-        pickle_out = open(WheretosavePickleData+"/"+pickleOutY,"wb")
-        pickle.dump(y,pickle_out)
+        pickle_out = open(WheretosavePickleData + "/" + pickleOutY, "wb")
+        pickle.dump(y, pickle_out)
         pickle_out.close()
-        print("Finished saving images to pickle x for "+pickleOutX+"  y for "+pickleOutY)
+        print("Finished saving images to pickle x for " + pickleOutX + "  y for " + pickleOutY)
 
-    def saveToPickle(array,pickleOut:str,WheretosavePickleData:str):
-        ImageLoader.mkdir_safe(WheretosavePickleData)
-        pickle_out = open(WheretosavePickleData+"/"+pickleOut,"wb")
-        pickle.dump(array,pickle_out)
+    def save_to_pickle(array, pickleOut: str, savePath: str):
+        ImageLoader.mkdir_safe(savePath)
+        pickle_out = open(savePath + "/" + pickleOut, "wb")
+        pickle.dump(array, pickle_out)
         pickle_out.close()
 
-    def loadFromPickle(WheretoLoad:str,FileName:str):
-         pickle_in = open(WheretoLoad+"/"+FileName,"rb")
+    def load_from_pickle(loadPath: str, fileName: str):
+         pickle_in = open(loadPath + "/" + fileName, "rb")
          return pickle.load(pickle_in)
 
-    def loadtwodarrayFromPickle(WhereToload:str,inX,inY):
-        pickle_in = open(WhereToload+"/"+inX,"rb")
+    def load_array_from_pickle(loadPath: str, inX, inY):
+        pickle_in = open(loadPath + "/" + inX, "rb")
         x_train = pickle.load(pickle_in)
-        pickle_in = open(WhereToload+"/"+inY,"rb")
+        
+        pickle_in = open(loadPath + "/" + inY, "rb")
         y_train = pickle.load(pickle_in)
-        return [x_train,y_train]
+        return [x_train, y_train]
 
     def combine_images(imageArray, max_y: int, max_x: int) -> np.array:
         image = np.zeros((max_y,max_x,3),np.int)
@@ -118,7 +130,7 @@ class ImageLoader(object):
         size_y, size_x,Nope = imageArray[0].shape
         curr_y = 0
         i = 0
-        # TODO: rewrite with generators.
+      
         while (curr_y + size_y) <= max_y:
             curr_x = 0
             while (curr_x + size_x) <= max_x:
@@ -132,105 +144,116 @@ class ImageLoader(object):
         return image
 
 
-    def removingOnlyDarkpictures(img,gt):
-        amountofblackpictures=0
-        newimg=[]
-        newgt=[]
-        Dimension = 0
+    def remove_dark_images(img, gt):
+        nrOfDarkImages = 0
+        dimension = 0
+        newimg = []
+        newgt = [] 
+        
         for i in range(len(gt)):
-            thisarray=np.asarray(gt[i])
-            arrayflow = np.all(thisarray < 10, Dimension)
+            thisarray = np.asarray(gt[i])
+            arrayflow = np.all(thisarray < 10, dimension)
             if(arrayflow.all()):
-                amountofblackpictures = amountofblackpictures + 1
+                nrOfDarkImages = nrOfDarkImages + 1
             else:
                 newimg.append(img[i])
                 newgt.append(gt[i])
-#        print(amountofblackpictures)
+        #print(nrOfDarkImages)
         return [newimg,newgt]
 
     
-    def addBorder(array,dimensionX,dimensionY,BoarderColor,max_x,max_y):
-        #Takes in the prefer Images and adds a border if nessesary based on dimensions
+    def add_border(array, dimensionX, dimensionY, borderColor, max_x, max_y):
+        # Takes in the prefer Images and adds a border if nessesary based on dimensions
         border_y = 0
         if max_y % dimensionY != 0:
             border_y = (dimensionY - (max_y % dimensionY) + 1) // 2
-            array = cv2.copyMakeBorder(array,border_y,border_y,0,0, cv2.BORDER_CONSTANT, value=BoarderColor)
+            array = cv2.copyMakeBorder(array, border_y, border_y, 0, 0, 
+                                       cv2.BORDER_CONSTANT, value=borderColor)
         border_x = 0
         if max_x % dimensionX != 0:
             border_x = (dimensionX - (max_x % dimensionX) + 1) // 2
-            array = cv2.copyMakeBorder( array, 0, 0, border_x, border_x, cv2.BORDER_CONSTANT, value=BoarderColor)
+            array = cv2.copyMakeBorder(array, 0, 0, border_x, border_x, 
+                                       cv2.BORDER_CONSTANT, value=borderColor)
         return array
         
-    def splitImage(array,dimensionX,dimensionY,max_x,max_y):
-        #Splits the images into smaller chunks based on the dimension entered returns an array of cut pictures
-        smallerImages = []
+    def split_image(array, dimensionX, dimensionY, max_x, max_y):
+        chunks = []
         current_y = 0
         while(current_y + dimensionY)<= max_y:
             current_x = 0
             while(current_x + dimensionX) <= max_x:
-                smallerImages.append(array[current_y:current_y+dimensionY,current_x:current_x + dimensionX])
+                chunks.append(array[current_y:current_y + dimensionY, current_x : current_x + dimensionX])
                 current_x += dimensionX
             current_y += dimensionY
-        return smallerImages
+        return chunks
 
-    def save_Image_ToFolder(Folder:str,image:[np.array],ImageName:str):
-        ImageLoader.mkdir_safe(Folder)
-        cv2.imwrite(os.path.join(Folder,ImageName+'.png'),image)
+    def save_image(path: str, image: [np.array], name: str):
+        ImageLoader.mkdir_safe(path)
+        cv2.imwrite(os.path.join(path, name + '.png'), image)
     
     def mkdir_safe(path: str):
         if not os.path.exists(path):
             os.makedirs(path)
 
-    def turnCombinedListInToCombinedNp(Array:list):
+    def transform_list_to_combined_np(array: list):
         x = [] #TrainImage
         y = [] #TrainimageResult
-        for startPicture, groundTruth in Array:
+        
+        for startPicture, groundTruth in array:
             x.append(startPicture)
             y.append(groundTruth)
+            
         x = np.array(x)
         y = np.array(y)
-        return [x,y]
+        return [x, y]
 
-    def turnListInToNp(Array:list):
+    def convert_list_to_np(array: list):
         numpyArray = [] 
-        for eachArrayElement in Array:
+        for eachArrayElement in array:
             numpyArray.append(eachArrayElement)
         numpyArray = np.array(numpyArray)
         return numpyArray
 
-    def fixColorError(array : np.array):
-        coppiedarray = array.copy()
-        coppiedarray[:,:, :, 0] = array[:, :, :, 2]
-        coppiedarray[:,:, :, 2] = array[:, :, :, 0]
-        return coppiedarray
+    def adjust_colors(array : np.array):
+        copy = array.copy()
+        copy[:,:, :, 0] = array[:, :, :, 2]
+        copy[:,:, :, 2] = array[:, :, :, 0]
+        return copy
 
 
 def main():
-    #First we read all data from the folders and add a boarder if necsary. then we splice the images in to smaller images 
-    TrainingData = ImageLoader.readImagesResizeCrop(conf.DATADIR,conf.Training,conf.Result,[0,0,0],[1,conf.Xsize,conf.Ysize])
+    # read all data from folders and add border if needed. Afterwards split images into chunks
+    data = ImageLoader.read_images_resize_crop(conf.DATADIR, conf.Training, conf.Result,
+                                               [0,0,0], [1, conf.Xsize, conf.Ysize])
     img = []
     gt = []
-    for eachArrayElement in TrainingData:
+    
+    for eachArrayElement in data:
         img.append(eachArrayElement[0])
         gt.append(eachArrayElement[1])
-    #lets turn the list in to npArrays
-    img = ImageLoader.turnListInToNp(img)
-    gt = ImageLoader.turnListInToNp(gt)
-    gt=ImageLoader.fixColorError(gt)
-    img = ImageLoader.fixColorError(img)
+    
+    # convert to numpy arrays
+    img = ImageLoader.convert_list_to_np(img)
+    gt = ImageLoader.convert_list_to_np(gt)
+    gt = ImageLoader.adjust_colors(gt)
+    img = ImageLoader.adjust_colors(img)
     #print(gt.shape)
-    ImageLoader.saveToPickle(img,"Completeimg",conf.Picklefiles)
+    
+    ImageLoader.save_to_pickle(img, "combined.pickle", conf.Picklefiles)
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
     img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
-    [img,gt] = ImageLoader.removingOnlyDarkpictures(img,gt)
-    img = ImageLoader.turnListInToNp(img)
-    gt = ImageLoader.turnListInToNp(gt)
-    gt = gt.reshape(gt.shape[0],conf.Xsize,conf.Ysize,3)
-    img = img.reshape(img.shape[0],conf.Xsize,conf.Ysize,3)
-    ImageLoader.saveToPickle(img,"TraingImages",conf.Picklefiles)
-    ImageLoader.saveToPickle(gt,"GroundTruthImages",conf.Picklefiles)
+    
+    [img,gt] = ImageLoader.remove_dark_images(img, gt)
+    img = ImageLoader.convert_list_to_np(img)
+    gt = ImageLoader.convert_list_to_np(gt)
+    gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 3)
+    
+    img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
+    ImageLoader.save_to_pickle(img, "img.pickle", conf.Picklefiles)
+    ImageLoader.save_to_pickle(gt, "gt.pickle", conf.Picklefiles)
     #print(gt.shape)
 #    plt.imshow(gt[1])
 #    plt.show()
-if __name__=="__main__":
+    
+if __name__ == "__main__":
     main()

@@ -1,7 +1,8 @@
 import tensorflow as tf
 from keras.models import Sequential, model_from_json
 from keras.layers import Dense, Flatten
-import utils.imageLoader as loader
+
+
 class Model:
     """Utility class to represent a model."""
     

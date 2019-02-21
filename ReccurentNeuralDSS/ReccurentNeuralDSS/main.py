@@ -1,37 +1,36 @@
 import matplotlib.pyplot as plt
-import utils.imageLoader as loader
+from utils.imageLoader import ImageLoader
 from model.model import Model
-
 import utils.config as conf
-
 
 def main():
     #first run imageLoaders main for this to work. 
-    x_train=loader.ImageLoader.loadFromPickle(conf.Picklefiles,"TraingImages")
-    y_train=loader.ImageLoader.loadFromPickle(conf.Picklefiles,"GroundTruthImages")
+    x_train = ImageLoader.load_from_pickle(conf.Picklefiles, "img.pickle")
+    y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
 
     x_train = x_train.reshape(y_train.shape[0], conf.Xsize*conf.Ysize*3)
     x_train = x_train.astype('float32') / 255
     y_train = y_train.reshape(y_train.shape[0], conf.Xsize*conf.Ysize*3)
     y_train = y_train.astype('float32') / 255
-    model = Model.build_model(conf.Xsize*conf.Ysize*3)
-    model.fit(x_train,y_train, epochs=200, batch_size=20)
-
-    x_train = x_train.reshape(x_train.shape[0],conf.Xsize,conf.Ysize,3)
-    x_train = x_train.astype('float32') * 255
-    y_train = y_train.reshape(y_train.shape[0],conf.Xsize,conf.Ysize,3)
-    y_train = y_train.astype('float32') * 255
     
+    model = Model.build_model(conf.Xsize*conf.Ysize*3)
+    model.fit(x_train, y_train, epochs=1, batch_size=20)
 
-    validation=loader.ImageLoader.loadFromPickle(conf.Picklefiles,"Completeimg")
+    x_train = x_train.reshape(x_train.shape[0],conf.Xsize,conf.Ysize, 3)
+    x_train = x_train.astype('float32') * 255
+    y_train = y_train.reshape(y_train.shape[0],conf.Xsize,conf.Ysize, 3)
+    y_train = y_train.astype('float32') * 255
+
+    # validation
+    validation = ImageLoader.load_from_pickle(conf.Picklefiles, "combined.pickle")
     validation = validation.reshape(validation.shape[0], conf.Xsize*conf.Ysize*3)
     validation = validation.astype('float32') / 255
 
     ynew = model.predict(validation)
-    ynew = ynew.reshape(ynew.shape[0],conf.Xsize,conf.Ysize,3)
+    ynew = ynew.reshape(ynew.shape[0],conf.Xsize,conf.Ysize, 3)
     ynew = ynew.astype('float32') * 255
     
-    img = loader.ImageLoader.combine_images(ynew, 6496, 4872)
+    img = ImageLoader.combine_images(ynew, 6496, 4872)
     plt.imshow(img)
     plt.show()
     
