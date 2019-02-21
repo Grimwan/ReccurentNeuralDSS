@@ -2,7 +2,7 @@ import tensorflow as tf
 from keras.models import Sequential, model_from_json
 from keras.layers import Dense, Dropout, LSTM, CuDNNLSTM
 from keras import optimizers
-
+from keras.layers import Flatten, Dense
 
 class Model:
     """Utility class to represent a model."""
@@ -13,24 +13,11 @@ class Model:
         Model.model = Sequential()
         
         # input layer
-        Model.model.add(CuDNNLSTM(128, input_shape=dataSize, return_sequences=True))
-        Model.model.add(Dropout(0.2))
-        
-        # hidden layers
-        Model.model.add(CuDNNLSTM(128))
-        Model.model.add(Dropout(0.1))
-        
-        Model.model.add(Dense(32, activation='relu'))
-        Model.model.add(Dropout(0.2))
-        
-        # output layer
-        Model.model.add(Dense(dataSize, activation='sigmoid'))
-        
-        opt = optimizers.Adam(lr=0.001, decay=1e-6)
-        
+        Model.model.add(CuDNNLSTM(1, batch_input_shape=(None,3072,1), return_sequences=True))
+        #Model.model.add(LSTM((1),batch_input_shape=(None,3072,1),return_sequences=True))
         # compile settings
         Model.model.compile(loss='binary_crossentropy', 
-                      optimizer=opt, 
+                      optimizer='adam', 
                       metrics=['accuracy'])
         
         return Model.model
