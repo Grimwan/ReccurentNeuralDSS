@@ -219,6 +219,30 @@ class ImageLoader():
         copy[:,:, :, 0] = array[:, :, :, 2]
         copy[:,:, :, 2] = array[:, :, :, 0]
         return copy
+    
+    def flatten_data_multi(x_train, y_train):
+        x_train = x_train.reshape(y_train.shape[0], conf.Xsize*conf.Ysize*3)
+        x_train = x_train.astype('float32') / 255
+        y_train = y_train.reshape(y_train.shape[0], conf.Xsize*conf.Ysize*3)
+        y_train = y_train.astype('float32') / 255
+        return x_train, y_train
+    
+    def flatten_data(x_train):
+        x_train = x_train.reshape(x_train.shape[0], conf.Xsize*conf.Ysize*3)
+        x_train = x_train.astype('float32') / 255
+        return x_train
+        
+    def convert_to_multidimensional_data_multi(x_train, y_train):
+        x_train = x_train.reshape(x_train.shape[0], conf.Xsize,conf.Ysize, 3)
+        x_train = x_train.astype('float32') * 255
+        y_train = y_train.reshape(y_train.shape[0], conf.Xsize,conf.Ysize, 3)
+        y_train = y_train.astype('float32') * 255
+        return x_train, y_train
+    
+    def convert_to_multidimensional_data(x_train):
+        x_train = x_train.reshape(x_train.shape[0], conf.Xsize,conf.Ysize, 3)
+        x_train = x_train.astype('float32') * 255
+        return x_train
 
 
 def main():
@@ -239,15 +263,18 @@ def main():
     img = ImageLoader.adjust_colors(img)
     #print(gt.shape)
     
+    # write original image to pickle
     ImageLoader.save_to_pickle(img, "combined.pickle", conf.Picklefiles)
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
     img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
     
+    # remove complete dark images in the image
     [img,gt] = ImageLoader.remove_dark_images(img, gt)
     img = ImageLoader.convert_list_to_np(img)
     gt = ImageLoader.convert_list_to_np(gt)
     gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 3)
     
+    # output training data to pickle
     img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
     ImageLoader.save_to_pickle(img, "img.pickle", conf.Picklefiles)
     ImageLoader.save_to_pickle(gt, "gt.pickle", conf.Picklefiles)
