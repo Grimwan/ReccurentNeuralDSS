@@ -29,7 +29,7 @@ class Model:
         opt = optimizers.Adam(lr=0.001, decay=1e-6)
         
         # compile settings
-        Model.model.compile(loss='binarized_crossentropy', 
+        Model.model.compile(loss='binary_crossentropy', 
                       optimizer=opt, 
                       metrics=['accuracy'])
         
