@@ -13,7 +13,7 @@ class Model:
         Model.model = Sequential()
         
         # input layer
-        Model.model.add(CuDNNLSTM(128, input_shape=(dataSize, ), return_sequences=True))
+        Model.model.add(CuDNNLSTM(128, input_shape=dataSize, return_sequences=True))
         Model.model.add(Dropout(0.2))
         
         # hidden layers
@@ -24,7 +24,7 @@ class Model:
         Model.model.add(Dropout(0.2))
         
         # output layer
-        Model.model.add(Dense(dataSize, activation='softmax'))
+        Model.model.add(Dense(dataSize, activation='sigmoid'))
         
         opt = optimizers.Adam(lr=0.001, decay=1e-6)
         

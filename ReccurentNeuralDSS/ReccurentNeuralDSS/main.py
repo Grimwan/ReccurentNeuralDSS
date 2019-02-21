@@ -9,9 +9,9 @@ def main():
 
     # flatten
     x_train, y_train = ImageLoader.flatten_data_multi(x_train, y_train)
-    
     # prepare the model and train it
-    model = Model.build_model(conf.Xsize*conf.Ysize*3)
+    print(x_train[0].shape[0])
+    model = Model.build_model((225,x_train[0].shape[0]))
     model.fit(x_train, y_train, epochs=1, batch_size=20)
 
     # convert to original dimensions
