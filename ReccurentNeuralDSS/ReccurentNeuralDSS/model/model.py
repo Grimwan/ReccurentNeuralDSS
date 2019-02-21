@@ -1,6 +1,7 @@
 import tensorflow as tf
 from keras.models import Sequential, model_from_json
-from keras.layers import Dense, Flatten
+from keras.layers import Dense, Dropout, LSTM, CuDNNLSTM
+from keras import optimizers
 
 
 class Model:
@@ -10,18 +11,28 @@ class Model:
         
     def build_model(dataSize):
         Model.model = Sequential()
-        #model.add(Flatten()) # flattens array to 1D
+        
+        # input layer
+        Model.model.add(CuDNNLSTM(128, input_shape=(dataSize, ), return_sequences=True))
+        Model.model.add(Dropout(0.2))
         
         # hidden layers
-        Model.model.add(Dense(200, activation='relu', input_shape=(dataSize,)))
-        Model.model.add(Dense(200, activation='relu'))
-        Model.model.add(Dense(200, activation='relu'))
+        Model.model.add(CuDNNLSTM(128))
+        Model.model.add(Dropout(0.1))
+        
+        Model.model.add(Dense(32, activation='relu'))
+        Model.model.add(Dropout(0.2))
         
         # output layer
-        Model.model.add(Dense(dataSize, activation='sigmoid')) 
-
+        Model.model.add(Dense(dataSize, activation='softmax'))
+        
+        opt = optimizers.Adam(lr=0.001, decay=1e-6)
+        
         # compile settings
-        Model.model.compile(optimizer='adam', loss='binary_crossentropy', metrics=['accuracy'])
+        Model.model.compile(loss='binarized_crossentropy', 
+                      optimizer=opt, 
+                      metrics=['accuracy'])
+        
         return Model.model
 
     def save_model():
