@@ -8,13 +8,16 @@ class Model:
     """Utility class to represent a model."""
     
     model = 0
-        
+       
     def build_model(dataSize):
         Model.model = Sequential()
-        
+        batch_size = None
+        timesteps = dataSize[0]
+        data_dim = dataSize[1]
         # input layer
-        Model.model.add(CuDNNLSTM(1, batch_input_shape=(None,3072,1), return_sequences=True))
-        #Model.model.add(LSTM((1),batch_input_shape=(None,3072,1),return_sequences=True))
+        Model.model.add(CuDNNLSTM((data_dim), batch_input_shape=(None,timesteps,data_dim), return_sequences=True))
+        Model.model.add(Dense(data_dim,activation='sigmoid'))
+        #Model.model.add(LSTM((data_dim), batch_input_shape=(None,timesteps,data_dim), activation = 'sigmoid', return_sequences=True))
         # compile settings
         Model.model.compile(loss='binary_crossentropy', 
                       optimizer='adam', 
@@ -37,3 +40,4 @@ class Model:
         loaded_model.load_weights("..output/model.h5")
         return loaded_model
 
+#lstm comment: For example, say your input sequences look like X = [[0.54, 0.3], [0.11, 0.2], [0.37, 0.81]]. We can see that this sequence has a timestep of 3 and a data_dim of 2.
