@@ -1,7 +1,9 @@
 import tensorflow as tf
 from keras.models import Sequential, model_from_json
 from keras.layers import Dense, Dropout, LSTM, CuDNNLSTM
+from keras import layers
 from keras import optimizers
+from keras import models
 from keras.layers import Flatten, Dense
 
 class Model:
@@ -26,7 +28,24 @@ class Model:
         return Model.model
 
 #    def build_model_CNNLSTM(input_Shape):
-    #def build_CNN_model()    
+    def build_CNN_model(dataSize):
+        imageHeight = dataSize[0]
+        imageWidth = dataSize[1]
+        channels = dataSize[2]
+        Model.model = Sequential()
+        Model.model.add(layers.Conv2D(32,(3,3), activation='relu', input_shape=(imageHeight,imageWidth,channels)))
+        Model.model.add(layers.MaxPooling2D((2,2)))
+        Model.model.add(layers.Conv2D(64,(3, 3), activation = 'relu'))
+        Model.model.add(layers.MaxPooling2D((2,2)))
+        Model.model.add(layers.Conv2D(64,(3, 3), activation = 'relu'))
+        Model.model.add(layers.Flatten())
+        Model.model.add(layers.Dense(imageHeight*imageWidth, activation = 'relu'))
+        Model.model.add(layers.Dense(imageHeight * imageWidth * channels, activation = 'sigmoid'))
+
+        Model.model.compile(loss='binary_crossentropy', 
+                optimizer='adam', 
+                metrics=['accuracy'])
+        return Model.model
         
     def save_model():
         model_json = Model.model.to_json()
