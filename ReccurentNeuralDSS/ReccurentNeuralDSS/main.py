@@ -7,11 +7,11 @@ def main():
     x_train = ImageLoader.load_from_pickle(conf.Picklefiles, "img.pickle")
     y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
     #onlyRNN
-    xreshapeValue = [3,conf.Xsize*conf.Ysize*1] #for LSTMRNN
-    yreshapeValue = [3,conf.Xsize*conf.Ysize*1] #for LSTMRNN
+#    xreshapeValue = [3,conf.Xsize*conf.Ysize*1] #for LSTMRNN
+#    yreshapeValue = [3,conf.Xsize*conf.Ysize*1] #for LSTMRNN
     #onlyCNN
-    xreshapeValue = [3,conf.Xsize*conf.Ysize*1] #for LSTMRNN
-    yreshapeValue = [3,conf.Xsize*conf.Ysize*1] #for LSTMRNN
+#    xreshapeValue = [3,conf.Xsize*conf.Ysize*1] #for LSTMRNN
+#    yreshapeValue = [3,conf.Xsize*conf.Ysize*1] #for LSTMRNN
 
 
 
@@ -26,6 +26,7 @@ def main():
     print(x_train.shape)
     print(x_train[0].shape)
     #model = Model.build_model(x_train[0].shape)
+    #model = Model.build_CNN_robin_model(x_train[0].shape)
     model = Model.build_CNN_model(x_train[0].shape)
     model.fit(x_train, y_train, epochs=10, batch_size=20,validation_split=0.2)
     #Model.save_model()

@@ -5,7 +5,8 @@ from keras import layers
 from keras import optimizers
 from keras import models
 from keras.layers import Flatten, Dense
-
+from keras.layers.normalization import BatchNormalization
+from keras.layers.core import SpatialDropout2D, Activation
 class Model:
     """Utility class to represent a model."""
     
@@ -37,7 +38,8 @@ class Model:
         Model.model.add(layers.MaxPooling2D((2,2)))
         Model.model.add(layers.Conv2D(64,(3, 3), activation = 'relu'))
         Model.model.add(layers.MaxPooling2D((2,2)))
-        Model.model.add(layers.Conv2D(64,(3, 3), activation = 'relu'))
+        Model.model.add(layers.Conv2D(128,(3, 3), activation = 'relu'))
+        Model.model.add(layers.MaxPooling2D((2,2)))
         Model.model.add(layers.Flatten())
         Model.model.add(layers.Dense(imageHeight*imageWidth, activation = 'relu'))
         Model.model.add(layers.Dense(imageHeight * imageWidth * channels, activation = 'sigmoid'))
@@ -47,6 +49,57 @@ class Model:
                 metrics=['accuracy'])
         return Model.model
         
+    def build_CNN_robin_model(dataSize):
+        imageHeight = dataSize[0]
+        imageWidth = dataSize[1]
+        channels = dataSize[2]
+        Model.model = Sequential()
+                #start downsampling
+        #down1
+        Model.model.add(layers.Conv2D(32,(3,3), activation='relu', input_shape=(imageHeight,imageWidth,channels)))
+        Model.model.add(layers.BatchNormalization(axis=3))
+        Model.model.add(layers.Conv2D(32, (3, 3), padding='same', kernel_initializer='he_normal'))
+        Model.model.add(layers.BatchNormalization(axis=3))
+        conv1 = Model.model.add(layers.SpatialDropout2D(0.1))
+        #down2
+        [conv2,pool2] = Model.down_layer(64)
+        #down3
+        [conv3,pool3] = Model.down_layer(128)
+        #down4
+        [conv4,pool4] = Model.down_layer(256)
+        #down5
+        [conv5,pool5] = Model.down_layer(512)
+
+        #bottleneck
+        bottleneck = Model.double_conv_layer(1024)
+
+
+        # Upsampling.
+        up5 = Model.up_layer(conv5, 512)
+        up4 = Model.up_layer(conv4, 256)
+        up3 = Model.up_layer(conv3, 128)
+        up2 = Model.up_layer(conv2, 64)
+        up1 = Model.up_layer(conv1, 32)
+
+        outputs = Conv2D(1, (1, 1))(up1)
+        outputs = Activation('sigmoid')(outputs)
+        return Model.model
+    def double_conv_layer(AmountOfFillters):
+         Model.model.add(layers.Conv2D(AmountOfFillters, (3, 3), padding='same', kernel_initializer='he_normal'))
+         Model.model.add(layers.BatchNormalization(axis=3))
+         Model.model.add(layers.Conv2D(AmountOfFillters, (3, 3), padding='same', kernel_initializer='he_normal'))
+         Model.model.add(layers.BatchNormalization(axis=3))
+         Model.model.add(layers.SpatialDropout2D(0.1))
+         return Model.model
+
+    def up_layer(concats,AmountOfFillters):
+        return Model.double_conv_layer(Model.model.add(layers.concatenate([layers.UpSampling2D(size=(2,2)),concats], axis=3), AmountOfFillters))
+
+    def down_layer(AmountOfFillters):
+        conv = Model.double_conv_layer(AmountOfFillters)
+        pool = Model.model.add(layers.MaxPooling2D(2,2))
+                                   #Model.model.add(pool)
+        return [conv,pool]
     def save_model():
         model_json = Model.model.to_json()
         
@@ -61,5 +114,9 @@ class Model:
         loaded_model = model_from_json(loaded_model_json)
         loaded_model.load_weights("..output/model.h5")
         return loaded_model
+
+
+
+   
 
 #lstm comment: For example, say your input sequences look like X = [[0.54, 0.3], [0.11, 0.2], [0.37, 0.81]]. We can see that this sequence has a timestep of 3 and a data_dim of 2.
