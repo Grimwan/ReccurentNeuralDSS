@@ -25,6 +25,9 @@ class Model:
         
         return Model.model
 
+#    def build_model_CNNLSTM(input_Shape):
+    #def build_CNN_model()    
+        
     def save_model():
         model_json = Model.model.to_json()
         

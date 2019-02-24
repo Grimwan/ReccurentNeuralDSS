@@ -6,28 +6,26 @@ from keras import preprocessing
 def main():
     x_train = ImageLoader.load_from_pickle(conf.Picklefiles, "img.pickle")
     y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
-    maxlen = 3072
+    reshapeValue = [3,conf.Xsize*conf.Ysize*1] #for LSTMRNN
     # flatten
 #    x_train, y_train = ImageLoader.flatten_data_multi(x_train, y_train)
-    #¤x_train = preprocessing.sequence.pad_sequences(x_train, maxlen=maxlen)
     # prepare the model and train it
-    x_train = x_train.reshape(x_train.shape[0], 1,conf.Xsize*conf.Ysize*3)
+    x_train = x_train.reshape(x_train.shape[0], reshapeValue[0],reshapeValue[1])
     x_train = x_train.astype('float32') / 255
-    y_train = y_train.reshape(y_train.shape[0],1, conf.Xsize*conf.Ysize*3)
+    y_train = y_train.reshape(y_train.shape[0],reshapeValue[0],reshapeValue[1])
     y_train = y_train.astype('float32') / 255
     print(x_train.shape)
     print(x_train[0].shape)
-#    model = Model.build_model([3072,1])
     model = Model.build_model(x_train[0].shape)
-    model.fit(x_train, y_train, epochs=20, batch_size=20,validation_split=0.2)
-    Model.save_model()
+    model.fit(x_train, y_train, epochs=10, batch_size=20,validation_split=0.2)
+    #Model.save_model()
     # convert to original dimensions
     x_train, y_train = ImageLoader.convert_to_multidimensional_data_multi(x_train, y_train)
 
     # validation with the original image
     validation = ImageLoader.load_from_pickle(conf.Picklefiles, "combined.pickle")
     #validation = ImageLoader.flatten_data(validation)
-    validation = validation.reshape(validation.shape[0], 1,conf.Xsize*conf.Ysize*3)
+    validation = validation.reshape(validation.shape[0], reshapeValue[0],reshapeValue[1])
     validation = validation.astype('float32') / 255
     prediction = model.predict(validation)
     print(prediction.shape)
