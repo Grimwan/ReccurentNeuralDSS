@@ -84,6 +84,57 @@ class Model:
         outputs = Conv2D(1, (1, 1))(up1)
         outputs = Activation('sigmoid')(outputs)
         return Model.model
+    def build_CNN_forSemanticSegmentation(dataSize):
+        imageHeight = dataSize[0]
+        imageWidth = dataSize[1]
+        channels = dataSize[2]
+        Model.model = Sequential()
+        Model.model.add(layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal',input_shape=(imageHeight,imageWidth,channels)))
+        Model.model.add(layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+        Model.model.add(layers.Conv2D(128, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Conv2D(128, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+        Model.model.add(layers.Conv2D(256, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Conv2D(256, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+        Model.model.add(layers.Conv2D(512, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Conv2D(512, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Dropout(0.5))
+        Model.model.add(layers.MaxPooling2D(pool_size=(2, 2)))
+
+        Model.model.add(layers.Conv2D(1024, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Conv2D(1024, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Dropout(0.5))
+        Model.model.add(layers.UpSampling2D(size = (2,2)))  
+        Model.model.add(layers.Conv2D(512, 2, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        #Model.model.add(layers.concatenate([drop4,up6], axis = 3))
+        Model.model.add(layers.Conv2D(512, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Conv2D(512, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.UpSampling2D(size = (2,2)))  
+        Model.model.add(layers.Conv2D(256, 2, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        #Model.model.add(layers.concatenate([conv3,up7], axis = 3))
+        Model.model.add(layers.Conv2D(256, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Conv2D(256, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.UpSampling2D(size = (2,2)))  
+        Model.model.add(layers.Conv2D(128, 2, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        #Model.model.add(layers.concatenate([conv2,up8], axis = 3))
+        Model.model.add(layers.Conv2D(128, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Conv2D(128, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        
+        Model.model.add(layers.Conv2D(64, 2, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        #Model.model.add(layers.concatenate([conv1,up9], axis = 3))
+        Model.model.add(layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Conv2D(64, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Conv2D(2, 3, activation = 'relu', padding = 'same', kernel_initializer = 'he_normal'))
+        Model.model.add(layers.Conv2D(1, 1, activation = 'sigmoid'))
+
+        
+        Model.model.compile(loss='binary_crossentropy', 
+        optimizer='adam', 
+        metrics=['accuracy'])
+
+        return Model.model
     def double_conv_layer(AmountOfFillters):
          Model.model.add(layers.Conv2D(AmountOfFillters, (3, 3), padding='same', kernel_initializer='he_normal'))
          Model.model.add(layers.BatchNormalization(axis=3))
