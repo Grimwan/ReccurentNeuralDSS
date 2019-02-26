@@ -32,10 +32,10 @@ def main():
     #Model.save_model()
     # convert to original dimensions
     
-    y_trainPredict0=model.predict(x_train)
-    y_trainPredict0[0]
-    y_train[0]
-    x_train, y_train = ImageLoader.convert_to_multidimensional_data_multi(x_train, y_train)
+#    y_trainPredict0=model.predict(x_train)
+#    y_trainPredict0[0]
+#    y_train[0]
+#    x_train, y_train = ImageLoader.convert_to_multidimensional_data_multi(x_train, y_train)
 
     # validation with the original image
     validation = ImageLoader.load_from_pickle(conf.Picklefiles, "combined.pickle")
@@ -44,6 +44,13 @@ def main():
     validation = validation.astype('float32') / 255
     prediction = model.predict(validation)
     print(prediction.shape)
+    prediction=prediction.reshape(30856,yreshapeValue[0], 32,11)
+    
+    newPrediction = []
+    for eachprediction in prediction:
+        newPrediction.append(ImageLoader.turnLabeltoColorvalues(eachprediction))
+
+    prediction = newPrediction
     prediction = ImageLoader.convert_to_multidimensional_data(prediction)
     
     # show result

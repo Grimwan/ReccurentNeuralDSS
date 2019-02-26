@@ -321,6 +321,82 @@ class ImageLoader():
             returnThisArray.append(ImageLoader.reEachLabelGt(each_array))
         return returnThisArray
 
+    def turnLabeltoColorvalues(Array):
+        returnThisArray = []
+        for each_array in Array:
+            returnThisArray.append(ImageLoader.turnlabeltocolorsingle(each_array))
+        return returnThisArray
+
+    def turnlabeltocolorsingle(Array: np.array):
+        returnMe = []
+        Togglefunction =  False
+        for label_data in Array:
+            Togglefunction =  False
+            if((label_data == [1,1,0,0,0,0,0,0,0,0,0]).all()):
+                Togglefunction = True
+                returnMe.append([128,0,1])
+            elif(((label_data == [1,0,1,0,0,0,0,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([128,0,2])
+            elif(((label_data == [1,0,0,1,0,0,0,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([128,0,3])
+            elif(((label_data == [1,0,0,0,1,0,0,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([128,0,4])
+            elif(((label_data == [1,0,0,0,0,1,0,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([128,0,5])
+            elif(((label_data == [1,0,0,0,0,0,1,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([128,0,6])
+            elif(((label_data == [1,0,0,0,0,0,0,1,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([128,0,8])
+            elif(((label_data == [1,0,0,0,0,0,0,0,1,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([128,0,9])
+            elif(((label_data == [1,0,0,0,0,0,0,0,0,1,0])).all()):
+                Togglefunction = True
+                returnMe.append([128,0,10])
+            elif(((label_data == [1,0,0,0,0,0,0,0,0,0,1])).all()):
+                Togglefunction = True
+                returnMe.append([128,0,12])
+########################################################
+            elif(((label_data == [0,1,0,0,0,0,0,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,1])
+            elif(((label_data == [0,0,1,0,0,0,0,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,2])
+            elif(((label_data == [0,0,0,1,0,0,0,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,3])
+            elif(((label_data == [0,0,0,0,1,0,0,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,4])
+            elif(((label_data == [0,0,0,0,0,1,0,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,5])
+            elif(((label_data == [0,0,0,0,0,0,1,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,6])
+            elif(((label_data == [0,0,0,0,0,0,0,1,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,8])
+            elif(((label_data == [0,0,0,0,0,0,0,0,1,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,9])
+            elif(((label_data == [0,0,0,0,0,0,0,0,0,1,0])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,10])
+            elif(((label_data == [0,0,0,0,0,0,0,0,0,0,1])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,12])
+            if(Togglefunction == False):
+                returnMe.append([0,0,0])
+                #print("these values are not labeled should do?")
+        return returnMe
 
 def main():
     # read all data from folders and add border if needed. Afterwards split images into chunks
