@@ -152,7 +152,7 @@ class ImageLoader():
         
         for i in range(len(gt)):
             thisarray = np.asarray(gt[i])
-            arrayflow = np.all(thisarray < 10, dimension)
+            arrayflow = np.all(thisarray < 2, dimension)
             if(arrayflow.all()):
                 nrOfDarkImages = nrOfDarkImages + 1
             else:
@@ -244,6 +244,83 @@ class ImageLoader():
         x_train = x_train.astype('float32') * 255
         return x_train
 
+    def reEachLabelGt(Array: np.array):
+        returnMe = []
+        Togglefunction =  False
+        for color_data in Array:
+            Togglefunction =  False
+            if(color_data[0] == 128):
+                if(color_data[2] == 1):
+                    Togglefunction = True
+                    returnMe.append(0.1)
+                elif (color_data[2] == 2):
+                    Togglefunction = True
+                    returnMe.append(0.2)
+                elif (color_data[2] == 3):
+                    Togglefunction = True
+                    returnMe.append(0.3)
+                elif (color_data[2] == 4):
+                    Togglefunction = True
+                    returnMe.append(0.4)
+                elif (color_data[2] == 5):
+                    Togglefunction = True
+                    returnMe.append(0.5)
+                elif (color_data[2] == 6):
+                    Togglefunction = True
+                    returnMe.append(0.6)
+                elif (color_data[2] == 8):
+                    Togglefunction = True
+                    returnMe.append(0.7)
+                elif (color_data[2] == 9):
+                    Togglefunction = True
+                    returnMe.append(0.8)
+                elif (color_data[2] == 10):
+                    Togglefunction = True
+                    returnMe.append(0.9)
+                elif (color_data[2] == 12):
+                    Togglefunction = True
+                    returnMe.append(0)
+            elif (color_data[0] == 0):
+                if(color_data[2] == 1):
+                    Togglefunction = True
+                    returnMe.append(0.15)
+                elif (color_data[2] == 2):
+                    Togglefunction = True
+                    returnMe.append(0.25)
+                elif (color_data[2] == 3):
+                    Togglefunction = True
+                    returnMe.append(0.35)
+                elif (color_data[2] == 4):
+                    Togglefunction = True
+                    returnMe.append(0.45)
+                elif (color_data[2] == 5):
+                    Togglefunction = True
+                    returnMe.append(0.55)
+                elif (color_data[2] == 6):
+                    Togglefunction = True
+                    returnMe.append(0.65)
+                elif (color_data[2] == 8):
+                    Togglefunction = True
+                    returnMe.append(0.75)
+                elif (color_data[2] == 9):
+                    Togglefunction = True
+                    returnMe.append(0.85)
+                elif (color_data[2] == 10):
+                    Togglefunction = True
+                    returnMe.append(0.95)
+                elif (color_data[2] == 12):
+                    Togglefunction = True
+                    returnMe.append(1)
+            if(Togglefunction == False):
+                print("these values are not labeled should do?"+str(color_data[0])+","+str(color_data[1])+","+str(color_data[2]))
+        return returnMe
+
+    def reLabelGt(Array: np.array):
+        returnThisArray = []
+        for each_array in Array:
+            returnThisArray.append(ImageLoader.reEachLabelGt(each_array))
+        return returnThisArray
+
 
 def main():
     # read all data from folders and add border if needed. Afterwards split images into chunks
@@ -272,8 +349,10 @@ def main():
     [img,gt] = ImageLoader.remove_dark_images(img, gt)
     img = ImageLoader.convert_list_to_np(img)
     gt = ImageLoader.convert_list_to_np(gt)
-    gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 3)
-    
+    gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize, 3)
+    gt = ImageLoader.reLabelGt(gt)
+    gt = ImageLoader.convert_list_to_np(gt)
+    gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 1)
     # output training data to pickle
     img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
     ImageLoader.save_to_pickle(img, "img.pickle", conf.Picklefiles)
