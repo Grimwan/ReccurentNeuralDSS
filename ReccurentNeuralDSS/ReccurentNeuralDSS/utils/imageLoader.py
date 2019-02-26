@@ -252,65 +252,65 @@ class ImageLoader():
             if(color_data[0] == 128):
                 if(color_data[2] == 1):
                     Togglefunction = True
-                    returnMe.append(0.1)
+                    returnMe.append([1,1,0,0,0,0,0,0,0,0,0])
                 elif (color_data[2] == 2):
                     Togglefunction = True
-                    returnMe.append(0.2)
+                    returnMe.append([1,0,1,0,0,0,0,0,0,0,0])
                 elif (color_data[2] == 3):
                     Togglefunction = True
-                    returnMe.append(0.3)
+                    returnMe.append([1,0,0,1,0,0,0,0,0,0,0])
                 elif (color_data[2] == 4):
                     Togglefunction = True
-                    returnMe.append(0.4)
+                    returnMe.append([1,0,0,0,1,0,0,0,0,0,0])
                 elif (color_data[2] == 5):
                     Togglefunction = True
-                    returnMe.append(0.5)
+                    returnMe.append([1,0,0,0,0,1,0,0,0,0,0])
                 elif (color_data[2] == 6):
                     Togglefunction = True
-                    returnMe.append(0.6)
+                    returnMe.append([1,0,0,0,0,0,1,0,0,0,0])
                 elif (color_data[2] == 8):
                     Togglefunction = True
-                    returnMe.append(0.7)
+                    returnMe.append([1,0,0,0,0,0,0,1,0,0,0])
                 elif (color_data[2] == 9):
                     Togglefunction = True
-                    returnMe.append(0.8)
+                    returnMe.append([1,0,0,0,0,0,0,0,1,0,0])
                 elif (color_data[2] == 10):
                     Togglefunction = True
-                    returnMe.append(0.9)
+                    returnMe.append([1,0,0,0,0,0,0,0,0,1,0])
                 elif (color_data[2] == 12):
                     Togglefunction = True
-                    returnMe.append(0)
+                    returnMe.append([1,0,0,0,0,0,0,0,0,0,1])
             elif (color_data[0] == 0):
                 if(color_data[2] == 1):
                     Togglefunction = True
-                    returnMe.append(0.15)
+                    returnMe.append([0,1,0,0,0,0,0,0,0,0,0])
                 elif (color_data[2] == 2):
                     Togglefunction = True
-                    returnMe.append(0.25)
+                    returnMe.append([0,0,1,0,0,0,0,0,0,0,0])
                 elif (color_data[2] == 3):
                     Togglefunction = True
-                    returnMe.append(0.35)
+                    returnMe.append([0,0,0,1,0,0,0,0,0,0,0])
                 elif (color_data[2] == 4):
                     Togglefunction = True
-                    returnMe.append(0.45)
+                    returnMe.append([0,0,0,0,1,0,0,0,0,0,0])
                 elif (color_data[2] == 5):
                     Togglefunction = True
-                    returnMe.append(0.55)
+                    returnMe.append([0,0,0,0,0,1,0,0,0,0,0])
                 elif (color_data[2] == 6):
                     Togglefunction = True
-                    returnMe.append(0.65)
+                    returnMe.append([0,0,0,0,0,0,1,0,0,0,0])
                 elif (color_data[2] == 8):
                     Togglefunction = True
-                    returnMe.append(0.75)
+                    returnMe.append([0,0,0,0,0,0,0,1,0,0,0])
                 elif (color_data[2] == 9):
                     Togglefunction = True
-                    returnMe.append(0.85)
+                    returnMe.append([0,0,0,0,0,0,0,0,1,0,0])
                 elif (color_data[2] == 10):
                     Togglefunction = True
-                    returnMe.append(0.95)
+                    returnMe.append([0,0,0,0,0,0,0,0,0,1,0])
                 elif (color_data[2] == 12):
                     Togglefunction = True
-                    returnMe.append(1)
+                    returnMe.append([0,0,0,0,0,0,0,0,0,0,1])
             if(Togglefunction == False):
                 print("these values are not labeled should do?"+str(color_data[0])+","+str(color_data[1])+","+str(color_data[2]))
         return returnMe
@@ -352,7 +352,7 @@ def main():
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize, 3)
     gt = ImageLoader.reLabelGt(gt)
     gt = ImageLoader.convert_list_to_np(gt)
-    gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 1)
+    gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 11)
     # output training data to pickle
     img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
     ImageLoader.save_to_pickle(img, "img.pickle", conf.Picklefiles)

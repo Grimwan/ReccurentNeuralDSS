@@ -8,7 +8,7 @@ def main():
     y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
     #onlyRNN
     xreshapeValue = [conf.Xsize,conf.Ysize*3] #for LSTMRNN
-    yreshapeValue = [conf.Xsize,conf.Ysize] #for LSTMRNN
+    yreshapeValue = [conf.Xsize,conf.Ysize*11] #for LSTMRNN
     #onlyCNN
 #    xreshapeValue = [3,conf.Xsize*conf.Ysize*1] 
 #    yreshapeValue = [3,conf.Xsize*conf.Ysize*1] 
