@@ -19,13 +19,14 @@ class Model:
         data_dim = dataSize[1]
         # input layer
         Model.model.add(CuDNNLSTM((data_dim), batch_input_shape=(None,timesteps,data_dim), return_sequences=True))
-        Model.model.add(Dense(352,activation='sigmoid'))
+        Model.model.add(Flatten())
+        Model.model.add(Dense(1024,activation='sigmoid'))
         #Model.model.add(LSTM((data_dim), batch_input_shape=(None,timesteps,data_dim), activation = 'sigmoid', return_sequences=True))
         # compile settings
         Model.model.compile(loss='binary_crossentropy', 
                       optimizer='adam', 
                       metrics=['accuracy'])
-        
+#        print(Model.model.summary())
         return Model.model
 
 #    def build_model_CNNLSTM(input_Shape):
@@ -41,7 +42,7 @@ class Model:
         Model.model.add(layers.Conv2D(128,(3, 3), activation = 'relu'))
         Model.model.add(layers.MaxPooling2D((2,2)))
         Model.model.add(layers.Flatten())
-        Model.model.add(layers.Dense(imageHeight*imageWidth, activation = 'relu'))
+        Model.model.add(layers.Dense(imageHeight*imageWidth*3, activation = 'relu'))
         Model.model.add(layers.Dense(imageHeight * imageWidth, activation = 'sigmoid'))
 
         Model.model.compile(loss='binary_crossentropy', 

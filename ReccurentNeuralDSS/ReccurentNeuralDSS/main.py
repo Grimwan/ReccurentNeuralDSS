@@ -8,7 +8,7 @@ def main():
     y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
     #onlyRNN
     xreshapeValue = [conf.Xsize,conf.Ysize*3] #for LSTMRNN
-    yreshapeValue = [conf.Xsize,conf.Ysize*11] #for LSTMRNN
+    yreshapeValue = [conf.Xsize,conf.Ysize] #for LSTMRNN
     #onlyCNN
 #    xreshapeValue = [3,conf.Xsize*conf.Ysize*1] 
 #    yreshapeValue = [3,conf.Xsize*conf.Ysize*1] 
@@ -19,7 +19,8 @@ def main():
     # prepare the model and train it
     x_train = x_train.reshape(x_train.shape[0], xreshapeValue[0],xreshapeValue[1])
     x_train = x_train.astype('float32') / 255
-    y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0],yreshapeValue[1])
+    y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0]*yreshapeValue[1])
+    y_train = y_train.astype('float32')/140
 #    y_train = ImageLoader.flatten_data(y_train)
     
     print(x_train.shape)
@@ -44,7 +45,7 @@ def main():
     validation = validation.astype('float32') / 255
     prediction = model.predict(validation)
     print(prediction.shape)
-    prediction=prediction.reshape(30856,yreshapeValue[0], 32,11)
+    prediction=prediction.reshape(30856,yreshapeValue[0], 32,1)
     
     newPrediction = []
     for eachprediction in prediction:
