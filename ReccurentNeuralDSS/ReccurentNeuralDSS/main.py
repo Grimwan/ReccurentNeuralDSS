@@ -30,7 +30,7 @@ def main():
     #model = Model.build_CNN_robin_model(x_train[0].shape)
 #    model = Model.build_CNN_model(x_train[0].shape)
 #    model = Model.build_CNN_forSemanticSegmentation(x_train[0.shape])
-    model.fit(x_train, y_train, epochs=10, batch_size=20,validation_split=0.2)
+    model.fit(x_train, y_train, epochs=40, batch_size=20,validation_split=0.2)
     #Model.save_model()
     # convert to original dimensions
     
@@ -48,19 +48,22 @@ def main():
 #    prediction=ImageLoader.convert_list_to_np(prediction)
     prediction = np.where(prediction <= 0.5, 0, 1)
     print(prediction.shape)
+    6964#30856
     prediction=prediction.reshape(30856,yreshapeValue[0], 32,5)
     i = 0
     newPrediction = []
     for eachprediction in prediction:
         newPrediction.append(ImageLoader.turnLabeltoColorvalues(eachprediction))
-        print(i)
         i= i+1
     prediction = newPrediction
     prediction = ImageLoader.convert_list_to_np(prediction)
-    prediction = ImageLoader.convert_to_multidimensional_data(prediction)
+    prediction = prediction.reshape(prediction.shape[0], conf.Xsize,conf.Ysize, 3)
+    #prediction = ImageLoader.convert_to_multidimensional_data(prediction)
     
     # show result
     img = ImageLoader.combine_images(prediction, 6496, 4872)
+    img = ImageLoader.adjust_colors(img)
+    ImageLoader.save_image("here",img,"testimage")
     plt.imshow(img)
     plt.show()
     

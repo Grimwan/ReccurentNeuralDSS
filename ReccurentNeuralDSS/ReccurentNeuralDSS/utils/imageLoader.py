@@ -311,6 +311,9 @@ class ImageLoader():
                 elif (color_data[2] == 12):
                     Togglefunction = True
                     returnMe.append([0,0,0,1,1]) 
+                elif (color_data[2] == 0):
+                    Togglefunction = True
+                    returnMe.append([0,0,0,0,0])
             if(Togglefunction == False):
                 print("these values are not labeled should do?"+str(color_data[0])+","+str(color_data[1])+","+str(color_data[2]))
         return returnMe
@@ -394,6 +397,9 @@ class ImageLoader():
             elif(((label_data == [0,0,0,1,1])).all()):
                 Togglefunction = True
                 returnMe.append([0,0,12])
+            elif(((label_data == [0,0,0,0,0])).all()):
+                Togglefunction = True
+                returnMe.append([0,0,0])
             if(Togglefunction == False):
                 returnMe.append([0,128,0])
                 #print("these values are not labeled should do?")
@@ -423,7 +429,7 @@ def main():
     img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
     
     # remove complete dark images in the image
-    [img,gt] = ImageLoader.remove_dark_images(img, gt)
+#    [img,gt] = ImageLoader.remove_dark_images(img, gt)
     img = ImageLoader.convert_list_to_np(img)
     gt = ImageLoader.convert_list_to_np(gt)
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize, 3)
