@@ -252,65 +252,65 @@ class ImageLoader():
             if(color_data[0] == 128):
                 if(color_data[2] == 1):
                     Togglefunction = True
-                    returnMe.append(128+1)
+                    returnMe.append([1,1,0,0,0])
                 elif (color_data[2] == 2):
                     Togglefunction = True
-                    returnMe.append(128+2)
+                    returnMe.append([1,0,1,0,0])
                 elif (color_data[2] == 3):
                     Togglefunction = True
-                    returnMe.append(128+3)
+                    returnMe.append([1,1,1,0,0])
                 elif (color_data[2] == 4):
                     Togglefunction = True
-                    returnMe.append(128+4)
+                    returnMe.append([1,0,0,1,0])
                 elif (color_data[2] == 5):
                     Togglefunction = True
-                    returnMe.append(128+5)
+                    returnMe.append([1,1,0,1,0])
                 elif (color_data[2] == 6):
                     Togglefunction = True
-                    returnMe.append(128+6)
+                    returnMe.append([1,0,1,1,0])
                 elif (color_data[2] == 8):
                     Togglefunction = True
-                    returnMe.append(128+8)
+                    returnMe.append([1,0,0,0,1])
                 elif (color_data[2] == 9):
                     Togglefunction = True
-                    returnMe.append(128+9)
+                    returnMe.append([1,1,0,0,1])
                 elif (color_data[2] == 10):
                     Togglefunction = True
-                    returnMe.append(128+10)
+                    returnMe.append([1,0,1,0,1])
                 elif (color_data[2] == 12):
                     Togglefunction = True
-                    returnMe.append(128+12)
+                    returnMe.append([1,0,0,1,1])
             elif (color_data[0] == 0):
                 if(color_data[2] == 1):
                     Togglefunction = True
-                    returnMe.append(1)
+                    returnMe.append([0,1,0,0,0])
                 elif (color_data[2] == 2):
                     Togglefunction = True
-                    returnMe.append(2)
+                    returnMe.append([0,0,1,0,0])
                 elif (color_data[2] == 3):
                     Togglefunction = True
-                    returnMe.append(3)
+                    returnMe.append([0,1,1,0,0])
                 elif (color_data[2] == 4):
                     Togglefunction = True
-                    returnMe.append(4)
+                    returnMe.append([0,0,0,1,0])
                 elif (color_data[2] == 5):
                     Togglefunction = True
-                    returnMe.append(5)
+                    returnMe.append([0,1,0,1,0])
                 elif (color_data[2] == 6):
                     Togglefunction = True
-                    returnMe.append(6)
+                    returnMe.append([0,0,1,1,0])
                 elif (color_data[2] == 8):
                     Togglefunction = True
-                    returnMe.append(8)
+                    returnMe.append([0,0,0,0,1])
                 elif (color_data[2] == 9):
                     Togglefunction = True
-                    returnMe.append(9)
+                    returnMe.append([0,1,0,0,1])
                 elif (color_data[2] == 10):
                     Togglefunction = True
-                    returnMe.append(10)
+                    returnMe.append([0,0,1,0,1])
                 elif (color_data[2] == 12):
                     Togglefunction = True
-                    returnMe.append(12)
+                    returnMe.append([0,0,0,1,1]) 
             if(Togglefunction == False):
                 print("these values are not labeled should do?"+str(color_data[0])+","+str(color_data[1])+","+str(color_data[2]))
         return returnMe
@@ -320,6 +320,7 @@ class ImageLoader():
         for each_array in Array:
             returnThisArray.append(ImageLoader.reEachLabelGt(each_array))
         return returnThisArray
+
 
     def turnLabeltoColorvalues(Array):
         returnThisArray = []
@@ -332,69 +333,69 @@ class ImageLoader():
         Togglefunction =  False
         for label_data in Array:
             Togglefunction =  False
-            if((label_data == [1,1,0,0,0,0,0,0,0,0,0]).all()):
+            if((label_data == [1,1,0,0,0]).all()):
                 Togglefunction = True
                 returnMe.append([128,0,1])
-            elif(((label_data == [1,0,1,0,0,0,0,0,0,0,0])).all()):
+            elif(((label_data == [1,0,1,0,0])).all()):
                 Togglefunction = True
                 returnMe.append([128,0,2])
-            elif(((label_data == [1,0,0,1,0,0,0,0,0,0,0])).all()):
+            elif(((label_data == [1,1,1,0,0])).all()):
                 Togglefunction = True
                 returnMe.append([128,0,3])
-            elif(((label_data == [1,0,0,0,1,0,0,0,0,0,0])).all()):
+            elif(((label_data == [1,0,0,1,0])).all()):
                 Togglefunction = True
                 returnMe.append([128,0,4])
-            elif(((label_data == [1,0,0,0,0,1,0,0,0,0,0])).all()):
+            elif(((label_data == [1,1,0,1,0])).all()):
                 Togglefunction = True
                 returnMe.append([128,0,5])
-            elif(((label_data == [1,0,0,0,0,0,1,0,0,0,0])).all()):
+            elif(((label_data == [1,0,1,1,0])).all()):
                 Togglefunction = True
                 returnMe.append([128,0,6])
-            elif(((label_data == [1,0,0,0,0,0,0,1,0,0,0])).all()):
+            elif(((label_data == [1,0,0,0,1])).all()):
                 Togglefunction = True
                 returnMe.append([128,0,8])
-            elif(((label_data == [1,0,0,0,0,0,0,0,1,0,0])).all()):
+            elif(((label_data == [1,1,0,0,1])).all()):
                 Togglefunction = True
                 returnMe.append([128,0,9])
-            elif(((label_data == [1,0,0,0,0,0,0,0,0,1,0])).all()):
+            elif(((label_data == [1,0,1,0,1])).all()):
                 Togglefunction = True
                 returnMe.append([128,0,10])
-            elif(((label_data == [1,0,0,0,0,0,0,0,0,0,1])).all()):
+            elif(((label_data == [1,0,0,1,1])).all()):
                 Togglefunction = True
                 returnMe.append([128,0,12])
 ########################################################
-            elif(((label_data == [0,1,0,0,0,0,0,0,0,0,0])).all()):
+            elif((label_data == [0,1,0,0,0]).all()):
                 Togglefunction = True
                 returnMe.append([0,0,1])
-            elif(((label_data == [0,0,1,0,0,0,0,0,0,0,0])).all()):
+            elif(((label_data == [0,0,1,0,0])).all()):
                 Togglefunction = True
                 returnMe.append([0,0,2])
-            elif(((label_data == [0,0,0,1,0,0,0,0,0,0,0])).all()):
+            elif(((label_data == [0,1,1,0,0])).all()):
                 Togglefunction = True
                 returnMe.append([0,0,3])
-            elif(((label_data == [0,0,0,0,1,0,0,0,0,0,0])).all()):
+            elif(((label_data == [0,0,0,1,0])).all()):
                 Togglefunction = True
                 returnMe.append([0,0,4])
-            elif(((label_data == [0,0,0,0,0,1,0,0,0,0,0])).all()):
+            elif(((label_data == [0,1,0,1,0])).all()):
                 Togglefunction = True
                 returnMe.append([0,0,5])
-            elif(((label_data == [0,0,0,0,0,0,1,0,0,0,0])).all()):
+            elif(((label_data == [0,0,1,1,0])).all()):
                 Togglefunction = True
                 returnMe.append([0,0,6])
-            elif(((label_data == [0,0,0,0,0,0,0,1,0,0,0])).all()):
+            elif(((label_data == [0,0,0,0,1])).all()):
                 Togglefunction = True
                 returnMe.append([0,0,8])
-            elif(((label_data == [0,0,0,0,0,0,0,0,1,0,0])).all()):
+            elif(((label_data == [0,1,0,0,1])).all()):
                 Togglefunction = True
                 returnMe.append([0,0,9])
-            elif(((label_data == [0,0,0,0,0,0,0,0,0,1,0])).all()):
+            elif(((label_data == [0,0,1,0,1])).all()):
                 Togglefunction = True
                 returnMe.append([0,0,10])
-            elif(((label_data == [0,0,0,0,0,0,0,0,0,0,1])).all()):
+            elif(((label_data == [0,0,0,1,1])).all()):
                 Togglefunction = True
                 returnMe.append([0,0,12])
             if(Togglefunction == False):
-                returnMe.append([0,0,0])
+                returnMe.append([0,128,0])
                 #print("these values are not labeled should do?")
         return returnMe
 
@@ -428,7 +429,7 @@ def main():
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize, 3)
     gt = ImageLoader.reLabelGt(gt)
     gt = ImageLoader.convert_list_to_np(gt)
-    gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 1)
+    gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 5)
     # output training data to pickle
     img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
     ImageLoader.save_to_pickle(img, "img.pickle", conf.Picklefiles)

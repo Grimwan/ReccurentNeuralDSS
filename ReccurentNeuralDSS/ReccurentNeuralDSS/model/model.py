@@ -19,8 +19,7 @@ class Model:
         data_dim = dataSize[1]
         # input layer
         Model.model.add(CuDNNLSTM((data_dim), batch_input_shape=(None,timesteps,data_dim), return_sequences=True))
-        Model.model.add(Flatten())
-        Model.model.add(Dense(1024,activation='sigmoid'))
+        Model.model.add(Dense(160,activation='sigmoid'))
         #Model.model.add(LSTM((data_dim), batch_input_shape=(None,timesteps,data_dim), activation = 'sigmoid', return_sequences=True))
         # compile settings
         Model.model.compile(loss='binary_crossentropy', 
