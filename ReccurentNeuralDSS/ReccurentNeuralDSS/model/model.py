@@ -1,6 +1,6 @@
 import tensorflow as tf
 from keras.models import Sequential, model_from_json
-from keras.layers import Dense, Dropout, LSTM, CuDNNLSTM
+from keras.layers import Dense, Dropout, LSTM, CuDNNLSTM, Bidirectional
 from keras import layers
 from keras import optimizers
 from keras import models
@@ -18,7 +18,8 @@ class Model:
         timesteps = dataSize[0]
         data_dim = dataSize[1]
         # input layer
-        Model.model.add(CuDNNLSTM((data_dim), batch_input_shape=(None,timesteps,data_dim), return_sequences=True))
+        
+        Model.model.add(Bidirectional(CuDNNLSTM((data_dim), return_sequences=True), batch_input_shape=(None,timesteps,data_dim)))
         Model.model.add(Dense(160,activation='sigmoid'))
         #Model.model.add(LSTM((data_dim), batch_input_shape=(None,timesteps,data_dim), activation = 'sigmoid', return_sequences=True))
         # compile settings
