@@ -62,7 +62,7 @@ def main():
     
     # show result
     img = ImageLoader.combine_images(prediction, 6496, 4872)
-    img = ImageLoader.adjust_colors(img)
+    img = ImageLoader.adjust_colorsthree(img)
     ImageLoader.save_image("here",img,"testimage")
     plt.imshow(img)
     plt.show()
