@@ -12,7 +12,7 @@ class Model:
     
     model = 0
        
-    def build_model(dataSize):
+    def build_BI_LSTM_model(dataSize):
         Model.model = Sequential()
         batch_size = None
         timesteps = dataSize[0]
@@ -43,8 +43,8 @@ class Model:
         Model.model.add(layers.MaxPooling2D((2,2)))
         Model.model.add(layers.Flatten())
         Model.model.add(layers.Dense(imageHeight*imageWidth*3, activation = 'relu'))
-        Model.model.add(layers.Dense(imageHeight * imageWidth, activation = 'sigmoid'))
-
+        Model.model.add(layers.Dense(imageHeight * imageWidth*5, activation = 'sigmoid'))
+        #print(Model.model.summary());
         Model.model.compile(loss='binary_crossentropy', 
                 optimizer='adam', 
                 metrics=['accuracy'])

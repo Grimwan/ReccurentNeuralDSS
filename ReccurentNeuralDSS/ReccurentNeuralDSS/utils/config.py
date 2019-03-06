@@ -5,5 +5,7 @@ Training = ["DeansTestmap/img/training"]
 Result = ["DeansTestmap/pixel-level-gt/training"]
 Xsize = 32
 Ysize= 32
-
+AmountOfEpochs = 5
+batchSize = 20
+validationSplit = 0.2
 Picklefiles = "../output"
