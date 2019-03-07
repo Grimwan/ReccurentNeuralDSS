@@ -416,9 +416,19 @@ class ImageLoader():
                 #print("these values are not labeled should do?")
         return returnMe
 
-def main():
-    # read all data from folders and add border if needed. Afterwards split images into chunks
-    data = ImageLoader.read_images_resize_crop(conf.DATADIR, conf.Training, conf.Result,
+def readImageAndFixColor(*args):
+
+    if len(args) == 2:
+        Training = args[0]
+        Result = args[1]
+        DATADIR = conf.DATADIR
+    elif len(args) == 3:
+        Training = args[0]
+        Result = args[1]
+        DATADIR = args[2]
+
+
+    data = ImageLoader.read_images_resize_crop(DATADIR, Training, Result,
                                                [0,0,0], [1, conf.Xsize, conf.Ysize])
     img = []
     gt = []
@@ -432,28 +442,34 @@ def main():
     gt = ImageLoader.convert_list_to_np(gt)
     gt = ImageLoader.adjust_colors(gt)
     img = ImageLoader.adjust_colors(img)
-    #print(gt.shape)
+
+    return [img,gt]
+
+def main():
+    # read all data from folders and add border if needed. Afterwards split images into chunks
+    [img,gt]=readImageAndFixColor(conf.Training, conf.Result)
     
     # write original image to pickle
     ImageLoader.save_to_pickle(img, "combined.pickle", conf.Picklefiles)
+
+    # remove complete dark images in the image
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
     img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
-    
-    # remove complete dark images in the image
 #    [img,gt] = ImageLoader.remove_dark_images(img, gt)
     img = ImageLoader.convert_list_to_np(img)
     gt = ImageLoader.convert_list_to_np(gt)
+
+
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize, 3)
     gt = ImageLoader.reLabelGt(gt)
     gt = ImageLoader.convert_list_to_np(gt)
     gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 5)
+    
     # output training data to pickle
     img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
     ImageLoader.save_to_pickle(img, "img.pickle", conf.Picklefiles)
     ImageLoader.save_to_pickle(gt, "gt.pickle", conf.Picklefiles)
-    #print(gt.shape)
-#    plt.imshow(gt[1])
-#    plt.show()
+
     
 if __name__ == "__main__":
     main()
