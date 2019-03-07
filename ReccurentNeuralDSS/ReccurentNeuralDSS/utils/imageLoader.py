@@ -214,10 +214,7 @@ class ImageLoader():
         return [x, y]
 
     def convert_list_to_np(array: list):
-        numpyArray = [] 
-        for eachArrayElement in array:
-            numpyArray.append(eachArrayElement)
-        numpyArray = np.array(numpyArray)
+        numpyArray = np.array(array)
         return numpyArray
 
     def adjust_colors(array : np.array):
