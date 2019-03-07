@@ -1,6 +1,6 @@
 import tensorflow as tf
 from keras.models import Sequential, model_from_json
-from keras.layers import Dense, Dropout, LSTM, CuDNNLSTM, Bidirectional
+from keras.layers import Dense, Dropout, LSTM, CuDNNLSTM, Bidirectional, TimeDistributed
 from keras import layers
 from keras import optimizers
 from keras import models
@@ -15,8 +15,8 @@ class Model:
     def build_BI_LSTM_model(dataSize):
         Model.model = Sequential()
         batch_size = None
-        timesteps = dataSize[0]
-        data_dim = dataSize[1]
+        timesteps = dataSize[0] #first layer array size
+        data_dim = dataSize[1] #how big is one part in the array.
         # input layer
         Model.model.add(Bidirectional(CuDNNLSTM((data_dim), return_sequences=True), batch_input_shape=(None,timesteps,data_dim)))
         # Model.model.add(CuDNNLSTM((data_dim), return_sequences=True, batch_input_shape=(None,timesteps,data_dim)))
@@ -167,6 +167,46 @@ class Model:
         loaded_model.load_weights("..output/model.h5")
         return loaded_model
 
+
+    def save_model(Name):
+        model_json = Model.model.to_json()
+        
+        with open("../output/"+Name+".json", "w") as json_file:
+            json_file.write(model_json)
+        Model.model.save_weights("../output/"+Name+".h5")
+        
+    def load_model(Name):
+        json_file = open('../ouput/'+Name+'.json', 'r')
+        loaded_model_json = json_file.read()
+        json_file.close()
+        loaded_model = model_from_json(loaded_model_json)
+        loaded_model.load_weights("..output/"+Name+".h5")
+        return loaded_model
+
+
+    def build_CNN_BI_LSTM_model(dataSize):
+        imageHeight = dataSize[0]
+        imageWidth = dataSize[1]
+        channels = dataSize[2]
+        cnn = Sequential()
+        cnn.add(layers.Conv2D(64,(3,3), activation='relu', input_shape=(imageHeight,imageWidth,channels)))
+        cnn.add(layers.MaxPooling2D((2,2)))
+        cnn.add(layers.Conv2D(128,(3, 3), activation = 'relu'))
+        cnn.add(layers.MaxPooling2D((2,2)))
+        cnn.add(layers.Conv2D(256,(3, 3), activation = 'relu'))
+        cnn.add(layers.MaxPooling2D((2,2)))
+        cnn.add(layers.Flatten())
+        Model.model = Sequential()
+        # input layer
+        Model.model.add(TimeDistributed(cnn))
+        Model.model.add(Bidirectional(CuDNNLSTM((data_dim), return_sequences=True)))
+        Model.model.add(Dense(160,activation='sigmoid'))
+        # compile settings
+        Model.model.compile(loss='binary_crossentropy', 
+                      optimizer='adam', 
+                      metrics=['accuracy'])
+        print(Model.model.summary())
+        return Model.model
 
 
    

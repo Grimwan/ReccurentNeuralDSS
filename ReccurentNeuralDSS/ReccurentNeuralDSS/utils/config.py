@@ -9,3 +9,9 @@ AmountOfEpochs = 5
 batchSize = 20
 validationSplit = 0.2
 Picklefiles = "../output"
+
+
+LoadTestPickle = "combined.pickle"
+SaveTestImage = True
+WhereTosaveTestImage = "here"
+NameOfTestImage = "testimage"
