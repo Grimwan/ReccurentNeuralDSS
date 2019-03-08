@@ -165,6 +165,7 @@ class Model:
         json_file.close()
         loaded_model = model_from_json(loaded_model_json)
         loaded_model.load_weights("..output/model.h5")
+        Model.model = load_model
         return loaded_model
 
 
@@ -176,11 +177,11 @@ class Model:
         Model.model.save_weights("../output/"+Name+".h5")
         
     def load_model(Name):
-        json_file = open('../ouput/'+Name+'.json', 'r')
+        json_file = open("../output/"+Name+".json", "r")
         loaded_model_json = json_file.read()
         json_file.close()
         loaded_model = model_from_json(loaded_model_json)
-        loaded_model.load_weights("..output/"+Name+".h5")
+        loaded_model.load_weights("../output/"+Name+".h5")
         return loaded_model
 
 

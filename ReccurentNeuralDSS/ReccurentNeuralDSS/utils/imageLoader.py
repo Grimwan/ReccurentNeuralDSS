@@ -447,12 +447,13 @@ def main():
     [img,gt]=readImageAndFixColor(conf.Training, conf.Result)
     
     # write original image to pickle
-    ImageLoader.save_to_pickle(img, "combined.pickle", conf.Picklefiles)
+    [saveme,trash]=readImageAndFixColor(conf.TestTraining,conf.TestResult)
+    ImageLoader.save_to_pickle(saveme, "combined.pickle", conf.Picklefiles)
 
     # remove complete dark images in the image
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
     img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
-#    [img,gt] = ImageLoader.remove_dark_images(img, gt)
+    #[img,gt] = ImageLoader.remove_dark_images(img, gt)
     img = ImageLoader.convert_list_to_np(img)
     gt = ImageLoader.convert_list_to_np(gt)
 

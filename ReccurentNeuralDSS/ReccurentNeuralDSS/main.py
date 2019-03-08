@@ -70,7 +70,6 @@ def newStandardCNN(*args):
     return False
 
 def newCNNBIDirectionalLstmRNN(*args):
-
     if len(args) == 1:
         x_train = args[0]
         y_train = args[0]
@@ -130,9 +129,10 @@ def SaveImage(OnlyLstm : bool):
 def main():
     x_train = ImageLoader.load_from_pickle(conf.Picklefiles, "img.pickle")
     y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
-    SaveImage(newCNNBIDirectionalLstmRNN(x_train,y_train))
-     #Model.save_model("CNNBID");
-
+    #newCNNBIDirectionalLstmRNN(x_train,y_train)
+    #Model.save_model("CNNBID")
+    #Model.model = Model.load_model("CNNBID")
+    #SaveImage(False);
  
 
 if __name__ == "__main__":
