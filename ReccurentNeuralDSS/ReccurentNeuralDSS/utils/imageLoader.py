@@ -8,8 +8,139 @@ import pycuda.autoinit
 import pycuda.driver as drv
 import numpy
 from pycuda.compiler import SourceModule
+from numba import vectorize,guvectorize
+from numba import vectorize, int64
 
-
+@guvectorize([(int64[:],int64[:], int64[:])], '(n),(i)->(i)')
+def reEachLabelGtCuda(color_data,justforSize, returnMe):
+    if(color_data[0] == 128):
+        if(color_data[2] == 1):
+            returnMe[0] = 1
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 0
+        elif (color_data[2] == 2):
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 0
+        elif (color_data[2] == 3):
+            returnMe[0] = 1
+            returnMe[1] = 1
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 0
+        elif (color_data[2] == 4):
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 0
+        elif (color_data[2] == 5):
+            returnMe[0] = 1
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 0
+        elif (color_data[2] == 6):
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 1
+            returnMe[4] = 0
+        elif (color_data[2] == 8):
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 1
+        elif (color_data[2] == 9):
+            returnMe[0] = 1
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 1
+        elif (color_data[2] == 10):
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 1
+        elif (color_data[2] == 12):
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 1
+    elif (color_data[0] == 0):
+        if(color_data[2] == 1):
+            returnMe[0] = 0
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 0
+        elif (color_data[2] == 2):
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 0
+        elif (color_data[2] == 3):
+            returnMe[0] = 0
+            returnMe[1] = 1
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 0
+        elif (color_data[2] == 4):
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 0
+        elif (color_data[2] == 5):
+            returnMe[0] = 0
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 0
+        elif (color_data[2] == 6):
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 1
+            returnMe[4] = 0
+        elif (color_data[2] == 8):
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 1
+        elif (color_data[2] == 9):
+            returnMe[0] = 0
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 1
+        elif (color_data[2] == 10):
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 1
+        elif (color_data[2] == 12):
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 1
+        elif (color_data[2] == 0):
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 0
 
 class ImageLoader():
     """Load dataset images, split them inte chunks and write them to pickle files."""
@@ -327,8 +458,10 @@ class ImageLoader():
 
     def reLabelGt(Array: np.array):
         returnThisArray = []
+        b = [[1,2,3,4,5]]
         for each_array in Array:
-            returnThisArray.append(ImageLoader.reEachLabelGt(each_array))
+            returnThisArray.append(reEachLabelGtCuda(each_array,b))
+            #returnThisArray.append(ImageLoader.reEachLabelGt(each_array))
         return returnThisArray
 
 
@@ -444,12 +577,13 @@ def readImageAndFixColor(*args):
 
 def main():
     # read all data from folders and add border if needed. Afterwards split images into chunks
+
     [img,gt]=readImageAndFixColor(conf.Training, conf.Result)
-    
+    print("loaded all pictures 1")
     # write original image to pickle
     [saveme,trash]=readImageAndFixColor(conf.TestTraining,conf.TestResult)
     ImageLoader.save_to_pickle(saveme, "combined.pickle", conf.Picklefiles)
-
+    print("2")
     # remove complete dark images in the image
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
     img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
@@ -461,13 +595,16 @@ def main():
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize, 3)
     gt = ImageLoader.reLabelGt(gt)
     gt = ImageLoader.convert_list_to_np(gt)
+    print("3")
     gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 5)
     
     # output training data to pickle
     img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
+    print("save first")
     ImageLoader.save_to_pickle(img, "img.pickle", conf.Picklefiles)
+    print("save second")
     ImageLoader.save_to_pickle(gt, "gt.pickle", conf.Picklefiles)
-
+    print("done")
     
 if __name__ == "__main__":
     main()
