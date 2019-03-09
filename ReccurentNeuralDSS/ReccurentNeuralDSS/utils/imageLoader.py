@@ -9,8 +9,124 @@ import pycuda.driver as drv
 import numpy
 from pycuda.compiler import SourceModule
 from numba import vectorize,guvectorize
-from numba import vectorize, int64
+from numba import vectorize, int64, cuda
 
+@guvectorize([(int64[:],int64[:], int64[:])], '(n),(i)->(i)',target ='cpu')
+def turnlabeltoColorSingleCuda(label_data,justforSize,returnMe):
+    
+    Togglefunction = False
+    if((label_data[0] != 0)):
+        if((label_data == [1,1,0,0,0]).all()):
+            Togglefunction = True
+            returnMe[0] = 128
+            returnMe[1] = 0
+            returnMe[2] = 1
+        elif(((label_data == [1,0,1,0,0])).all()):
+            Togglefunction = True
+            returnMe[0] = 128
+            returnMe[1] = 0
+            returnMe[2] = 2
+        elif(((label_data == [1,1,1,0,0])).all()):
+            Togglefunction = True
+            returnMe[0] = 128
+            returnMe[1] = 0
+            returnMe[2] = 3
+        elif(((label_data == [1,0,0,1,0])).all()):
+            Togglefunction = True
+            returnMe[0] = 128
+            returnMe[1] = 0
+            returnMe[2] = 4
+        elif(((label_data == [1,1,0,1,0])).all()):
+            Togglefunction = True
+            returnMe[0] = 128
+            returnMe[1] = 0
+            returnMe[2] = 5
+        elif(((label_data == [1,0,1,1,0])).all()):
+            Togglefunction = True
+            returnMe[0] = 128
+            returnMe[1] = 0
+            returnMe[2] = 6
+        elif(((label_data == [1,0,0,0,1])).all()):
+            Togglefunction = True
+            returnMe[0] = 128
+            returnMe[1] = 0
+            returnMe[2] = 8
+        elif(((label_data == [1,1,0,0,1])).all()):
+            Togglefunction = True
+            returnMe[0] = 128
+            returnMe[1] = 0
+            returnMe[2] = 9
+        elif(((label_data == [1,0,1,0,1])).all()):
+            Togglefunction = True
+            returnMe[0] = 128
+            returnMe[1] = 0
+            returnMe[2] = 10
+        elif(((label_data == [1,0,0,1,1])).all()):
+            Togglefunction = True
+            returnMe[0] = 128
+            returnMe[1] = 0
+            returnMe[2] = 12
+########################################################
+    elif(((label_data == [0,0,0,0,0])).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 0
+    elif((label_data == [0,1,0,0,0]).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 1
+    elif(((label_data == [0,0,1,0,0])).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 2
+    elif(((label_data == [0,1,1,0,0])).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 3
+    elif(((label_data == [0,0,0,1,0])).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 4
+    elif(((label_data == [0,1,0,1,0])).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 5
+    elif(((label_data == [0,0,1,1,0])).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 6
+    elif(((label_data == [0,0,0,0,1])).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 8
+    elif(((label_data == [0,1,0,0,1])).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 9
+    elif(((label_data == [0,0,1,0,1])).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 10
+    elif(((label_data == [0,0,0,1,1])).all()):
+        Togglefunction = True
+        returnMe[0] = 0
+        returnMe[1] = 0
+        returnMe[2] = 12
+    if(Togglefunction == False):
+        returnMe[0] = 0
+        returnMe[1] = 128
+        returnMe[2] = 0
+#################
 @guvectorize([(int64[:],int64[:], int64[:])], '(n),(i)->(i)')
 def reEachLabelGtCuda(color_data,justforSize, returnMe):
     if(color_data[0] == 128):
@@ -467,8 +583,9 @@ class ImageLoader():
 
     def turnLabeltoColorvalues(Array):
         returnThisArray = []
-        for each_array in Array:
-            returnThisArray.append(ImageLoader.turnlabeltocolorsingle(each_array))
+        b = [[1,2,3]]
+        #for each_array in Array:
+        returnThisArray.append(turnlabeltoColorSingleCuda(Array,b))
         return returnThisArray
 
     def turnlabeltocolorsingle(Array: np.array):

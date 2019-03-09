@@ -106,18 +106,20 @@ def SaveImage(OnlyLstm : bool):
     prediction = np.where(prediction <= 0.5, 0, 1)
     print(prediction.shape)
     6964#30856
-    prediction=prediction.reshape(validation.shape[0],conf.Xsize, conf.Ysize,5)
+    predictionorignalshape = prediction.shape[0]
+    prediction=prediction.reshape(conf.Xsize, conf.Ysize*validation.shape[0],5)
     i = 0
     newPrediction = []
     for eachprediction in prediction:
         newPrediction.append(ImageLoader.turnLabeltoColorvalues(eachprediction))
         i= i+1
-        if(i%1000 == 0):
-            print(i)
+        #if(i%1000 == 0):
+        print(i)
 
+    prediction=prediction.reshape(validation.shape[0],conf.Xsize, conf.Ysize,5)
     prediction = newPrediction
     prediction = ImageLoader.convert_list_to_np(prediction)
-    prediction = prediction.reshape(prediction.shape[0], conf.Xsize,conf.Ysize, 3)    
+    prediction = prediction.reshape(predictionorignalshape, conf.Xsize,conf.Ysize, 3)    
     # show result
     img = ImageLoader.combine_images(prediction, conf.orignalPictureX, conf.orignalPictureY)
     img = ImageLoader.adjust_colorsthree(img)
@@ -131,8 +133,8 @@ def main():
     y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
     #newCNNBIDirectionalLstmRNN(x_train,y_train)
     #Model.save_model("CNNBID")
-    #Model.model = Model.load_model("CNNBID")
-    #SaveImage(False);
+    Model.model = Model.load_model("CNNBID")
+    SaveImage(False);
  
 
 if __name__ == "__main__":
