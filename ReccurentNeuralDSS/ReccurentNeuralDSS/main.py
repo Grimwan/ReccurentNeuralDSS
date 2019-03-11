@@ -129,11 +129,12 @@ def SaveImage(OnlyLstm : bool):
     return 0
 
 def main():
-    x_train = ImageLoader.load_from_pickle(conf.Picklefiles, "img.pickle")
-    y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
-    #newCNNBIDirectionalLstmRNN(x_train,y_train)
+    #x_train = ImageLoader.load_from_pickle(conf.Picklefiles, "img.pickle")
+    #y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
+    [x_train,y_train]=ImageLoader.shortMain()
+    newCNNBIDirectionalLstmRNN(x_train,y_train)
     #Model.save_model("CNNBID")
-    Model.model = Model.load_model("CNNBID")
+    #Model.model = Model.load_model("CNNBID")
     SaveImage(False);
  
 

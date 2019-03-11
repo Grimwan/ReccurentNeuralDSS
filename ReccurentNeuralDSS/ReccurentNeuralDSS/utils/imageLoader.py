@@ -10,6 +10,7 @@ import numpy
 from pycuda.compiler import SourceModule
 from numba import vectorize,guvectorize
 from numba import vectorize, int64, cuda
+from timeit import default_timer as timer
 
 @guvectorize([(int64[:],int64[:], int64[:])], '(n),(i)->(i)',target ='cpu')
 def turnlabeltoColorSingleCuda(label_data,justforSize,returnMe):
@@ -663,40 +664,115 @@ class ImageLoader():
                 #print("these values are not labeled should do?")
         return returnMe
 
-def readImageAndFixColor(*args):
+    def readImageAndFixColor(*args):
 
-    if len(args) == 2:
-        Training = args[0]
-        Result = args[1]
-        DATADIR = conf.DATADIR
-    elif len(args) == 3:
-        Training = args[0]
-        Result = args[1]
-        DATADIR = args[2]
+        if len(args) == 2:
+            Training = args[0]
+            Result = args[1]
+            DATADIR = conf.DATADIR
+        elif len(args) == 3:
+            Training = args[0]
+            Result = args[1]
+            DATADIR = args[2]
 
 
-    data = ImageLoader.read_images_resize_crop(DATADIR, Training, Result,
-                                               [0,0,0], [1, conf.Xsize, conf.Ysize])
-    img = []
-    gt = []
+        data = ImageLoader.read_images_resize_crop(DATADIR, Training, Result,
+                                                   [0,0,0], [1, conf.Xsize, conf.Ysize])
+        img = []
+        gt = []
     
-    for eachArrayElement in data:
-        img.append(eachArrayElement[0])
-        gt.append(eachArrayElement[1])
+        for eachArrayElement in data:
+            img.append(eachArrayElement[0])
+            gt.append(eachArrayElement[1])
     
-    # convert to numpy arrays
-    img = ImageLoader.convert_list_to_np(img)
-    gt = ImageLoader.convert_list_to_np(gt)
-    gt = ImageLoader.adjust_colors(gt)
-    img = ImageLoader.adjust_colors(img)
+        # convert to numpy arrays
+        img = ImageLoader.convert_list_to_np(img)
+        gt = ImageLoader.convert_list_to_np(gt)
+        gt = ImageLoader.adjust_colors(gt)
+        img = ImageLoader.adjust_colors(img)
 
-    return [img,gt]
+        return [img,gt]
+
+    def readImagefixColorsandRelabelingFast(dataDir: str, trainingDir: str, resultDir: str, resize, crop):
+        training_data = []
+        for category in trainingDir:
+            path = os.path.join(dataDir, category) # path to img/training or pixel-level-gt/training dir
+            secondPath = os.path.join(dataDir, resultDir[trainingDir.index(category)])
+            #class_num = CATEGORIES.index(category)
+            newImg =  os.listdir(secondPath)
+            i = 0;
+            for img in os.listdir(path):
+                try:
+                    imgTraining_array = cv2.imread(os.path.join(path, img), cv2.IMREAD_COLOR)
+                    imgResult_array = cv2.imread(os.path.join(secondPath, newImg[i]), cv2.IMREAD_COLOR)
+
+                    imgTraining_array = ImageLoader.adjust_colorsthree(imgTraining_array)
+                    imgResult_array = ImageLoader.adjust_colorsthree(imgResult_array)
+                    b = [[1,2,3,4,5]]
+                    imgResult_array=reEachLabelGtCuda(imgResult_array,b)
+                    #first Resize
+                    if resize[0] != 0:
+                        imgTraining_array = cv2.resize(imgTraining_array, (resize[1], resize[2]))
+                        imgResult_array = cv2.resize(imgResult_array, (resize[1], resize[2]))
+                    if crop[0] != 0:
+                        #First Try to add a boarder
+                        max_y, max_x = imgTraining_array.shape[:2] # this value is taken out from the original picture and used later for setting the max values
+                        imgTraining_array = ImageLoader.add_border(imgTraining_array, crop[1], 
+                                                                  crop[2], [0,0,0], max_x, max_y)
+                        imgResult_array = ImageLoader.add_border(imgResult_array, crop[1], 
+                                                                crop[2], [0,0,0], max_x, max_y)
+                        #Lets Split the images
+                        imgTraining_array = ImageLoader.split_image(imgTraining_array, crop[1], crop[2], 
+                                                                   max_x, max_y)
+                        imgResult_array = ImageLoader.split_image(imgResult_array, crop[1], crop[2], 
+                                                                 max_x, max_y)
+                        training_data += list(zip(imgTraining_array, imgResult_array))
+                    else:
+                        training_data.append([imgTraining_array, imgResult_array])
+                    i= i+1
+                except Exception as e:
+                    pass
+        return training_data
+
+
+    def shortMain():
+        # read all data from folders and add border if needed. Afterwards split images into chunks
+        start = timer()
+        data =ImageLoader.readImagefixColorsandRelabelingFast(conf.DATADIR, conf.Training, conf.Result,[0,0,0], [1, conf.Xsize, conf.Ysize])
+        img = []
+        gt = []
+    
+        for eachArrayElement in data:
+            img.append(eachArrayElement[0])
+            gt.append(eachArrayElement[1])
+
+        totaltime = timer() - start
+        print("loaded all pictures 1 and it took "+(str)(totaltime))
+        # write original image to pickle
+        [saveme,trash]=ImageLoader.readImageAndFixColor(conf.TestTraining,conf.TestResult)
+        ImageLoader.save_to_pickle(saveme, "combined.pickle", conf.Picklefiles)
+        print("2")
+        # remove complete dark images in the image
+        #gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
+        #img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
+        #[img,gt] = ImageLoader.remove_dark_images(img, gt)
+
+        img = ImageLoader.convert_list_to_np(img)
+        gt = ImageLoader.convert_list_to_np(gt)
+
+        gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 5)
+        # output training data to pickle
+        img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
+        totaltime = timer() - start
+        print("total tid förall laddning"+ (str)(totaltime))        
+        return [img,gt]
 
 def main():
     # read all data from folders and add border if needed. Afterwards split images into chunks
-
-    [img,gt]=readImageAndFixColor(conf.Training, conf.Result)
-    print("loaded all pictures 1")
+    start = timer()
+    [img,gt]=ImageLoader.readImageAndFixColor(conf.Training, conf.Result)
+    totaltime = timer() - start
+    print("loaded all pictures 1 and it took "+(str)(totaltime))
     # write original image to pickle
     [saveme,trash]=readImageAndFixColor(conf.TestTraining,conf.TestResult)
     ImageLoader.save_to_pickle(saveme, "combined.pickle", conf.Picklefiles)
@@ -708,20 +784,24 @@ def main():
     img = ImageLoader.convert_list_to_np(img)
     gt = ImageLoader.convert_list_to_np(gt)
 
-
+    print("nu börjar relabelingen")
     gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize, 3)
     gt = ImageLoader.reLabelGt(gt)
     gt = ImageLoader.convert_list_to_np(gt)
-    print("3")
+    totaltime = timer() - start
+    print("total tid för relabelingen"+ (str)(totaltime))
     gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 5)
     
     # output training data to pickle
     img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
-    print("save first")
+    totaltime = timer() - start
+    print("save first" +(str)(totaltime))
     ImageLoader.save_to_pickle(img, "img.pickle", conf.Picklefiles)
-    print("save second")
+    totaltime = timer() - start
+    print("save second" +(str)(totaltime))
     ImageLoader.save_to_pickle(gt, "gt.pickle", conf.Picklefiles)
-    print("done")
+    totaltime = timer() - start
+    print("Done took a total of "+ (str)(totaltime))
     
 if __name__ == "__main__":
     main()
