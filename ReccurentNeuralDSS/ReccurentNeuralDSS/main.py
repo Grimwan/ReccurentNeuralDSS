@@ -97,8 +97,9 @@ def newCNNBIDirectionalLstmRNN(*args):
     Model.model = model;
     return False
 
-def SaveImage(OnlyLstm : bool):
-    validation = ImageLoader.load_from_pickle(conf.Picklefiles, conf.LoadTestPickle)
+def SaveImage(*args):
+    OnlyLstm=args[0]
+    validation = ImageLoader.convert_list_to_np(args[1])
     if(OnlyLstm):
         validation = validation.reshape(validation.shape[0],conf.Xsize,conf.Ysize*3)
     validation = validation.astype('float32') / 255
@@ -122,20 +123,18 @@ def SaveImage(OnlyLstm : bool):
     prediction = prediction.reshape(predictionorignalshape, conf.Xsize,conf.Ysize, 3)    
     # show result
     img = ImageLoader.combine_images(prediction, conf.orignalPictureX, conf.orignalPictureY)
-    img = ImageLoader.adjust_colorsthree(img)
+    img = ImageLoader.adjust_colors(img)
     ImageLoader.save_image(conf.WhereTosaveTestImage,img,conf.NameOfTestImage)
     plt.imshow(img)
     plt.show()
     return 0
 
 def main():
-    #x_train = ImageLoader.load_from_pickle(conf.Picklefiles, "img.pickle")
-    #y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
-    [x_train,y_train]=ImageLoader.shortMain()
-    newCNNBIDirectionalLstmRNN(x_train,y_train)
-    Model.save_model("CNNBID")
-    #Model.model = Model.load_model("CNNBID")
-    SaveImage(False);
+    [x_train,y_train,PredictPictures]=ImageLoader.shortMain()
+ #   newCNNBIDirectionalLstmRNN(x_train,y_train)
+#    Model.save_model("CNNBID")
+    Model.model = Model.load_model("CNNBID")
+    SaveImage(False,PredictPictures);
  
 
 if __name__ == "__main__":

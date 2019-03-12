@@ -9,8 +9,8 @@ ValidationTraining = ["CS18/img/validation"]
 ValidationResult = ["CS18/pixel-level-gt/validation"]
 Xsize = 32
 Ysize= 32
-AmountOfEpochs = 10
-batchSize = 20
+AmountOfEpochs = 1
+batchSize = 50
 validationSplit = 0.2
 Picklefiles = "../output"
 

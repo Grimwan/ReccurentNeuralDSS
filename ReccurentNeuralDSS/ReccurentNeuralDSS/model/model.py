@@ -19,9 +19,7 @@ class Model:
         data_dim = dataSize[1] #how big is one part in the array.
         # input layer
         Model.model.add(Bidirectional(CuDNNLSTM((data_dim), return_sequences=True), batch_input_shape=(None,timesteps,data_dim)))
-        # Model.model.add(CuDNNLSTM((data_dim), return_sequences=True, batch_input_shape=(None,timesteps,data_dim)))
         Model.model.add(Dense(160,activation='sigmoid'))
-        #Model.model.add(LSTM((data_dim), batch_input_shape=(None,timesteps,data_dim), activation = 'sigmoid', return_sequences=True))
         # compile settings
         Model.model.compile(loss='binary_crossentropy', 
                       optimizer='adam', 
