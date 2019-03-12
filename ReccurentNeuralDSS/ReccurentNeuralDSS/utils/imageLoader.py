@@ -2,12 +2,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import os
 import cv2
-import pickle 
 import utils.config as conf 
-import pycuda.autoinit
-import pycuda.driver as drv
 import numpy
-from pycuda.compiler import SourceModule
 from numba import vectorize,guvectorize
 from numba import vectorize, int64, cuda
 from timeit import default_timer as timer

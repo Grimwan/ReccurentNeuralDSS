@@ -130,8 +130,8 @@ def SaveImage(*args):
     return 0
 
 def main():
-    [x_train,y_train,PredictPictures]=ImageLoader.shortMain()
- #   newCNNBIDirectionalLstmRNN(x_train,y_train)
+    [x_train,y_train,PredictPictures,CorrectPrediction]=ImageLoader.shortMain()
+    newCNNBIDirectionalLstmRNN(x_train,y_train)
 #    Model.save_model("CNNBID")
     Model.model = Model.load_model("CNNBID")
     SaveImage(False,PredictPictures);
