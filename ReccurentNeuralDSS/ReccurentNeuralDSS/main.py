@@ -133,7 +133,7 @@ def main():
     #y_train = ImageLoader.load_from_pickle(conf.Picklefiles, "gt.pickle")
     [x_train,y_train]=ImageLoader.shortMain()
     newCNNBIDirectionalLstmRNN(x_train,y_train)
-    #Model.save_model("CNNBID")
+    Model.save_model("CNNBID")
     #Model.model = Model.load_model("CNNBID")
     SaveImage(False);
  
