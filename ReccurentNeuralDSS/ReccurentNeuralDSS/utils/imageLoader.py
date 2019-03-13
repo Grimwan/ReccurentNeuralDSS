@@ -7,7 +7,7 @@ from numba import int64
 from timeit import default_timer as timer
 
 @guvectorize([(int64[:], int64[:], int64[:])], '(n),(i)->(i)', target='cpu')
-def turnlabeltoColorSingleCuda(label_data, array):
+def turnlabeltoColorSingleCuda(label_data,justforSize, array):
     
     # some sequential steps are missing...?
     if((label_data[0] != 0)):
@@ -195,8 +195,6 @@ def relabel_colors(array, r, g, b):
 
 class ImageLoader():
     """Load dataset images, split them inte chunks and write them to pickle files."""
-    
-
 
     def combine_images(imageArray, max_y: int, max_x: int) -> np.array:
         image = np.zeros((max_y,max_x,3),np.int)
@@ -359,7 +357,6 @@ class ImageLoader():
         start = timer()
         [img,gt] =ImageLoader.read_Images(conf.DATADIR, conf.Training, conf.Result, [1, conf.Xsize, conf.Ysize])
 
-
         totaltime = timer() - start
         print("loaded all pictures 1 and it took "+(str)(totaltime))
         # write original image to pickle
@@ -380,8 +377,3 @@ class ImageLoader():
         print("total tid förall laddning"+ (str)(totaltime))        
         return [img,gt,PredictPictures,GTPredictPictures]
 
-def main():
-    # empty for now
-    
-if __name__ == "__main__":
-    main()
