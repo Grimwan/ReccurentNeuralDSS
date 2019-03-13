@@ -2,7 +2,6 @@ import matplotlib.pyplot as plt
 from utils.imageLoader import ImageLoader
 from model.model import Model
 import utils.config as conf
-from keras import preprocessing
 import numpy as np
 
 def newBiDirectionalLSTMRNN(*args):
@@ -25,8 +24,8 @@ def newBiDirectionalLSTMRNN(*args):
         y_validation = args[3]
 
 
-    xreshapeValue = [conf.Xsize,conf.Ysize*3] #for LSTMRNN
-    yreshapeValue = [conf.Xsize,conf.Ysize*5] #for LSTMRNN
+    xreshapeValue = [conf.Xsize,conf.Ysize*3] # for LSTMRNN
+    yreshapeValue = [conf.Xsize,conf.Ysize*5] # for LSTMRNN
     x_train = x_train.reshape(x_train.shape[0], xreshapeValue[0],xreshapeValue[1])
     x_train = x_train.astype('float32') / 255
     y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0],yreshapeValue[1])
@@ -52,14 +51,9 @@ def newStandardCNN(*args):
     elif len(args) == 3:
         x_train = args[0]
         y_train = args[1]
-        x_validation = args[2]
-        y_validation = args[2]
     elif len(args) > 3:
         x_train = args[0]
         y_train = args[1]
-        x_validation = args[2]
-        y_validation = args[3]
-
 
     yreshapeValue = [conf.Xsize,conf.Ysize*5] 
     x_train = x_train.astype('float32') / 255
@@ -79,16 +73,10 @@ def newCNNBIDirectionalLstmRNN(*args):
     elif len(args) == 3:
         x_train = args[0]
         y_train = args[1]
-        x_validation = args[2]
-        y_validation = args[2]
     elif len(args) > 3:
         x_train = args[0]
         y_train = args[1]
-        x_validation = args[2]
-        y_validation = args[3]
 
-
-    xreshapeValue = [conf.Xsize,conf.Ysize*3] # for LSTMRNN
     yreshapeValue = [conf.Xsize,conf.Ysize*5] # for LSTMRNN
     x_train = x_train.astype('float32') / 255
     y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0]*yreshapeValue[1])
@@ -114,7 +102,7 @@ def SaveImage(*args):
     newPrediction = []
     for eachprediction in prediction:
         newPrediction.append(ImageLoader.turnLabeltoColorvalues(eachprediction))
-        i= i+1
+        i = i+1
         #if(i%1000 == 0):
         print(i)
 
@@ -135,7 +123,7 @@ def main():
     newCNNBIDirectionalLstmRNN(x_train,y_train)
 #    Model.save_model("CNNBID")
     Model.model = Model.load_model("CNNBID")
-    SaveImage(False,PredictPictures);
+    SaveImage(False, PredictPictures);
  
 
 if __name__ == "__main__":
