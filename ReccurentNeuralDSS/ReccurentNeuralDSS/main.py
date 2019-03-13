@@ -88,12 +88,13 @@ def newCNNBIDirectionalLstmRNN(*args):
         y_validation = args[3]
 
 
-    xreshapeValue = [conf.Xsize,conf.Ysize*3] #for LSTMRNN
-    yreshapeValue = [conf.Xsize,conf.Ysize*5] #for LSTMRNN
+    xreshapeValue = [conf.Xsize,conf.Ysize*3] # for LSTMRNN
+    yreshapeValue = [conf.Xsize,conf.Ysize*5] # for LSTMRNN
     x_train = x_train.astype('float32') / 255
     y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0]*yreshapeValue[1])
     model = Model.build_CNN_model(x_train[0].shape);
-    model.fit(x_train, y_train, epochs=conf.AmountOfEpochs, batch_size=conf.batchSize,validation_split=conf.validationSplit)
+    model.fit(x_train, y_train, epochs=conf.AmountOfEpochs, batch_size=conf.batchSize,
+              validation_split=conf.validationSplit)
     Model.model = model;
     return False
 

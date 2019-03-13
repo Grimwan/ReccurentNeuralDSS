@@ -1,129 +1,61 @@
 import numpy as np
-import matplotlib.pyplot as plt
 import os
 import cv2
 import utils.config as conf 
-import numpy
-from numba import vectorize,guvectorize
-from numba import vectorize, int64, cuda
+from numba import guvectorize
+from numba import int64
 from timeit import default_timer as timer
 
-@guvectorize([(int64[:],int64[:], int64[:])], '(n),(i)->(i)',target ='cpu')
-def turnlabeltoColorSingleCuda(label_data,justforSize,returnMe):
+@guvectorize([(int64[:], int64[:], int64[:])], '(n),(i)->(i)', target='cpu')
+def turnlabeltoColorSingleCuda(label_data, array):
     
-    Togglefunction = False
+    # some sequential steps are missing...?
     if((label_data[0] != 0)):
         if((label_data == [1,1,0,0,0]).all()):
-            Togglefunction = True
-            returnMe[0] = 128
-            returnMe[1] = 0
-            returnMe[2] = 1
+            array = relabel_colors(array, 128, 0, 1)
         elif(((label_data == [1,0,1,0,0])).all()):
-            Togglefunction = True
-            returnMe[0] = 128
-            returnMe[1] = 0
-            returnMe[2] = 2
+            array = relabel_colors(array, 128, 0, 2)
         elif(((label_data == [1,1,1,0,0])).all()):
-            Togglefunction = True
-            returnMe[0] = 128
-            returnMe[1] = 0
-            returnMe[2] = 3
+            array = relabel_colors(array, 128, 0, 3)
         elif(((label_data == [1,0,0,1,0])).all()):
-            Togglefunction = True
-            returnMe[0] = 128
-            returnMe[1] = 0
-            returnMe[2] = 4
+            array = relabel_colors(array, 128, 0, 4)
         elif(((label_data == [1,1,0,1,0])).all()):
-            Togglefunction = True
-            returnMe[0] = 128
-            returnMe[1] = 0
-            returnMe[2] = 5
+            array = relabel_colors(array, 128, 0, 5)
         elif(((label_data == [1,0,1,1,0])).all()):
-            Togglefunction = True
-            returnMe[0] = 128
-            returnMe[1] = 0
-            returnMe[2] = 6
+            array = relabel_colors(array, 128, 0, 6)
         elif(((label_data == [1,0,0,0,1])).all()):
-            Togglefunction = True
-            returnMe[0] = 128
-            returnMe[1] = 0
-            returnMe[2] = 8
+            array = relabel_colors(array, 128, 0, 8)
         elif(((label_data == [1,1,0,0,1])).all()):
-            Togglefunction = True
-            returnMe[0] = 128
-            returnMe[1] = 0
-            returnMe[2] = 9
+            array = relabel_colors(array, 128, 0, 9)
         elif(((label_data == [1,0,1,0,1])).all()):
-            Togglefunction = True
-            returnMe[0] = 128
-            returnMe[1] = 0
-            returnMe[2] = 10
+            array = relabel_colors(array, 128, 0, 10)
         elif(((label_data == [1,0,0,1,1])).all()):
-            Togglefunction = True
-            returnMe[0] = 128
-            returnMe[1] = 0
-            returnMe[2] = 12
-########################################################
+            array = relabel_colors(array, 128, 0, 12)
     elif(((label_data == [0,0,0,0,0])).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 0
+        array = relabel_colors(array, 0, 0, 0)
     elif((label_data == [0,1,0,0,0]).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 1
+        array = relabel_colors(array, 0, 0, 1)
     elif(((label_data == [0,0,1,0,0])).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 2
+        array = relabel_colors(array, 0, 0, 2)
     elif(((label_data == [0,1,1,0,0])).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 3
+        array = relabel_colors(array, 0, 0, 3)
     elif(((label_data == [0,0,0,1,0])).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 4
+        array = relabel_colors(array, 0, 0, 4)
     elif(((label_data == [0,1,0,1,0])).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 5
+        array = relabel_colors(array, 0, 0, 5)
     elif(((label_data == [0,0,1,1,0])).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 6
+        array = relabel_colors(array, 0, 0, 6)
     elif(((label_data == [0,0,0,0,1])).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 8
+        array = relabel_colors(array, 0, 0, 7)
     elif(((label_data == [0,1,0,0,1])).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 9
+        array = relabel_colors(array, 0, 0, 9)
     elif(((label_data == [0,0,1,0,1])).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 10
+        array = relabel_colors(array, 0, 0, 10)
     elif(((label_data == [0,0,0,1,1])).all()):
-        Togglefunction = True
-        returnMe[0] = 0
-        returnMe[1] = 0
-        returnMe[2] = 12
-    if(Togglefunction == False):
-        returnMe[0] = 0
-        returnMe[1] = 128
-        returnMe[2] = 0
-#################
+        array = relabel_colors(array, 0, 0, 12)
+    else:
+        array = relabel_colors(array, 0, 128, 0)
+
 @guvectorize([(int64[:],int64[:], int64[:])], '(n),(i)->(i)')
 def reEachLabelGtCuda(color_data,justforSize, returnMe):
     if(color_data[0] == 128):
@@ -254,6 +186,12 @@ def reEachLabelGtCuda(color_data,justforSize, returnMe):
             returnMe[2] = 0
             returnMe[3] = 0
             returnMe[4] = 0
+            
+def relabel_colors(array, r, g, b):      
+    array[0] = r
+    array[1] = g
+    array[2] = b
+    return array
 
 class ImageLoader():
     """Load dataset images, split them inte chunks and write them to pickle files."""
@@ -416,7 +354,6 @@ class ImageLoader():
                     pass
         return [returnImg,returnGt]
 
-
     def shortMain():
         # read all data from folders and add border if needed. Afterwards split images into chunks
         start = timer()
@@ -444,7 +381,7 @@ class ImageLoader():
         return [img,gt,PredictPictures,GTPredictPictures]
 
 def main():
-    emtpyfornow
+    # empty for now
     
 if __name__ == "__main__":
     main()
