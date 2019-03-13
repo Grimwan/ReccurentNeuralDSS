@@ -4,12 +4,13 @@ DATADIR = "../Imagesfiles"
 #Result = ["CB55/pixel-level-gt/training"]
 TestTraining = ["DeansTestmap/img/training"]
 TestResult = ["DeansTestmap/pixel-level-gt/training"]
-Training = ["DeansTestmap/img/training"]
-Result = ["DeansTestmap/pixel-level-gt/training"]
+
+Training = ["CS18/img/training"]
+Result = ["CS18/pixel-level-gt/training"]
 ValidationTraining = ["CS18/img/validation"]
 ValidationResult = ["CS18/pixel-level-gt/validation"]
-Picklefiles = "../output"
-LoadTestPickle = "combined.pickle"
+PredictionPictureTraining= ["CS18/img/public-test"]
+PredictionPictureResult= ["CS18/pixel-level-gt/public-test"]
 WhereTosaveTestImage = "here"
 NameOfTestImage = "testimage"
 
@@ -19,5 +20,5 @@ Ysize= 32
 AmountOfEpochs = 1
 batchSize = 50
 validationSplit = 0.2
-orignalPictureX = 6496
-orignalPictureY = 4872
+orignalPictureX = 4992
+orignalPictureY = 3328

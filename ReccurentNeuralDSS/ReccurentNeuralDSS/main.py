@@ -119,9 +119,12 @@ def SaveImage(*args):
     # show result
     img = ImageLoader.combine_images(prediction, conf.orignalPictureX, conf.orignalPictureY)
     img = ImageLoader.adjust_colors(img)
-    ImageLoader.save_image(conf.WhereTosaveTestImage,img,conf.NameOfTestImage)
-    plt.imshow(img)
-    plt.show()
+    Number = ""
+    if(len(args)==3):
+        Number = str(args[2])
+    ImageLoader.save_image(conf.WhereTosaveTestImage,img,conf.NameOfTestImage + str(Number))
+#    plt.imshow(img)
+#    plt.show()
     return 0
 
 def main():
@@ -129,8 +132,11 @@ def main():
     newCNNBIDirectionalLstmRNN(x_train,y_train)
 #    Model.save_model("CNNBID")
     #Model.model = Model.load_model("CNNBID")
-    SaveImage(False, PredictPictures);
- 
+    i = 0
+    for eachPicture in PredictPictures:
+        SaveImage(False, eachPicture,i)
+        i = i+1
+    
 
 if __name__ == "__main__":
     main()

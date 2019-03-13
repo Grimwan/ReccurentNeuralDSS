@@ -307,9 +307,12 @@ class ImageLoader():
         trainingDir = args[1]
         resultDir = args[2]
         crop = args[3]
+        singularPicture = True
         resize = [0,0,0]
         if len(args) > 4:
-            resize = args[4]
+            singularPicture = args[4]
+        if len(args) > 5:
+            resize = args[5]
         #elif len(args) == 1:
 
         returnImg = []
@@ -346,9 +349,9 @@ class ImageLoader():
                                                                    max_x, max_y)
                         imgResult_array = ImageLoader.split_image(imgResult_array, crop[1], crop[2], 
                                                                  max_x, max_y)
+                    if(singularPicture):
                         returnImg+=(imgTraining_array)
                         returnGt+=(imgResult_array)
-                        #training_data += list(zip(imgTraining_array, imgResult_array))
                     else:
                         returnImg.append(imgTraining_array)
                         returnGt.append(imgResult_array)
@@ -367,7 +370,7 @@ class ImageLoader():
         totaltime = timer() - start
         print("Successfully loaded images. Time: " + (str)(totaltime))
         # write original image to pickle
-        [PredictPictures,GTPredictPictures]=ImageLoader.read_Images(conf.DATADIR,conf.TestTraining,conf.TestResult,[1, conf.Xsize, conf.Ysize])
+        [PredictPictures,GTPredictPictures]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureTraining,conf.PredictionPictureResult,[1, conf.Xsize, conf.Ysize],False)
         print("2")
         # remove complete dark images in the image
         #gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
@@ -377,8 +380,12 @@ class ImageLoader():
         img = ImageLoader.convert_list_to_np(img)
         gt = ImageLoader.convert_list_to_np(gt)
 
+        PredictPictures = ImageLoader.convert_list_to_np(PredictPictures)
+        GTPredictPictures = ImageLoader.convert_list_to_np(GTPredictPictures)
+        PredictPictures = PredictPictures.reshape(PredictPictures.shape[0],PredictPictures.shape[1], conf.Xsize, conf.Ysize, 3)
+
+
         gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 5)
-        # output training data to pickle
         img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
         totaltime = timer() - start
         print("Total time for loading: " + (str)(totaltime))        
