@@ -54,54 +54,136 @@ def turnlabeltoColorSingleCuda(label_data, arraySize, array):
     else:
         array = relabel_colors(array, 0, 128, 0)
 
-@guvectorize([(int64[:],int64[:], int64[:])], '(n),(i)->(i)')
-def reEachLabelGtCuda(color_data, arraySize, array):
+@guvectorize([(int64[:], int64[:], int64[:])], '(n),(i)->(i)', target='cpu')
+def reEachLabelGtCuda(color_data,justforSize, returnMe):
     if(color_data[0] == 128):
         if(color_data[2] == 1):
-            array = relabel_gt(array, 1, 1, 0, 0, 0)
+            returnMe[0] = 1
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 0
         elif (color_data[2] == 2):
-            array = relabel_gt(array, 1, 0, 1, 0, 0)
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 0
         elif (color_data[2] == 3):
-            array = relabel_gt(array, 1, 1, 1, 0, 0)
+            returnMe[0] = 1
+            returnMe[1] = 1
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 0
         elif (color_data[2] == 4):
-            array = relabel_gt(array, 1, 0, 0, 1, 0)
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 0
         elif (color_data[2] == 5):
-            array = relabel_gt(array, 1, 1, 0, 1, 0)
+            returnMe[0] = 1
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 0
         elif (color_data[2] == 6):
-            array = relabel_gt(array, 1, 0, 1, 1, 0)
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 1
+            returnMe[4] = 0
         elif (color_data[2] == 8):
-            array = relabel_gt(array, 1, 0, 0, 0, 1)
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 1
         elif (color_data[2] == 9):
-            array = relabel_gt(array, 1, 1, 0, 0, 1)
+            returnMe[0] = 1
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 1
         elif (color_data[2] == 10):
-            array = relabel_gt(array, 1, 0, 1, 0, 1)
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 1
         elif (color_data[2] == 12):
-            array = relabel_gt(array, 1, 0, 0, 1, 1)
+            returnMe[0] = 1
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 1
     elif (color_data[0] == 0):
         if(color_data[2] == 1):
-            array = relabel_gt(array, 0, 1, 0, 0, 0)
+            returnMe[0] = 0
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 0
         elif (color_data[2] == 2):
-            array = relabel_gt(array, 0, 0, 1, 0, 0)
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 0
         elif (color_data[2] == 3):
-            array = relabel_gt(array, 0, 1, 1, 0, 0)
+            returnMe[0] = 0
+            returnMe[1] = 1
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 0
         elif (color_data[2] == 4):
-            array = relabel_gt(array, 0, 0, 0, 1, 0)
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 0
         elif (color_data[2] == 5):
-            array = relabel_gt(array, 0, 1, 0, 1, 0)
+            returnMe[0] = 0
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 0
         elif (color_data[2] == 6):
-            array = relabel_gt(array, 0, 0, 1, 1, 0)
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 1
+            returnMe[4] = 0
         elif (color_data[2] == 8):
-            array = relabel_gt(array, 0, 0, 0, 0, 1)
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 1
         elif (color_data[2] == 9):
-            array = relabel_gt(array, 0, 1, 0, 0, 1)
+            returnMe[0] = 0
+            returnMe[1] = 1
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 1
         elif (color_data[2] == 10):
-            array = relabel_gt(array, 0, 0, 1, 0, 1)
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 1
+            returnMe[3] = 0
+            returnMe[4] = 1
         elif (color_data[2] == 12):
-            array = relabel_gt(array, 0, 0, 0, 1, 1)
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 1
+            returnMe[4] = 1
         elif (color_data[2] == 0):
-            array = relabel_gt(array, 0, 0, 0, 0, 0)
-    else:
-         array = relabel_gt(array, 0, 0, 0, 0, 0)
+            returnMe[0] = 0
+            returnMe[1] = 0
+            returnMe[2] = 0
+            returnMe[3] = 0
+            returnMe[4] = 0
             
 def relabel_colors(array, r, g, b):      
     array[0] = r
@@ -268,7 +350,8 @@ class ImageLoader():
                         returnGt+=(imgResult_array)
                         #training_data += list(zip(imgTraining_array, imgResult_array))
                     else:
-                        img.append(imgTraining_array)
+                        returnImg.append(imgTraining_array)
+                        returnGt.append(imgResult_array)
                         #training_data.append([imgTraining_array, imgResult_array])
                     i = i+1
                 except Exception as e:

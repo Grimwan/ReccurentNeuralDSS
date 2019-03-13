@@ -77,25 +77,22 @@ class Model:
         imageHeight = dataSize[0]
         imageWidth = dataSize[1]
         channels = dataSize[2]
-        cnn = Sequential()
-        cnn.add(layers.Conv2D(64,(3,3), activation='relu', input_shape=(imageHeight, imageWidth, channels)))
-        cnn.add(layers.MaxPooling2D((2,2)))
-        cnn.add(layers.Conv2D(128,(3, 3), activation = 'relu'))
-        cnn.add(layers.MaxPooling2D((2,2)))
-        cnn.add(layers.Conv2D(256,(3, 3), activation = 'relu'))
-        cnn.add(layers.MaxPooling2D((2,2)))
-        cnn.add(layers.Flatten())
         Model.model = Sequential()
-        
+        Model.model.add((layers.Conv2D(64,(3,3), activation='relu', input_shape=(imageHeight, imageWidth, channels))))
+        Model.model.add((layers.MaxPooling2D((2,2))))
+        Model.model.add((layers.Conv2D(128,(3, 3), activation = 'relu')))
+        Model.model.add((layers.MaxPooling2D((2,2))))
+        Model.model.add((layers.Conv2D(256,(3, 3), activation = 'relu')))
+        Model.model.add((layers.MaxPooling2D((2,2))))
+        Model.model.add(TimeDistributed(layers.Flatten()))
         # input layer
-        Model.model.add(TimeDistributed(cnn))
-        Model.model.add(Bidirectional(CuDNNLSTM((data_dim), return_sequences=True)))
-        Model.model.add(Dense(160, activation='sigmoid'))
+        Model.model.add(Bidirectional(CuDNNLSTM((1), return_sequences=True)))
+        Model.model.add((layers.Flatten()))
+        Model.model.add(layers.Dense(imageHeight*imageWidth*5, activation='sigmoid'))
         
         # compile settings
         Model.model.compile(loss='binary_crossentropy', 
                       optimizer='adam', 
                       metrics=['accuracy'])
         print(Model.model.summary())
-        
         return Model.model

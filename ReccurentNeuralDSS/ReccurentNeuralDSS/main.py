@@ -128,7 +128,7 @@ def main():
     [x_train,y_train,PredictPictures,CorrectPrediction]=ImageLoader.shortMain()
     newCNNBIDirectionalLstmRNN(x_train,y_train)
 #    Model.save_model("CNNBID")
-    Model.model = Model.load_model("CNNBID")
+    #Model.model = Model.load_model("CNNBID")
     SaveImage(False, PredictPictures);
  
 
