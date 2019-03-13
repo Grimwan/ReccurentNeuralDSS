@@ -7,9 +7,7 @@ from numba import int64
 from timeit import default_timer as timer
 
 @guvectorize([(int64[:], int64[:], int64[:])], '(n),(i)->(i)', target='cpu')
-def turnlabeltoColorSingleCuda(label_data, array):
-    
-    # some sequential steps are missing...?
+def turnlabeltoColorSingleCuda(label_data, arraySize, array):
     if((label_data[0] != 0)):
         if((label_data == [1,1,0,0,0]).all()):
             array = relabel_colors(array, 128, 0, 1)
@@ -57,135 +55,53 @@ def turnlabeltoColorSingleCuda(label_data, array):
         array = relabel_colors(array, 0, 128, 0)
 
 @guvectorize([(int64[:],int64[:], int64[:])], '(n),(i)->(i)')
-def reEachLabelGtCuda(color_data,justforSize, returnMe):
+def reEachLabelGtCuda(color_data, arraySize, array):
     if(color_data[0] == 128):
         if(color_data[2] == 1):
-            returnMe[0] = 1
-            returnMe[1] = 1
-            returnMe[2] = 0
-            returnMe[3] = 0
-            returnMe[4] = 0
+            array = relabel_gt(array, 1, 1, 0, 0, 0)
         elif (color_data[2] == 2):
-            returnMe[0] = 1
-            returnMe[1] = 0
-            returnMe[2] = 1
-            returnMe[3] = 0
-            returnMe[4] = 0
+            array = relabel_gt(array, 1, 0, 1, 0, 0)
         elif (color_data[2] == 3):
-            returnMe[0] = 1
-            returnMe[1] = 1
-            returnMe[2] = 1
-            returnMe[3] = 0
-            returnMe[4] = 0
+            array = relabel_gt(array, 1, 1, 1, 0, 0)
         elif (color_data[2] == 4):
-            returnMe[0] = 1
-            returnMe[1] = 0
-            returnMe[2] = 0
-            returnMe[3] = 1
-            returnMe[4] = 0
+            array = relabel_gt(array, 1, 0, 0, 1, 0)
         elif (color_data[2] == 5):
-            returnMe[0] = 1
-            returnMe[1] = 1
-            returnMe[2] = 0
-            returnMe[3] = 1
-            returnMe[4] = 0
+            array = relabel_gt(array, 1, 1, 0, 1, 0)
         elif (color_data[2] == 6):
-            returnMe[0] = 1
-            returnMe[1] = 0
-            returnMe[2] = 1
-            returnMe[3] = 1
-            returnMe[4] = 0
+            array = relabel_gt(array, 1, 0, 1, 1, 0)
         elif (color_data[2] == 8):
-            returnMe[0] = 1
-            returnMe[1] = 0
-            returnMe[2] = 0
-            returnMe[3] = 0
-            returnMe[4] = 1
+            array = relabel_gt(array, 1, 0, 0, 0, 1)
         elif (color_data[2] == 9):
-            returnMe[0] = 1
-            returnMe[1] = 1
-            returnMe[2] = 0
-            returnMe[3] = 0
-            returnMe[4] = 1
+            array = relabel_gt(array, 1, 1, 0, 0, 1)
         elif (color_data[2] == 10):
-            returnMe[0] = 1
-            returnMe[1] = 0
-            returnMe[2] = 1
-            returnMe[3] = 0
-            returnMe[4] = 1
+            array = relabel_gt(array, 1, 0, 1, 0, 1)
         elif (color_data[2] == 12):
-            returnMe[0] = 1
-            returnMe[1] = 0
-            returnMe[2] = 0
-            returnMe[3] = 1
-            returnMe[4] = 1
+            array = relabel_gt(array, 1, 0, 0, 1, 1)
     elif (color_data[0] == 0):
         if(color_data[2] == 1):
-            returnMe[0] = 0
-            returnMe[1] = 1
-            returnMe[2] = 0
-            returnMe[3] = 0
-            returnMe[4] = 0
+            array = relabel_gt(array, 0, 1, 0, 0, 0)
         elif (color_data[2] == 2):
-            returnMe[0] = 0
-            returnMe[1] = 0
-            returnMe[2] = 1
-            returnMe[3] = 0
-            returnMe[4] = 0
+            array = relabel_gt(array, 0, 0, 1, 0, 0)
         elif (color_data[2] == 3):
-            returnMe[0] = 0
-            returnMe[1] = 1
-            returnMe[2] = 1
-            returnMe[3] = 0
-            returnMe[4] = 0
+            array = relabel_gt(array, 0, 1, 1, 0, 0)
         elif (color_data[2] == 4):
-            returnMe[0] = 0
-            returnMe[1] = 0
-            returnMe[2] = 0
-            returnMe[3] = 1
-            returnMe[4] = 0
+            array = relabel_gt(array, 0, 0, 0, 1, 0)
         elif (color_data[2] == 5):
-            returnMe[0] = 0
-            returnMe[1] = 1
-            returnMe[2] = 0
-            returnMe[3] = 1
-            returnMe[4] = 0
+            array = relabel_gt(array, 0, 1, 0, 1, 0)
         elif (color_data[2] == 6):
-            returnMe[0] = 0
-            returnMe[1] = 0
-            returnMe[2] = 1
-            returnMe[3] = 1
-            returnMe[4] = 0
+            array = relabel_gt(array, 0, 0, 1, 1, 0)
         elif (color_data[2] == 8):
-            returnMe[0] = 0
-            returnMe[1] = 0
-            returnMe[2] = 0
-            returnMe[3] = 0
-            returnMe[4] = 1
+            array = relabel_gt(array, 0, 0, 0, 0, 1)
         elif (color_data[2] == 9):
-            returnMe[0] = 0
-            returnMe[1] = 1
-            returnMe[2] = 0
-            returnMe[3] = 0
-            returnMe[4] = 1
+            array = relabel_gt(array, 0, 1, 0, 0, 1)
         elif (color_data[2] == 10):
-            returnMe[0] = 0
-            returnMe[1] = 0
-            returnMe[2] = 1
-            returnMe[3] = 0
-            returnMe[4] = 1
+            array = relabel_gt(array, 0, 0, 1, 0, 1)
         elif (color_data[2] == 12):
-            returnMe[0] = 0
-            returnMe[1] = 0
-            returnMe[2] = 0
-            returnMe[3] = 1
-            returnMe[4] = 1
+            array = relabel_gt(array, 0, 0, 0, 1, 1)
         elif (color_data[2] == 0):
-            returnMe[0] = 0
-            returnMe[1] = 0
-            returnMe[2] = 0
-            returnMe[3] = 0
-            returnMe[4] = 0
+            array = relabel_gt(array, 0, 0, 0, 0, 0)
+    else:
+         array = relabel_gt(array, 0, 0, 0, 0, 0)
             
 def relabel_colors(array, r, g, b):      
     array[0] = r
@@ -193,11 +109,17 @@ def relabel_colors(array, r, g, b):
     array[2] = b
     return array
 
+def relabel_gt(array, lab1, lab2, lab3, lab4, lab5):
+    array[0] = lab1
+    array[1] = lab2
+    array[2] = lab3
+    array[3] = lab4
+    array[4] = lab5
+    return array
+
 class ImageLoader():
     """Load dataset images, split them inte chunks and write them to pickle files."""
     
-
-
     def combine_images(imageArray, max_y: int, max_x: int) -> np.array:
         image = np.zeros((max_y,max_x,3),np.int)
         #np.array(x).reshape(-1,resize[1],resize[2],3)
@@ -275,7 +197,7 @@ class ImageLoader():
 
     def adjust_colors(array : np.array):
         copy = array.copy()
-        value = len(array.shape)
+        
         if(len(array.shape)==4):           
             copy[:,:, :, 0] = array[:, :, :, 2]
             copy[:,:, :, 2] = array[:, :, :, 0]
@@ -361,7 +283,7 @@ class ImageLoader():
 
 
         totaltime = timer() - start
-        print("loaded all pictures 1 and it took "+(str)(totaltime))
+        print("Successfully loaded images. Time: " + (str)(totaltime))
         # write original image to pickle
         [PredictPictures,GTPredictPictures]=ImageLoader.read_Images(conf.DATADIR,conf.TestTraining,conf.TestResult,[1, conf.Xsize, conf.Ysize])
         print("2")
@@ -377,11 +299,5 @@ class ImageLoader():
         # output training data to pickle
         img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
         totaltime = timer() - start
-        print("total tid förall laddning"+ (str)(totaltime))        
+        print("Total time for loading: " + (str)(totaltime))        
         return [img,gt,PredictPictures,GTPredictPictures]
-
-def main():
-    # empty for now
-    
-if __name__ == "__main__":
-    main()
