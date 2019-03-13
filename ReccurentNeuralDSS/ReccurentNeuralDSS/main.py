@@ -3,6 +3,7 @@ from utils.imageLoader import ImageLoader
 from model.model import Model
 import utils.config as conf
 import numpy as np
+from keras.callbacks import TensorBoard
 
 def newBiDirectionalLSTMRNN(*args):
 
@@ -64,6 +65,11 @@ def newStandardCNN(*args):
     return False
 
 def newCNNBIDirectionalLstmRNN(*args):
+    # create log dir if not created when executed, then when the model is done with the training,
+    # open cmd and locate to the directory above logs and run: "tensorboard --logdir=logs/"
+    # then copy the url into the browser to visualize results
+    tensorboard = TensorBoard(log_dir='logs/')
+    
     if len(args) == 1:
         x_train = args[0]
         y_train = args[0]
@@ -82,7 +88,7 @@ def newCNNBIDirectionalLstmRNN(*args):
     y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0]*yreshapeValue[1])
     model = Model.build_CNN_model(x_train[0].shape);
     model.fit(x_train, y_train, epochs=conf.AmountOfEpochs, batch_size=conf.batchSize,
-              validation_split=conf.validationSplit)
+              validation_split=conf.validationSplit, callbacks=[tensorboard])
     Model.model = model;
     return False
 
