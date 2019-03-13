@@ -269,9 +269,8 @@ class ImageLoader():
                         #training_data += list(zip(imgTraining_array, imgResult_array))
                     else:
                         img.append(imgTraining_array)
-                        gt.append(imgResult_array)
                         #training_data.append([imgTraining_array, imgResult_array])
-                    i= i+1
+                    i = i+1
                 except Exception as e:
                     pass
         return [returnImg,returnGt]
