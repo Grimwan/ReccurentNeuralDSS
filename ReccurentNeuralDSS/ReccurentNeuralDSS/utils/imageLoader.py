@@ -370,7 +370,9 @@ class ImageLoader():
         totaltime = timer() - start
         print("Successfully loaded images. Time: " + (str)(totaltime))
         # write original image to pickle
-        [PredictPictures,GTPredictPictures]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureTraining,conf.PredictionPictureResult,[1, conf.Xsize, conf.Ysize],False)
+        [PredictionPictureCB55,GTPredictPicturesCB55]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureCB55,conf.PredictionPictureResultCB55,[1, conf.Xsize, conf.Ysize],False)
+        [PredictPicturesCS,GTPredictPicturesCS]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureCS,conf.PredictionPictureResultCS,[1, conf.Xsize, conf.Ysize],False)
+        
         print("2")
         # remove complete dark images in the image
         #gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
@@ -380,13 +382,17 @@ class ImageLoader():
         img = ImageLoader.convert_list_to_np(img)
         gt = ImageLoader.convert_list_to_np(gt)
 
-        PredictPictures = ImageLoader.convert_list_to_np(PredictPictures)
-        GTPredictPictures = ImageLoader.convert_list_to_np(GTPredictPictures)
-        PredictPictures = PredictPictures.reshape(PredictPictures.shape[0],PredictPictures.shape[1], conf.Xsize, conf.Ysize, 3)
+        PredictionPictureCB55 = ImageLoader.convert_list_to_np(PredictionPictureCB55)
+        PredictionPictureCB55 = PredictionPictureCB55.reshape(PredictionPictureCB55.shape[0],PredictionPictureCB55.shape[1], conf.Xsize, conf.Ysize, 3)
+
+        PredictPicturesCS = ImageLoader.convert_list_to_np(PredictPicturesCS)
+        PredictPicturesCS = PredictPicturesCS.reshape(PredictPicturesCS.shape[0],PredictPicturesCS.shape[1], conf.Xsize, conf.Ysize, 3)
+
+
 
 
         gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 5)
         img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
         totaltime = timer() - start
         print("Total time for loading: " + (str)(totaltime))        
-        return [img,gt,PredictPictures,GTPredictPictures]
+        return [img,gt,PredictionPictureCB55,PredictPicturesCS]

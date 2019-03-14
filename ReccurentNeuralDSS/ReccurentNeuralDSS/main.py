@@ -117,27 +117,26 @@ def SaveImage(*args):
     prediction = ImageLoader.convert_list_to_np(prediction)
     prediction = prediction.reshape(predictionorignalshape, conf.Xsize,conf.Ysize, 3)    
     # show result
-    if(Number <10):
-        img = ImageLoader.combine_images(prediction, 4872, 6496)
-    elif(Number <40):
-        img = ImageLoader.combine_images(prediction, 3328, 4992)
+
+    img = ImageLoader.combine_images(prediction, args[3], args[4])
     img = ImageLoader.adjust_colors(img)
-    Number = ""
-    if(len(args)==3):
-        Number = str(args[2])
+    Number = str(args[2])
     ImageLoader.save_image(conf.WhereTosaveTestImage,img,conf.NameOfTestImage + str(Number))
 #    plt.imshow(img)
 #    plt.show()
     return 0
 
 def main():
-    [x_train,y_train,PredictPictures,CorrectPrediction]=ImageLoader.shortMain()
+    [x_train,y_train,PredictionPictureCB55,PredictionPictureCS]=ImageLoader.shortMain()
     newCNNBIDirectionalLstmRNN(x_train,y_train)
 #    Model.save_model("CNNBID")
     #Model.model = Model.load_model("CNNBID")
     i = 0
-    for eachPicture in PredictPictures:
-        SaveImage(False, eachPicture,i)
+    for eachPicture in PredictionPictureCB55:
+        SaveImage(False, eachPicture,i,6496,4872)
+        i = i+1
+    for eachPicture in PredictionPictureCS:
+        SaveImage(False, eachPicture,i,4992,3328)
         i = i+1
     
 
