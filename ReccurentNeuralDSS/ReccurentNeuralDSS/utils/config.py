@@ -9,8 +9,8 @@ Training = ["CS18/img/training"]
 Result = ["CS18/pixel-level-gt/training"]
 ValidationTraining = ["CS18/img/validation"]
 ValidationResult = ["CS18/pixel-level-gt/validation"]
-PredictionPictureTraining= ["CS18/img/public-test"]
-PredictionPictureResult= ["CS18/pixel-level-gt/public-test"]
+PredictionPictureTraining= ["CB55/img/public-test","CS18/img/public-test","CS863/img/public-test"]
+PredictionPictureResult= ["CB55/pixel-level-gt/public-test","CS18/pixel-level-gt/public-test","CS863/pixel-level-gt/public-test"]
 WhereTosaveTestImage = "here"
 NameOfTestImage = "testimage"
 

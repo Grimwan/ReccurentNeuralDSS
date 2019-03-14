@@ -117,7 +117,10 @@ def SaveImage(*args):
     prediction = ImageLoader.convert_list_to_np(prediction)
     prediction = prediction.reshape(predictionorignalshape, conf.Xsize,conf.Ysize, 3)    
     # show result
-    img = ImageLoader.combine_images(prediction, conf.orignalPictureX, conf.orignalPictureY)
+    if(Number <10):
+        img = ImageLoader.combine_images(prediction, 4872, 6496)
+    elif(Number <40):
+        img = ImageLoader.combine_images(prediction, 3328, 4992)
     img = ImageLoader.adjust_colors(img)
     Number = ""
     if(len(args)==3):
