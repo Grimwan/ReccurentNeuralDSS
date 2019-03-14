@@ -64,29 +64,32 @@ def newStandardCNN(*args):
     Model.model = model;
     return False
 
-def newCNNBIDirectionalLstmRNN(*args):
+def CNNBIDirectionalLstmRNN(*args):
     # create log dir if not created when executed, then when the model is done with the training,
     # open cmd and locate to the directory above logs and run: "tensorboard --logdir=logs/"
     # then copy the url into the browser to visualize results
     tensorboard = TensorBoard(log_dir='logs/')
-    
-    if len(args) == 1:
+    loadModel = ""
+    if len(args) < 2:
         x_train = args[0]
         y_train = args[0]
-    elif len(args) == 2:
+    elif len(args) < 3:
         x_train = args[0]
         y_train = args[1]
-    elif len(args) == 3:
+    elif len(args) < 4:
         x_train = args[0]
         y_train = args[1]
-    elif len(args) > 3:
-        x_train = args[0]
-        y_train = args[1]
-
+        loadModel = args[2]
     yreshapeValue = [conf.Xsize,conf.Ysize*5] # for LSTMRNN
     x_train = x_train.astype('float32') / 255
     y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0]*yreshapeValue[1])
-    model = Model.build_CNN_model(x_train[0].shape);
+    if(loadModel ==""):
+        model = Model.build_CNN_model(x_train[0].shape)
+    else:
+        model = Model.load_model(loadModel)
+        model.compile(loss='binary_crossentropy', 
+                optimizer='adam', 
+                metrics=['accuracy'])
     model.fit(x_train, y_train, epochs=conf.AmountOfEpochs, batch_size=conf.batchSize,
               validation_split=conf.validationSplit, callbacks=[tensorboard])
     Model.model = model;
@@ -127,9 +130,12 @@ def SaveImage(*args):
     return 0
 
 def main():
-    [x_train,y_train,PredictionPictureCB55,PredictionPictureCS]=ImageLoader.shortMain()
-    newCNNBIDirectionalLstmRNN(x_train,y_train)
-#    Model.save_model("CNNBID")
+    [x_trainCB55,y_trainCB55,x_trainCS18,y_trainCS18,x_trainCS863,y_trainCS863,PredictionPictureCB55,PredictionPictureCS]=ImageLoader.shortMain()
+    CNNBIDirectionalLstmRNN(x_trainCB55,y_trainCB55)
+    Model.save_model("CNNBID")
+    CNNBIDirectionalLstmRNN(x_trainCS18,y_trainCS18,"CNNBID")
+    Model.save_model("CNNBID")
+    CNNBIDirectionalLstmRNN(x_trainCS863,y_trainCS863,"CNNBID")
     #Model.model = Model.load_model("CNNBID")
     i = 0
     for eachPicture in PredictionPictureCB55:

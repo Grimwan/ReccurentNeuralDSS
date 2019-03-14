@@ -364,23 +364,38 @@ class ImageLoader():
     def shortMain():
         # read all data from folders and add border if needed. Afterwards split images into chunks
         start = timer()
-        [img,gt] =ImageLoader.read_Images(conf.DATADIR, conf.Training, conf.Result, [1, conf.Xsize, conf.Ysize])
+        [imga,gta] =ImageLoader.read_Images(conf.DATADIR,["CB55/img/training"],  ["CB55/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize])
+        [imgc,gtc] =ImageLoader.read_Images(conf.DATADIR,["CS18/img/training"] , ["CS18/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize])
+        [imgb,gtb] =ImageLoader.read_Images(conf.DATADIR,["CS863/img/training"] ,["CS863/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize])
 
 
+        imga = ImageLoader.convert_list_to_np(imga)
+        imgb = ImageLoader.convert_list_to_np(imgb)
+        imgc = ImageLoader.convert_list_to_np(imgc)
+
+        gta = ImageLoader.convert_list_to_np(gta)
+        gtb = ImageLoader.convert_list_to_np(gtb)
+        gtc = ImageLoader.convert_list_to_np(gtc)
+
+        gta = gta.reshape(gta.shape[0], conf.Xsize, conf.Ysize, 5)
+        imga = imga.reshape(imga.shape[0], conf.Xsize, conf.Ysize, 3)
+        gtb = gtb.reshape(gtb.shape[0], conf.Xsize, conf.Ysize, 5)
+        imgb = imgb.reshape(imgb.shape[0], conf.Xsize, conf.Ysize, 3)
+        gtc = gtc.reshape(gtc.shape[0], conf.Xsize, conf.Ysize, 5)
+        imgc = imgc.reshape(imgc.shape[0], conf.Xsize, conf.Ysize, 3)
         totaltime = timer() - start
         print("Successfully loaded images. Time: " + (str)(totaltime))
         # write original image to pickle
         [PredictionPictureCB55,GTPredictPicturesCB55]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureCB55,conf.PredictionPictureResultCB55,[1, conf.Xsize, conf.Ysize],False)
         [PredictPicturesCS,GTPredictPicturesCS]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureCS,conf.PredictionPictureResultCS,[1, conf.Xsize, conf.Ysize],False)
-        
-        print("2")
+        totaltime = timer() - start
+        print("Successfully loaded images. Time: " + (str)(totaltime))
         # remove complete dark images in the image
         #gt = gt.reshape(gt.shape[0], conf.Xsize*conf.Ysize*3)
         #img = img.reshape(img.shape[0], conf.Xsize*conf.Ysize*3)
         #[img,gt] = ImageLoader.remove_dark_images(img, gt)
 
-        img = ImageLoader.convert_list_to_np(img)
-        gt = ImageLoader.convert_list_to_np(gt)
+
 
         PredictionPictureCB55 = ImageLoader.convert_list_to_np(PredictionPictureCB55)
         PredictionPictureCB55 = PredictionPictureCB55.reshape(PredictionPictureCB55.shape[0],PredictionPictureCB55.shape[1], conf.Xsize, conf.Ysize, 3)
@@ -389,10 +404,6 @@ class ImageLoader():
         PredictPicturesCS = PredictPicturesCS.reshape(PredictPicturesCS.shape[0],PredictPicturesCS.shape[1], conf.Xsize, conf.Ysize, 3)
 
 
-
-
-        gt = gt.reshape(gt.shape[0], conf.Xsize, conf.Ysize, 5)
-        img = img.reshape(img.shape[0], conf.Xsize, conf.Ysize, 3)
         totaltime = timer() - start
         print("Total time for loading: " + (str)(totaltime))        
-        return [img,gt,PredictionPictureCB55,PredictPicturesCS]
+        return [imga,gta,imgb,gtb,imgc,gtc,PredictionPictureCB55,PredictPicturesCS]
