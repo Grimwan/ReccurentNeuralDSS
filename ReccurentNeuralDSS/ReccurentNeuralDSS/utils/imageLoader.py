@@ -308,13 +308,17 @@ class ImageLoader():
         resultDir = args[2]
         crop = args[3]
         singularPicture = True
+        ReshapeConvert = False
         resize = [0,0,0]
         if len(args) > 4:
             singularPicture = args[4]
         if len(args) > 5:
-            resize = args[5]
+            ReshapeConvert = args[5]
+            
+        if len(args) > 6:
+            resize = args[6]
         #elif len(args) == 1:
-
+        start = timer()
         returnImg = []
         returnGt = []
         #training_data = []
@@ -359,6 +363,18 @@ class ImageLoader():
                     i = i+1
                 except Exception as e:
                     pass
+
+        if(ReshapeConvert):
+            imga = ImageLoader.convert_list_to_np(returnImg)
+            gta = ImageLoader.convert_list_to_np(returnGt)
+            gta = gta.reshape(gta.shape[0], conf.Xsize, conf.Ysize, 5)
+            imga = imga.reshape(imga.shape[0], conf.Xsize, conf.Ysize, 3)
+            totaltime = timer() - start
+            print("Successfully loaded images. Time: " + (str)(totaltime))
+            return [imga,gta]
+
+        totaltime = timer() - start
+        print("Successfully loaded images. Time: " + (str)(totaltime))
         return [returnImg,returnGt]
 
     def shortMain():

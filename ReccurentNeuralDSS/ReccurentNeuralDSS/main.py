@@ -5,39 +5,40 @@ import utils.config as conf
 import numpy as np
 from keras.callbacks import TensorBoard
 
-def newBiDirectionalLSTMRNN(*args):
+def BiDirectionalLSTMRNN(*args):
 
+    loadModel = ""
     if len(args) == 1:
         x_train = args[0]
         y_train = args[0]
     elif len(args) == 2:
         x_train = args[0]
         y_train = args[1]
-    elif len(args) == 3:
+    elif len(args) > 2:
         x_train = args[0]
         y_train = args[1]
-        x_validation = args[2]
-        y_validation = args[2]
+        loadModel = args[2]
     elif len(args) > 3:
         x_train = args[0]
         y_train = args[1]
         x_validation = args[2]
         y_validation = args[3]
-
+             
 
     xreshapeValue = [conf.Xsize,conf.Ysize*3] # for LSTMRNN
     yreshapeValue = [conf.Xsize,conf.Ysize*5] # for LSTMRNN
     x_train = x_train.reshape(x_train.shape[0], xreshapeValue[0],xreshapeValue[1])
     x_train = x_train.astype('float32') / 255
     y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0],yreshapeValue[1])
-
-    model = Model.build_BI_LSTM_model(x_train[0].shape);
-
-
-    if len(args)>2:
-        model.fit(x_train, y_train,x_validation,y_validation, epochs=conf.AmountOfEpochs, batch_size=conf.batchSize)
+    if(loadModel ==""):
+        model = Model.build_BI_LSTM_model(x_train[0].shape)
     else:
-        model.fit(x_train, y_train, epochs=conf.AmountOfEpochs, batch_size=conf.batchSize,validation_split=conf.validationSplit)
+        model = Model.load_model(loadModel)
+        model.compile(loss='binary_crossentropy', 
+                optimizer='adam', 
+                metrics=['accuracy'])
+    model.fit(x_train, y_train, epochs=conf.AmountOfEpochs, batch_size=conf.batchSize,
+              validation_split=conf.validationSplit)
     Model.model = model;
     return True
 
@@ -84,7 +85,7 @@ def CNNBIDirectionalLstmRNN(*args):
     x_train = x_train.astype('float32') / 255
     y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0]*yreshapeValue[1])
     if(loadModel ==""):
-        model = Model.build_CNN_model(x_train[0].shape)
+        model = Model.build_CNN_BI_LSTM_model(x_train[0].shape)
     else:
         model = Model.load_model(loadModel)
         model.compile(loss='binary_crossentropy', 
@@ -130,21 +131,46 @@ def SaveImage(*args):
     return 0
 
 def main():
-    [x_trainCB55,y_trainCB55,x_trainCS18,y_trainCS18,x_trainCS863,y_trainCS863,PredictionPictureCB55,PredictionPictureCS]=ImageLoader.shortMain()
-    CNNBIDirectionalLstmRNN(x_trainCB55,y_trainCB55)
+    #[x_trainCB55,y_trainCB55,x_trainCS18,y_trainCS18,x_trainCS863,y_trainCS863,PredictionPictureCB55,PredictionPictureCS]=ImageLoader.shortMain()
+    [x_trainCB55,y_trainCB55] = ImageLoader.read_Images(conf.DATADIR,["CB55/img/training"],  ["CB55/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
+    BiDirectionalLSTMRNN(x_trainCB55,y_trainCB55)
+    del x_trainCB55
+    del y_trainCB55
+    x_trainCB55 = []
+    y_trainCB55 = []
     Model.save_model("CNNBID")
-    CNNBIDirectionalLstmRNN(x_trainCS18,y_trainCS18,"CNNBID")
+    [x_trainCS18,y_trainCS18] = ImageLoader.read_Images(conf.DATADIR,["CS18/img/training"],  ["CS18/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
+    BiDirectionalLSTMRNN(x_trainCS18,y_trainCS18,"CNNBID")
+    del x_trainCS18
+    del y_trainCS18
+    x_trainCS18 = []
+    y_trainCS18 = []
     Model.save_model("CNNBID")
-    CNNBIDirectionalLstmRNN(x_trainCS863,y_trainCS863,"CNNBID")
+    [x_trainCS863,y_trainCS863] = ImageLoader.read_Images(conf.DATADIR,["CS863/img/training"],  ["CS863/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
+    BiDirectionalLSTMRNN(x_trainCS863,y_trainCS863,"CNNBID")
+    del x_trainCS863
+    del y_trainCS863
+    x_trainCS863 = []
+    y_trainCS863 = []
     #Model.model = Model.load_model("CNNBID")
     i = 0
+    Model.save_model("CNNBID")
+    [PredictionPictureCB55,GTPredictPicturesCB55]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureCB55,conf.PredictionPictureResultCB55,[1, conf.Xsize, conf.Ysize],False)
     for eachPicture in PredictionPictureCB55:
         SaveImage(False, eachPicture,i,6496,4872)
         i = i+1
+    del PredictionPictureCB55
+    PredictionPictureCB55 = []
+    del GTPredictPicturesCB55
+    GTPredictPicturesCB55 = []
+    [PredictPicturesCS,GTPredictPicturesCS]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureCS,conf.PredictionPictureResultCS,[1, conf.Xsize, conf.Ysize],False)
     for eachPicture in PredictionPictureCS:
         SaveImage(False, eachPicture,i,4992,3328)
         i = i+1
-    
+    del PredictPicturesCS
+    del GTPredictPicturesCS
+    PredictPicturesCS =  []
+    GTPredictPicturesCS = []
 
 if __name__ == "__main__":
     main()
