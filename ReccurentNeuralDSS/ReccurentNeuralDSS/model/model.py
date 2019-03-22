@@ -78,15 +78,15 @@ class Model:
         imageWidth = dataSize[1]
         channels = dataSize[2]
         Model.model = Sequential()
-        Model.model.add((layers.Conv2D(64,(3,3), activation='relu', input_shape=(imageHeight, imageWidth, channels))))
+        Model.model.add((layers.Conv2D(128,(3,3), activation='relu', input_shape=(imageHeight, imageWidth, channels))))
         Model.model.add((layers.MaxPooling2D((2,2))))
-        Model.model.add((layers.Conv2D(128,(3, 3), activation = 'relu')))
+        Model.model.add((layers.Conv2D(64,(3, 3), activation = 'relu')))
         Model.model.add((layers.MaxPooling2D((2,2))))
-        Model.model.add((layers.Conv2D(256,(3, 3), activation = 'relu')))
-        Model.model.add((layers.MaxPooling2D((2,2))))
-        Model.model.add(TimeDistributed(layers.Flatten()))
+        Model.model.add((layers.Conv2D(64,(3, 3), activation = 'relu')))
+        #Model.model.add(TimeDistributed(layers.Flatten()))
+        Model.model.add(layers.Reshape((16,64),name='predictions'))
         # input layer
-        Model.model.add(Bidirectional(CuDNNLSTM((1), return_sequences=True)))
+        Model.model.add(Bidirectional(CuDNNLSTM((64), return_sequences=True)))
         Model.model.add((layers.Flatten()))
         Model.model.add(layers.Dense(imageHeight*imageWidth*5, activation='sigmoid'))
         

@@ -133,21 +133,21 @@ def SaveImage(*args):
 def main():
     #[x_trainCB55,y_trainCB55,x_trainCS18,y_trainCS18,x_trainCS863,y_trainCS863,PredictionPictureCB55,PredictionPictureCS]=ImageLoader.shortMain()
     [x_trainCB55,y_trainCB55] = ImageLoader.read_Images(conf.DATADIR,["CB55/img/training"],  ["CB55/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    BiDirectionalLSTMRNN(x_trainCB55,y_trainCB55)
+    CNNBIDirectionalLstmRNN(x_trainCB55,y_trainCB55)
     del x_trainCB55
     del y_trainCB55
     x_trainCB55 = []
     y_trainCB55 = []
     Model.save_model("CNNBID")
     [x_trainCS18,y_trainCS18] = ImageLoader.read_Images(conf.DATADIR,["CS18/img/training"],  ["CS18/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    BiDirectionalLSTMRNN(x_trainCS18,y_trainCS18,"CNNBID")
+    CNNBIDirectionalLstmRNN(x_trainCS18,y_trainCS18,"CNNBID")
     del x_trainCS18
     del y_trainCS18
     x_trainCS18 = []
     y_trainCS18 = []
     Model.save_model("CNNBID")
     [x_trainCS863,y_trainCS863] = ImageLoader.read_Images(conf.DATADIR,["CS863/img/training"],  ["CS863/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    BiDirectionalLSTMRNN(x_trainCS863,y_trainCS863,"CNNBID")
+    CNNBIDirectionalLstmRNN(x_trainCS863,y_trainCS863,"CNNBID")
     del x_trainCS863
     del y_trainCS863
     x_trainCS863 = []
