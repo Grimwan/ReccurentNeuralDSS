@@ -269,6 +269,8 @@ class ImageLoader():
         ImageLoader.mkdir_safe(path)
         cv2.imwrite(os.path.join(path, name + '.png'), image)
     
+    
+
     def mkdir_safe(path: str):
         if not os.path.exists(path):
             os.makedirs(path)

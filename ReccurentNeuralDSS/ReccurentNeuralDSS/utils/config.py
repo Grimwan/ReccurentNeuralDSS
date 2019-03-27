@@ -20,7 +20,7 @@ NameOfTestImage = "testimage"
 # variables
 Xsize = 32
 Ysize= 32
-AmountOfEpochs = 4
+AmountOfEpochs = 1
 batchSize = 50
 validationSplit = 0.2
 orignalPictureX = 4992
