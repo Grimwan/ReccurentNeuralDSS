@@ -163,7 +163,6 @@ def Train(*args):
 
     #[x_trainCB55,y_trainCB55,x_trainCS18,y_trainCS18,x_trainCS863,y_trainCS863,PredictionPictureCB55,PredictionPictureCS]=ImageLoader.shortMain()
     [x_trainCB55,y_trainCB55] = ImageLoader.read_Images(conf.DATADIR,["CB55/img/training"],  ["CB55/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    print(x_trainCB55.shape);
     TrainNetwork(NN,x_trainCB55,y_trainCB55,"CNNBID")
     del x_trainCB55
     del y_trainCB55
@@ -202,3 +201,21 @@ def Train(*args):
     del GTPredictPicturesCS
     PredictPicturesCS =  []
     GTPredictPicturesCS = []
+
+def ExperimentTraining(*args):
+    NN = 0
+    Predict = True
+    WhereToSave = "CNNBID"
+    if(len(args)>0):
+        if(args[0] == "BiDirectionalLSTMRNN"):
+            NN = 0
+        elif(args[0] == "StandardCNN"):
+            NN = 1
+        elif(args[0] == "CNNBIDirectionalLstmRNN"):
+            NN = 2
+        if(len(args)>1):
+            Predict = args[1]
+
+
+    [X_train,Y_train] = ImageLoader.read_Images(conf.DATADIR,["DeansTestmap/img/training"],  ["DeansTestmap/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
+    Model.ReNet([2,2,2])

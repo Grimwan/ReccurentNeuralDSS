@@ -2,7 +2,7 @@ import tensorflow as tf
 from keras.models import Sequential, model_from_json
 from keras.layers import Dense, CuDNNLSTM, Bidirectional, TimeDistributed
 from keras import layers
-
+import keras
 #lstm: For example, say your input sequences look like X = [[0.54, 0.3], [0.11, 0.2], [0.37, 0.81]]. We can see that this sequence has a timestep of 3 and a data_dim of 2.
 class Model:
     """Utility class to represent a model."""
@@ -49,6 +49,8 @@ class Model:
                 metrics=['accuracy'])
         return Model.model
         
+
+
     def save_model(*args):
         if len(args) == 0:
             Name = "model"
@@ -91,6 +93,23 @@ class Model:
         Model.model.add(layers.Dense(imageHeight*imageWidth*5, activation='sigmoid'))
         
         # compile settings
+        Model.model.compile(loss='binary_crossentropy', 
+                      optimizer='adam', 
+                      metrics=['accuracy'])
+        print(Model.model.summary())
+        return Model.model
+
+    def ReNet(dataSize):
+        imageHeight = dataSize[0]
+        imageWidth = dataSize[1]
+        channels = dataSize[2]
+        input = layers.Input(shape=(32,32,3))
+        xUp = layers.Dense(32*32*3, activation = 'relu')(input)
+        xDown = layers.Dense(32*32*3,activation = 'relu')(input)
+        concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
+        out = layers.Dense(4)(concatenate)
+        Model.model =  keras.models.Model(inputs=input,outputs=out)
+
         Model.model.compile(loss='binary_crossentropy', 
                       optimizer='adam', 
                       metrics=['accuracy'])
