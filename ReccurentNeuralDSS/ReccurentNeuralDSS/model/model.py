@@ -99,21 +99,35 @@ class Model:
         print(Model.model.summary())
         return Model.model
 
+    def SideLayer(*args):
+        imageHeight = args[0] * 0.5
+        imageWidth = args[1] * 0.5
+        channels = args[2]
+        input = args[3]
+        Timestep = int(imageHeight * imageWidth);
+        if(len(args)==5):
+            Timestep = args[4]
+        if(len(args) == 5):
+            reshapedinput = layers.Reshape((Timestep*2,channels),name='inputTimedistribution')(input)
+        else:
+            reshapedinput = layers.Reshape((Timestep,channels),name='inputTimedistribution')(input)
+        xUp =   layers.LSTM((Timestep), return_sequences=True)(reshapedinput)
+        xDown = layers.LSTM((Timestep),go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp = layers.Reshape((int(imageHeight),int(imageWidth),Timestep),name='')(xUp)
+        xDown = layers.Reshape((int(imageHeight),int(imageWidth),Timestep),name='')(xDown)
+        concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
+        channels = Timestep
+        return [concatenate,imageHeight,imageWidth,channels]
+
+
+    
     def ReNet(dataSize):
         imageHeight = dataSize[0]
         imageWidth = dataSize[1]
         channels = dataSize[2]
         input = layers.Input(shape=(imageHeight,imageWidth,channels))
-        Timestep = int(imageHeight*imageWidth*0.5*0.5);
-        reshapedinput = layers.Reshape((Timestep,2*2*channels),name='inputTimedistribution')(input)        
-#        xUp = layers.Dense(32*32*3, activation = 'relu')(input)
-#        xDown = layers.Dense(32*32*3,activation = 'relu')(input)
-        lstmoutput = 131072
-        xUp =   layers.LSTM((256), return_sequences=True)(reshapedinput)
-        xDown = layers.LSTM((256),go_backwards = True, return_sequences=True)(reshapedinput)
-        xUp = layers.Reshape((16,16,256),name='')(xUp)
-        xDown = layers.Reshape((16,16,256),name='')(xDown)
-        concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
+        [concatenate,imageHeight,imageWidth,channels]=Model.SideLayer(imageHeight,imageWidth,4*channels,input)
+        [concatenate,imageHeight,imageWidth,channels]=Model.SideLayer(imageHeight,imageWidth,channels,concatenate,channels)
         out = layers.Dense(4)(concatenate)
         Model.model =  keras.models.Model(inputs=input,outputs=out)
 
