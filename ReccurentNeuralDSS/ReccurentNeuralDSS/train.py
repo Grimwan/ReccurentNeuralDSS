@@ -217,5 +217,5 @@ def ExperimentTraining(*args):
             Predict = args[1]
 
 
-    [X_train,Y_train] = ImageLoader.read_Images(conf.DATADIR,["DeansTestmap/img/training"],  ["DeansTestmap/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    Model.ReNet([2,2,2])
+    #[X_train,Y_train] = ImageLoader.read_Images(conf.DATADIR,["DeansTestmap/img/training"],  ["DeansTestmap/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
+    Model.ReNet([32,32,3])

@@ -103,9 +103,16 @@ class Model:
         imageHeight = dataSize[0]
         imageWidth = dataSize[1]
         channels = dataSize[2]
-        input = layers.Input(shape=(32,32,3))
-        xUp = layers.Dense(32*32*3, activation = 'relu')(input)
-        xDown = layers.Dense(32*32*3,activation = 'relu')(input)
+        input = layers.Input(shape=(imageHeight,imageWidth,channels))
+        Timestep = int(imageHeight*imageWidth*0.5*0.5);
+        reshapedinput = layers.Reshape((Timestep,2*2*channels),name='inputTimedistribution')(input)        
+#        xUp = layers.Dense(32*32*3, activation = 'relu')(input)
+#        xDown = layers.Dense(32*32*3,activation = 'relu')(input)
+        lstmoutput = 131072
+        xUp =   layers.LSTM((256), return_sequences=True)(reshapedinput)
+        xDown = layers.LSTM((256),go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp = layers.Reshape((16,16,256),name='')(xUp)
+        xDown = layers.Reshape((16,16,256),name='')(xDown)
         concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
         out = layers.Dense(4)(concatenate)
         Model.model =  keras.models.Model(inputs=input,outputs=out)
