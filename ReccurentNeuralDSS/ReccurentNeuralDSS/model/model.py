@@ -100,17 +100,29 @@ class Model:
         return Model.model
 
     def SideLayer(*args):
+        imageHeight = args[0]
+        imageWidth = args[1]
+        channels = args[2]
+        input = args[3]
+        Timestep = int(imageHeight * imageWidth*0.5);
+        reshapedinput = layers.Reshape((Timestep,channels*4),name='')(input)
+        xUp =   layers.LSTM(int(channels/2), return_sequences=True)(reshapedinput)
+        xDown = layers.LSTM(int(channels/2),go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp =   layers.Reshape((int(imageHeight*0.5),int(imageWidth*0.5),channels),name='')(xUp)
+        xDown = layers.Reshape((int(imageHeight*0.5),int(imageWidth*0.5),channels),name='')(xDown)
+        concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
+        channels = channels
+        imageHeight = imageHeight *0.5
+        imageWidth = imageWidth *0.5
+        return [concatenate,imageHeight,imageWidth,channels]
+
+    def FirstSideLayer(*args):
         imageHeight = args[0] * 0.5
         imageWidth = args[1] * 0.5
         channels = args[2]
         input = args[3]
         Timestep = int(imageHeight * imageWidth);
-        if(len(args)==5):
-            Timestep = args[4]
-        if(len(args) == 5):
-            reshapedinput = layers.Reshape((Timestep*2,channels),name='inputTimedistribution')(input)
-        else:
-            reshapedinput = layers.Reshape((Timestep,channels),name='inputTimedistribution')(input)
+        reshapedinput = layers.Reshape((Timestep,channels*4),name='')(input)
         xUp =   layers.LSTM((Timestep), return_sequences=True)(reshapedinput)
         xDown = layers.LSTM((Timestep),go_backwards = True, return_sequences=True)(reshapedinput)
         xUp = layers.Reshape((int(imageHeight),int(imageWidth),Timestep),name='')(xUp)
@@ -119,14 +131,14 @@ class Model:
         channels = Timestep
         return [concatenate,imageHeight,imageWidth,channels]
 
-
     
     def ReNet(dataSize):
         imageHeight = dataSize[0]
         imageWidth = dataSize[1]
         channels = dataSize[2]
         input = layers.Input(shape=(imageHeight,imageWidth,channels))
-        [concatenate,imageHeight,imageWidth,channels]=Model.SideLayer(imageHeight,imageWidth,4*channels,input)
+        [concatenate,imageHeight,imageWidth,channels]=Model.FirstSideLayer(imageHeight,imageWidth,channels,input)
+        [concatenate,imageHeight,imageWidth,channels]=Model.SideLayer(imageHeight,imageWidth,channels,concatenate,channels)
         [concatenate,imageHeight,imageWidth,channels]=Model.SideLayer(imageHeight,imageWidth,channels,concatenate,channels)
         out = layers.Dense(4)(concatenate)
         Model.model =  keras.models.Model(inputs=input,outputs=out)
