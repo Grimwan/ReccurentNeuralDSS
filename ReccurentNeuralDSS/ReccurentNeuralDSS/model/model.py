@@ -131,7 +131,9 @@ class Model:
         channels = Timestep
         return [concatenate,imageHeight,imageWidth,channels]
 
-    
+        #keras.layers.transpose_shape(input,"tuple",)
+
+
     def ReNet(dataSize):
         imageHeight = dataSize[0]
         imageWidth = dataSize[1]
