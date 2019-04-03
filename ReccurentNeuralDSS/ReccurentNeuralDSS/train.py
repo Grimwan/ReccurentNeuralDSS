@@ -96,6 +96,40 @@ def CNNBIDirectionalLstmRNN(*args):
     Model.model = model;
     return False
 
+
+def ReNet(*args):
+    # create log dir if not created when executed, then when the model is done with the training,
+    # open cmd and locate to the directory above logs and run: "tensorboard --logdir=logs/"
+    # then copy the url into the browser to visualize results
+    tensorboard = TensorBoard(log_dir='logs/')
+    loadModel = ""
+    if len(args) < 2:
+        x_train = args[0]
+        y_train = args[0]
+    elif len(args) < 3:
+        x_train = args[0]
+        y_train = args[1]
+    elif len(args) < 4:
+        x_train = args[0]
+        y_train = args[1]
+        loadModel = args[2]
+    yreshapeValue = [conf.Xsize,conf.Ysize*5] # for LSTMRNN
+    x_train = x_train.astype('float32') / 255
+    y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0]*yreshapeValue[1])
+    if(loadModel ==""):
+        model = Model.ReNet(x_train[0].shape)
+    else:
+        model = Model.load_model(loadModel)
+        model.compile(loss='binary_crossentropy', 
+                optimizer='adam', 
+                metrics=['accuracy'])
+    model.fit(x_train, y_train, epochs=conf.AmountOfEpochs, batch_size=conf.batchSize,
+              validation_split=conf.validationSplit, callbacks=[tensorboard])
+    Model.model = model;
+    return False
+
+
+
 def TrainNetwork(*args):
     if(len(args)>3):
         if(args[0] == 0):
@@ -104,6 +138,8 @@ def TrainNetwork(*args):
             StandardCNN(args[1],args[2],args[3])
         elif(args[0] == 2):
             CNNBIDirectionalLstmRNN(args[1],args[2],args[3])
+        elif(args[0] ==3):
+            ReNet(args[1],args[2],args[3])
     else:
         if(args[0] == 0):
             BiDirectionalLSTMRNN(args[1],args[2])
@@ -111,6 +147,9 @@ def TrainNetwork(*args):
             StandardCNN(args[1],args[2])
         elif(args[0] == 2):
             CNNBIDirectionalLstmRNN(args[1],args[2])
+        elif(args[0] ==3):
+            ReNet(args[1],args[2])
+
 
 def SaveImage(*args):
     OnlyLstm=args[0]
@@ -158,12 +197,14 @@ def Train(*args):
             NN = 1
         elif(args[0] == "CNNBIDirectionalLstmRNN"):
             NN = 2
+        elif(args[0] == "ReNet"):
+            NN = 3
         if(len(args)>1):
             Predict = args[1]
 
     #[x_trainCB55,y_trainCB55,x_trainCS18,y_trainCS18,x_trainCS863,y_trainCS863,PredictionPictureCB55,PredictionPictureCS]=ImageLoader.shortMain()
     [x_trainCB55,y_trainCB55] = ImageLoader.read_Images(conf.DATADIR,["CB55/img/training"],  ["CB55/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    TrainNetwork(NN,x_trainCB55,y_trainCB55,"CNNBID")
+    TrainNetwork(NN,x_trainCB55,y_trainCB55)
     del x_trainCB55
     del y_trainCB55
     x_trainCB55 = []

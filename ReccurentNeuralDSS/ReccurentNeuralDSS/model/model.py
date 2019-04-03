@@ -106,8 +106,8 @@ class Model:
         input = args[3]
         Timestep = int(imageHeight * imageWidth*0.5);
         reshapedinput = layers.Reshape((Timestep,channels*4),name='')(input)
-        xUp =   layers.LSTM(int(channels/2), return_sequences=True)(reshapedinput)
-        xDown = layers.LSTM(int(channels/2),go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp =   layers.CuDNNLSTM(int(channels/2), return_sequences=True)(reshapedinput)
+        xDown = layers.CuDNNLSTM(int(channels/2),go_backwards = True, return_sequences=True)(reshapedinput)
         xUp =   layers.Reshape((int(imageHeight*0.5),int(imageWidth*0.5),channels),name='')(xUp)
         xDown = layers.Reshape((int(imageHeight*0.5),int(imageWidth*0.5),channels),name='')(xDown)
         concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
@@ -122,16 +122,19 @@ class Model:
         channels = args[2]
         input = args[3]
         Timestep = int(imageHeight * imageWidth);
-        reshapedinput = layers.Reshape((Timestep,channels*4),name='')(input)
-        xUp =   layers.LSTM((Timestep), return_sequences=True)(reshapedinput)
-        xDown = layers.LSTM((Timestep),go_backwards = True, return_sequences=True)(reshapedinput)
+        #256,12
+#        reshapedinput = layers.Reshape((Timestep,channels*4),name='')(input)
+        reshapedinput = keras.layers.transpose_shape(reshapedinput,'channels_first',spatial_axes=(0,3))
+        xUp =   layers.CuDNNLSTM((Timestep), return_sequences=True)(reshapedinput)
+        xDown = layers.CuDNNLSTM((Timestep),go_backwards = True, return_sequences=True)(reshapedinput)
+        layers.transpose_shape('')
         xUp = layers.Reshape((int(imageHeight),int(imageWidth),Timestep),name='')(xUp)
         xDown = layers.Reshape((int(imageHeight),int(imageWidth),Timestep),name='')(xDown)
         concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
         channels = Timestep
         return [concatenate,imageHeight,imageWidth,channels]
 
-        #keras.layers.transpose_shape(input,"tuple",)
+
 
 
     def ReNet(dataSize):
@@ -142,11 +145,12 @@ class Model:
         [concatenate,imageHeight,imageWidth,channels]=Model.FirstSideLayer(imageHeight,imageWidth,channels,input)
         [concatenate,imageHeight,imageWidth,channels]=Model.SideLayer(imageHeight,imageWidth,channels,concatenate,channels)
         [concatenate,imageHeight,imageWidth,channels]=Model.SideLayer(imageHeight,imageWidth,channels,concatenate,channels)
-        out = layers.Dense(4)(concatenate)
+        out = layers.Flatten()(concatenate)
+        out = (layers.Dense(int(32*32*5), activation='sigmoid'))(out)
         Model.model =  keras.models.Model(inputs=input,outputs=out)
 
         Model.model.compile(loss='binary_crossentropy', 
                       optimizer='adam', 
                       metrics=['accuracy'])
-        print(Model.model.summary())
+#        print(Model.model.summary())
         return Model.model
