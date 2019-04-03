@@ -3,6 +3,7 @@ from keras.models import Sequential, model_from_json
 from keras.layers import Dense, CuDNNLSTM, Bidirectional, TimeDistributed
 from keras import layers
 import keras
+import keras.backend as K
 #lstm: For example, say your input sequences look like X = [[0.54, 0.3], [0.11, 0.2], [0.37, 0.81]]. We can see that this sequence has a timestep of 3 and a data_dim of 2.
 class Model:
     """Utility class to represent a model."""
@@ -133,8 +134,12 @@ class Model:
         channels = Timestep
         return [concatenate,imageHeight,imageWidth,channels]
 
-
-
+    def reaRangeMatrix(x):
+        Whatisthis = K.all(x)
+        return Whatisthis
+    def rotateMatrix(x):
+        transposedValues = K.permute_dimensions(x, (0,2,1,3))
+        return transposedValues
 
     def ReNet(dataSize):
         imageHeight = dataSize[0]
@@ -142,6 +147,8 @@ class Model:
         channels = dataSize[2]
         input = layers.Input(shape=(imageHeight,imageWidth,channels))
         [concatenate,imageHeight,imageWidth,channels]=Model.FirstSideLayer(imageHeight,imageWidth,channels,input)
+        #concatenate = layers.Lambda(Model.rotateMatrix)(concatenate)
+        concatenate = layers.Lambda(Model.reaRangeMatrix)(concatenate)
         [concatenate,imageHeight,imageWidth,channels]=Model.SideLayer(imageHeight,imageWidth,channels,concatenate,channels)
         [concatenate,imageHeight,imageWidth,channels]=Model.SideLayer(imageHeight,imageWidth,channels,concatenate,channels)
         out = layers.Flatten()(concatenate)
