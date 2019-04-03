@@ -123,11 +123,10 @@ class Model:
         input = args[3]
         Timestep = int(imageHeight * imageWidth);
         #256,12
-#        reshapedinput = layers.Reshape((Timestep,channels*4),name='')(input)
-        reshapedinput = keras.layers.transpose_shape(reshapedinput,'channels_first',spatial_axes=(0,3))
+        reshapedinput = layers.Reshape((Timestep,channels*4),name='')(input)
+        #reshapedinput = keras.layers.transpose_shape(reshapedinput,'channels_first',spatial_axes=(0,3))
         xUp =   layers.CuDNNLSTM((Timestep), return_sequences=True)(reshapedinput)
         xDown = layers.CuDNNLSTM((Timestep),go_backwards = True, return_sequences=True)(reshapedinput)
-        layers.transpose_shape('')
         xUp = layers.Reshape((int(imageHeight),int(imageWidth),Timestep),name='')(xUp)
         xDown = layers.Reshape((int(imageHeight),int(imageWidth),Timestep),name='')(xDown)
         concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
@@ -152,5 +151,5 @@ class Model:
         Model.model.compile(loss='binary_crossentropy', 
                       optimizer='adam', 
                       metrics=['accuracy'])
-#        print(Model.model.summary())
+        print(Model.model.summary())
         return Model.model
