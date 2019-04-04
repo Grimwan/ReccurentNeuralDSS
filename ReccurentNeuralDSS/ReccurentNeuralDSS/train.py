@@ -4,6 +4,8 @@ from model.model import Model
 import utils.config as conf
 import numpy as np
 from keras.callbacks import TensorBoard
+import tensorflow as tf
+import keras as K
 
 def BiDirectionalLSTMRNN(*args):
 
@@ -210,6 +212,9 @@ def Train(*args):
     x_trainCB55 = []
     y_trainCB55 = []
     Model.save_model("CNNBID")
+    Model.model = None
+    tf.keras.backend.clear_session()
+    K.backend.clear_session()
     [x_trainCS18,y_trainCS18] = ImageLoader.read_Images(conf.DATADIR,["CS18/img/training"],  ["CS18/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
     TrainNetwork(NN,x_trainCS18,y_trainCS18,"CNNBID")
     del x_trainCS18

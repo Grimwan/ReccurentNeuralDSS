@@ -11,7 +11,7 @@
     <OutputPath>.</OutputPath>
     <Name>ReccurentNeuralDSS</Name>
     <RootNamespace>ReccurentNeuralDSS</RootNamespace>
-    <InterpreterId>Global|PythonCore|3.6</InterpreterId>
+    <InterpreterId>CondaEnv|CondaEnv|tfp3.6</InterpreterId>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'Debug' ">
     <DebugSymbols>true</DebugSymbols>
@@ -43,7 +43,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <InterpreterReference Include="Global|PythonCore|3.6" />
+    <InterpreterReference Include="CondaEnv|CondaEnv|tfp3.6" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="model\" />
