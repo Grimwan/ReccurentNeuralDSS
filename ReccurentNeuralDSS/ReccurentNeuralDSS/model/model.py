@@ -80,24 +80,28 @@ class Model:
         imageHeight = dataSize[0]
         imageWidth = dataSize[1]
         channels = dataSize[2]
-        Model.model = Sequential()
-        Model.model.add((layers.Conv2D(128,(3,3), activation='relu', input_shape=(imageHeight, imageWidth, channels))))
-        Model.model.add((layers.MaxPooling2D((2,2))))
-        Model.model.add((layers.Conv2D(64,(3, 3), activation = 'relu')))
-        Model.model.add((layers.MaxPooling2D((2,2))))
-        Model.model.add((layers.Conv2D(64,(3, 3), activation = 'relu')))
+        input = layers.Input(shape=(imageHeight,imageWidth,channels))
+        layer =layers.Conv2D(128,(3,3), activation='relu')(input)
+        layer =layers.MaxPooling2D((2,2))(layer)
+        layer =layers.Conv2D(64,(3,3), activation='relu')(layer)
+        layer =layers.MaxPooling2D((2,2))(layer)
+        layer =layers.Conv2D(64,(3,3), activation='relu')(layer)
+        layer =layers.MaxPooling2D((2,2))(layer)
+      
         #Model.model.add(TimeDistributed(layers.Flatten()))
-        Model.model.add(layers.Reshape((16,64),name='predictions'))
+        layer = layers.Reshape((layer._keras_shape[1]*layer._keras_shape[2],layer._keras_shape[3]),name='predictions')(layer)
         # input layer
-        Model.model.add(Bidirectional(CuDNNLSTM((64), return_sequences=True)))
-        Model.model.add((layers.Flatten()))
-        Model.model.add(layers.Dense(imageHeight*imageWidth*5, activation='sigmoid'))
-        
-        # compile settings
+        layer = Bidirectional(CuDNNLSTM((layer._keras_shape[2]), return_sequences=True))(layer)
+        layer = ((layers.Flatten()))(layer)
+        out = (layers.Dense(imageHeight*imageWidth*5, activation='sigmoid'))(layer)
+        Model.model =  keras.models.Model(inputs=input,outputs=out)
+
+
         Model.model.compile(loss='binary_crossentropy', 
                       optimizer='adam', 
                       metrics=['accuracy'])
         print(Model.model.summary())
+
         return Model.model
 
     def HorisontalySweepLayer(*args):
