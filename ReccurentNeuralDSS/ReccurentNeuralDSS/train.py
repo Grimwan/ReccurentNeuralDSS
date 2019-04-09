@@ -264,5 +264,5 @@ def ExperimentTraining(*args):
 
 
     #[X_train,Y_train] = ImageLoader.read_Images(conf.DATADIR,["DeansTestmap/img/training"],  ["DeansTestmap/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    #Model.ReNet([32,32,3])
+    Model.ReNet([32,32,3])
     #Model.build_CNN_BI_LSTM_model([64,64,3])

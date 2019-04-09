@@ -85,13 +85,19 @@ class Model:
         layer =layers.MaxPooling2D((2,2))(layer)
         layer =layers.Conv2D(64,(3,3), activation='relu')(layer)
         layer =layers.MaxPooling2D((2,2))(layer)
-        layer =layers.Conv2D(64,(3,3), activation='relu')(layer)
-        layer =layers.MaxPooling2D((2,2))(layer)
-      
-        #Model.model.add(TimeDistributed(layers.Flatten()))
-        layer = layers.Reshape((layer._keras_shape[1]*layer._keras_shape[2],layer._keras_shape[3]),name='predictions')(layer)
-        # input layer
-        layer = Bidirectional(CuDNNLSTM((layer._keras_shape[2]), return_sequences=True))(layer)
+        Split =layers.Conv2D(64,(3,3), activation='relu')(layer)
+        
+        #firstreadUpdown        
+        Split1 = layers.Reshape((Split._keras_shape[1]*Split._keras_shape[2],Split._keras_shape[3]),name='AddingTimeStepsupdown')(Split)
+        Split1 = Bidirectional(CuDNNLSTM((Split1._keras_shape[2]), return_sequences=True))(Split1)
+
+        #second read from side to side
+        Split2 = layers.Lambda(Model.rotateMatrix)(Split)
+        Split2 = layers.Reshape((Split2._keras_shape[1]*Split2._keras_shape[2],Split2._keras_shape[3]),name='AddingTimeStepsleftright')(Split2)
+        Split2 = Bidirectional(CuDNNLSTM((Split2._keras_shape[2]), return_sequences=True))(Split2)
+
+        layer = layers.concatenate(inputs = [Split1,Split2],axis=-1)
+
         layer = ((layers.Flatten()))(layer)
         out = (layers.Dense(imageHeight*imageWidth*5, activation='sigmoid'))(layer)
         Model.model =  keras.models.Model(inputs=input,outputs=out)
@@ -162,7 +168,10 @@ class Model:
         Whatisthis = K.all(x)
         return Whatisthis
     def rotateMatrix(x):
-        transposedValues = K.permute_dimensions(x, (0,2,1,3))
+        if(x.shape.ndims==4):
+            transposedValues = K.permute_dimensions(x, (0,2,1,3))
+        elif(x.shape.ndims ==3):
+            transposedValues = K.permute_dimensions(x, (0,2,1))
         return transposedValues
 
     def ReNetMiddleLayer(*args):
