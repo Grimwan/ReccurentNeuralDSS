@@ -1,6 +1,7 @@
 import matplotlib.pyplot as plt
 from utils.imageLoader import ImageLoader
 from model.model import Model
+from model.model import Unet
 import utils.config as conf
 import numpy as np
 from keras.callbacks import TensorBoard
@@ -62,7 +63,8 @@ def StandardCNN(*args):
     yreshapeValue = [conf.Xsize,conf.Ysize*5] 
     x_train = x_train.astype('float32') / 255
     y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0]*yreshapeValue[1])
-    model = Model.build_CNN_model(x_train[0].shape);
+    #model = Model.build_CNN_model(x_train[0].shape);
+    model = Model.build_Unet_model()
     model.fit(x_train, y_train, epochs=conf.AmountOfEpochs, batch_size=conf.batchSize,validation_split=conf.validationSplit)
     Model.model = model;
     return False
@@ -264,5 +266,5 @@ def ExperimentTraining(*args):
 
 
     #[X_train,Y_train] = ImageLoader.read_Images(conf.DATADIR,["DeansTestmap/img/training"],  ["DeansTestmap/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    Model.ReNet([32,32,3])
+    #Model.ReNet([32,32,3])
     #Model.build_CNN_BI_LSTM_model([64,64,3])

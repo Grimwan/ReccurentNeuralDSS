@@ -4,6 +4,64 @@ from keras.layers import Dense, CuDNNLSTM, Bidirectional, TimeDistributed
 from keras import layers
 import keras
 import keras.backend as K
+
+#############UNET#Import###############
+from keras.layers import Input, Conv2D, MaxPooling2D, UpSampling2D
+from keras.layers.core import SpatialDropout2D, Activation
+from keras.layers.merge import concatenate
+from keras.layers.normalization import BatchNormalization
+#######################################
+class Unet:
+
+    model = 0
+    def double_conv_layer(inputs, filter):
+        conv = Conv2D(filter, (3, 3), padding='same', kernel_initializer='he_normal')(inputs)
+        conv = BatchNormalization(axis=3)(conv)
+        conv = Activation('relu')(conv)
+        conv = Conv2D(filter, (3, 3), padding='same', kernel_initializer='he_normal')(conv)
+        conv = BatchNormalization(axis=3)(conv)
+        conv = Activation('relu')(conv)
+        conv = SpatialDropout2D(0.1)(conv)
+        return conv
+
+    def down_layer(inputs, filter):
+        """Create downsampling layer."""
+        conv = Unet.double_conv_layer(inputs, filter)
+        pool = MaxPooling2D(pool_size=(2, 2))(conv)
+        return conv, pool
+
+    def up_layer(inputs, concats, filter):
+        """Create upsampling layer."""
+        return Unet.double_conv_layer(concatenate([UpSampling2D(size=(2, 2))(inputs), concats], axis=3), filter)
+
+
+    def BuildUnet():
+        """Create U-net."""
+        inputs = Input((128, 128, 3))
+
+        # Downsampling.
+        down1, pool1 = Unet.down_layer(inputs, 32)
+        down2, pool2 = Unet.down_layer(pool1, 64)
+        down3, pool3 = Unet.down_layer(pool2, 128)
+        down4, pool4 = Unet.down_layer(pool3, 256)
+        down5, pool5 = Unet.down_layer(pool4, 512)
+
+        # Bottleneck.
+        bottleneck = Unet.double_conv_layer(pool5, 1024)
+
+        # Upsampling.
+        up5 = Unet.up_layer(bottleneck, down5, 512)
+        up4 = Unet.up_layer(up5, down4, 256)
+        up3 = Unet.up_layer(up4, down3, 128)
+        up2 = Unet.up_layer(up3, down2, 64)
+        up1 = Unet.up_layer(up2, down1, 32)
+
+        outputs = Conv2D(5, (1, 1))(up1)
+        outputs = Activation('sigmoid')(outputs)
+        outputs = layers.Flatten()(outputs)
+        Unet.model = keras.models.Model(inputs, outputs)
+        return Unet.model
+
 #lstm: For example, say your input sequences look like X = [[0.54, 0.3], [0.11, 0.2], [0.37, 0.81]]. We can see that this sequence has a timestep of 3 and a data_dim of 2.
 class Model:
     """Utility class to represent a model."""
@@ -50,8 +108,14 @@ class Model:
                 metrics=['accuracy'])
         return Model.model
         
-
-
+    def build_Unet_model():
+        #locked to 128 ;)
+        Model.model = Unet.BuildUnet()
+        print(Model.model.summary())
+        Model.model.compile(loss='binary_crossentropy', 
+                      optimizer='adam', 
+                      metrics=['accuracy'])
+        return Model.model
     def save_model(*args):
         if len(args) == 0:
             Name = "model"

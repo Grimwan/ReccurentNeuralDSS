@@ -18,8 +18,8 @@ WhereTosaveTestImage = "here"
 NameOfTestImage = "testimage"
 
 # variables
-Xsize = 32
-Ysize= 32
+Xsize = 128
+Ysize= 128
 AmountOfEpochs = 1
 batchSize = 50
 validationSplit = 0.2
