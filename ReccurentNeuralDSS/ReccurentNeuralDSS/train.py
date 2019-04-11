@@ -209,30 +209,19 @@ def Train(*args):
             Predict = args[1]
 
     #[x_trainCB55,y_trainCB55,x_trainCS18,y_trainCS18,x_trainCS863,y_trainCS863,PredictionPictureCB55,PredictionPictureCS]=ImageLoader.shortMain()
-    [x_trainCB55,y_trainCB55] = ImageLoader.read_Images(conf.DATADIR,["CB55/img/training"],  ["CB55/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)    
+    [x_train,y_train] = ImageLoader.read_Images(conf.DATADIR,["CB55/img/training"],  ["CB55/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)    
     #[x_trainCB55,y_trainCB55] = ImageLoader.augment_Images(x_trainCB55,y_trainCB55);
-    TrainNetwork(NN,x_trainCB55,y_trainCB55)
-    del x_trainCB55
-    del y_trainCB55
-    x_trainCB55 = []
-    y_trainCB55 = []
+    TrainNetwork(NN,x_train,y_train)
     Model.save_model("CNNBID")
     Model.model = None
     tf.keras.backend.clear_session()
     K.backend.clear_session()
-    [x_trainCS18,y_trainCS18] = ImageLoader.read_Images(conf.DATADIR,["CS18/img/training"],  ["CS18/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    TrainNetwork(NN,x_trainCS18,y_trainCS18,"CNNBID")
-    del x_trainCS18
-    del y_trainCS18
-    x_trainCS18 = []
-    y_trainCS18 = []
+    [x_train,y_train] = ImageLoader.read_Images(conf.DATADIR,["CS18/img/training"],  ["CS18/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
+    TrainNetwork(NN,x_train,y_train,"CNNBID")
     Model.save_model("CNNBID")
-    [x_trainCS863,y_trainCS863] = ImageLoader.read_Images(conf.DATADIR,["CS863/img/training"],  ["CS863/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    TrainNetwork(NN,x_trainCS863,y_trainCS863,"CNNBID")
-    del x_trainCS863
-    del y_trainCS863
-    x_trainCS863 = []
-    y_trainCS863 = []
+    [x_train,y_train] = ImageLoader.read_Images(conf.DATADIR,["CS863/img/training"],  ["CS863/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
+    TrainNetwork(NN,x_train,y_train,"CNNBID")
+
     #Model.model = Model.load_model("CNNBID")
     i = 0
     Model.save_model("CNNBID")
@@ -267,7 +256,5 @@ def ExperimentTraining(*args):
         if(len(args)>1):
             Predict = args[1]
 
-
-    #[X_train,Y_train] = ImageLoader.read_Images(conf.DATADIR,["DeansTestmap/img/training"],  ["DeansTestmap/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
     #Model.ReNet([32,32,3])
     #Model.build_CNN_BI_LSTM_model([64,64,3])

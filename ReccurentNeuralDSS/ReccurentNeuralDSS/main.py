@@ -3,9 +3,10 @@ import train
 
 
 def main():
-    train.Train("StandardCNN")
-    #train.Train("CNNBIDirectionalLstmRNN")
+    #train.Train("StandardCNN")
+    train.Train("CNNBIDirectionalLstmRNN")
     #train.ExperimentTraining()
     #train.Train("ReNet")
+
 if __name__ == "__main__":
     main()
