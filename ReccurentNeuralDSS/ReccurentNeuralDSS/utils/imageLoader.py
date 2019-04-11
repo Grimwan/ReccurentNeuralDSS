@@ -5,7 +5,9 @@ import utils.config as conf
 from numba import guvectorize
 from numba import int64
 from timeit import default_timer as timer
-
+from PIL import Image
+import Augmentor
+from Augmentor.Operations import Operation
 @guvectorize([(int64[:], int64[:], int64[:])], '(n),(i)->(i)', target='cpu')
 def turnlabeltoColorSingleCuda(label_data, arraySize, array):
     if((label_data[0] != 0)):
@@ -269,7 +271,34 @@ class ImageLoader():
         ImageLoader.mkdir_safe(path)
         cv2.imwrite(os.path.join(path, name + '.png'), image)
     
-    
+    def augment_Images(imgs_in,imgs_gt):
+        imgs = [[imgs_in[i], imgs_gt[i]] for i in range(len(imgs_in))]
+        p = Augmentor.DataPipeline(imgs)
+        p.random_distortion(0.5, 6, 6, 4)
+        # Linear transformations.
+        p.rotate(0.75, 15, 15)
+        p.shear(0.75, 10.0, 10.0)
+        p.zoom(0.75, 1.0, 1.2)
+        p.skew(0.75, 0.75)
+
+        batch = []
+        for i in range(0, len(p.augmentor_images)):
+            images_to_return = [Image.fromarray(x) for x in p.augmentor_images[i]]
+
+            for operation in p.operations:
+                r = round(random.uniform(0, 1), 1)
+                if r <= operation.probability:
+                    images_to_return = operation.perform_operation(images_to_return)
+
+            images_to_return = [np.asarray(x) for x in images_to_return]
+            batch.append(images_to_return)
+
+
+        imgs = batch
+        imgs_in = [p[0] for p in imgs]
+        imgs_gt = [p[1] for p in imgs]
+
+        return imgs_in, imgs_gt
 
     def mkdir_safe(path: str):
         if not os.path.exists(path):

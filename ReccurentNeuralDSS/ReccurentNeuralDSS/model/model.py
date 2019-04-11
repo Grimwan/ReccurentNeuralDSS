@@ -35,9 +35,12 @@ class Unet:
         return Unet.double_conv_layer(concatenate([UpSampling2D(size=(2, 2))(inputs), concats], axis=3), filter)
 
 
-    def BuildUnet():
+    def BuildUnet(dataSize):
+        imageHeight = dataSize[0]
+        imageWidth = dataSize[1]
+        channels = dataSize[2]
         """Create U-net."""
-        inputs = Input((128, 128, 3))
+        inputs = Input((imageHeight, imageWidth, channels))
 
         # Downsampling.
         down1, pool1 = Unet.down_layer(inputs, 32)
@@ -108,9 +111,9 @@ class Model:
                 metrics=['accuracy'])
         return Model.model
         
-    def build_Unet_model():
+    def build_Unet_model(dataSize):
         #locked to 128 ;)
-        Model.model = Unet.BuildUnet()
+        Model.model = Unet.BuildUnet(dataSize)
         print(Model.model.summary())
         Model.model.compile(loss='binary_crossentropy', 
                       optimizer='adam', 

@@ -8,6 +8,8 @@ from keras.callbacks import TensorBoard
 import tensorflow as tf
 import keras as K
 
+
+
 def BiDirectionalLSTMRNN(*args):
 
     loadModel = ""
@@ -64,7 +66,7 @@ def StandardCNN(*args):
     x_train = x_train.astype('float32') / 255
     y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0]*yreshapeValue[1])
     #model = Model.build_CNN_model(x_train[0].shape);
-    model = Model.build_Unet_model()
+    model = Model.build_Unet_model(x_train[0].shape)
     model.fit(x_train, y_train, epochs=conf.AmountOfEpochs, batch_size=conf.batchSize,validation_split=conf.validationSplit)
     Model.model = model;
     return False
@@ -207,7 +209,8 @@ def Train(*args):
             Predict = args[1]
 
     #[x_trainCB55,y_trainCB55,x_trainCS18,y_trainCS18,x_trainCS863,y_trainCS863,PredictionPictureCB55,PredictionPictureCS]=ImageLoader.shortMain()
-    [x_trainCB55,y_trainCB55] = ImageLoader.read_Images(conf.DATADIR,["CB55/img/training"],  ["CB55/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
+    [x_trainCB55,y_trainCB55] = ImageLoader.read_Images(conf.DATADIR,["CB55/img/training"],  ["CB55/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)    
+    #[x_trainCB55,y_trainCB55] = ImageLoader.augment_Images(x_trainCB55,y_trainCB55);
     TrainNetwork(NN,x_trainCB55,y_trainCB55)
     del x_trainCB55
     del y_trainCB55
