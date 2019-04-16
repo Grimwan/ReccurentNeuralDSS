@@ -79,11 +79,11 @@ class Model:
 
         input = layers.Input(shape=(timesteps,data_dim))       
         #firstreadUpdown          
-        Split1 = Bidirectional(CuDNNLSTM((data_dim), return_sequences=True))(input)
+        Split1 = Bidirectional(CuDNNLSTM((data_dim), unit_forget_bias=True,return_sequences=True))(input)
         #second read from side to side
         Split2 = layers.Lambda(Model.rotateMatrix)(input)
         Split2 = layers.Reshape((timesteps,data_dim),name='ReshapeingforTimesteps')(Split2)
-        Split2 = Bidirectional(CuDNNLSTM((data_dim), return_sequences=True))(Split2)
+        Split2 = Bidirectional(CuDNNLSTM((data_dim),unit_forget_bias=True, return_sequences=True))(Split2)
 
         layer = layers.concatenate(inputs = [Split1,Split2],axis=-1)
 
@@ -172,12 +172,12 @@ class Model:
         
         #firstreadUpdown        
         Split1 = layers.Reshape((Split._keras_shape[1]*Split._keras_shape[2],Split._keras_shape[3]),name='AddingTimeStepsupdown')(Split)
-        Split1 = Bidirectional(CuDNNLSTM((Split1._keras_shape[2]), return_sequences=True))(Split1)
+        Split1 = Bidirectional(CuDNNLSTM((Split1._keras_shape[2]),unit_forget_bias=True, return_sequences=True))(Split1)
 
         #second read from side to side
         Split2 = layers.Lambda(Model.rotateMatrix)(Split)
         Split2 = layers.Reshape((Split2._keras_shape[1]*Split2._keras_shape[2],Split2._keras_shape[3]),name='AddingTimeStepsleftright')(Split2)
-        Split2 = Bidirectional(CuDNNLSTM((Split2._keras_shape[2]), return_sequences=True))(Split2)
+        Split2 = Bidirectional(CuDNNLSTM((Split2._keras_shape[2]),unit_forget_bias=True, return_sequences=True))(Split2)
 
         layer = layers.concatenate(inputs = [Split1,Split2],axis=-1)
 
@@ -201,8 +201,8 @@ class Model:
         Timestep = int(imageHeight * imageWidth*2);
         input = layers.Lambda(Model.rotateMatrix)(input)
         reshapedinput = layers.Reshape((Timestep,channels),name='')(input)
-        xUp =   layers.CuDNNLSTM(int(channels/2), return_sequences=True)(reshapedinput)
-        xDown = layers.CuDNNLSTM(int(channels/2),go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp =   layers.CuDNNLSTM(int(channels/2),unit_forget_bias=True, return_sequences=True)(reshapedinput)
+        xDown = layers.CuDNNLSTM(int(channels/2),unit_forget_bias=True,go_backwards = True, return_sequences=True)(reshapedinput)
         xUp =   layers.Reshape((int(imageHeight),int(imageWidth),channels),name='')(xUp)
         xDown = layers.Reshape((int(imageHeight),int(imageWidth),channels),name='')(xDown)
         concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
@@ -217,8 +217,8 @@ class Model:
         input = args[3]
         Timestep = int(imageHeight * imageWidth*0.5);
         reshapedinput = layers.Reshape((Timestep,channels*4),name='')(input)
-        xUp =   layers.CuDNNLSTM(int(channels/2), return_sequences=True)(reshapedinput)
-        xDown = layers.CuDNNLSTM(int(channels/2),go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp =   layers.CuDNNLSTM(int(channels/2),unit_forget_bias=True, return_sequences=True)(reshapedinput)
+        xDown = layers.CuDNNLSTM(int(channels/2),unit_forget_bias=True,go_backwards = True, return_sequences=True)(reshapedinput)
         xUp =   layers.Reshape((int(imageHeight*0.5),int(imageWidth*0.5),channels),name='')(xUp)
         xDown = layers.Reshape((int(imageHeight*0.5),int(imageWidth*0.5),channels),name='')(xDown)
         concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
@@ -236,8 +236,8 @@ class Model:
         #256,12
         reshapedinput = layers.Reshape((Timestep,channels*4),name='')(input)
         #reshapedinput = keras.layers.transpose_shape(reshapedinput,'channels_first',spatial_axes=(0,3))
-        xUp =   layers.CuDNNLSTM((Timestep), return_sequences=True)(reshapedinput)
-        xDown = layers.CuDNNLSTM((Timestep),go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp =   layers.CuDNNLSTM((Timestep),unit_forget_bias=True, return_sequences=True)(reshapedinput)
+        xDown = layers.CuDNNLSTM((Timestep),unit_forget_bias=True,go_backwards = True, return_sequences=True)(reshapedinput)
         xUp = layers.Reshape((int(imageHeight),int(imageWidth),Timestep),name='')(xUp)
         xDown = layers.Reshape((int(imageHeight),int(imageWidth),Timestep),name='')(xDown)
         concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
