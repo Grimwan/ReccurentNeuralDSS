@@ -76,15 +76,31 @@ class Model:
         timesteps = dataSize[0] # first layer array size
         data_dim = dataSize[1] # how big is one part in the array.
         
+
+        input = layers.Input(shape=(timesteps,data_dim))       
+        #firstreadUpdown          
+        Split1 = Bidirectional(CuDNNLSTM((data_dim), return_sequences=True))(input)
+        #second read from side to side
+        Split2 = layers.Lambda(Model.rotateMatrix)(input)
+        Split2 = layers.Reshape((timesteps,data_dim),name='ReshapeingforTimesteps')(Split2)
+        Split2 = Bidirectional(CuDNNLSTM((data_dim), return_sequences=True))(Split2)
+
+        layer = layers.concatenate(inputs = [Split1,Split2],axis=-1)
+
+
+        layer = ((layers.Flatten()))(layer)
+        out = (layers.Dense((int)(timesteps*(data_dim/3)*5), activation='sigmoid'))(layer)
+        Model.model =  keras.models.Model(inputs=input,outputs=out)
+
         # input layer
-        Model.model.add(Bidirectional(CuDNNLSTM((data_dim), return_sequences=True), batch_input_shape=(None, timesteps,data_dim)))
-        Model.model.add(Dense(160, activation='sigmoid'))
+        #Model.model.add(Bidirectional(CuDNNLSTM((data_dim), return_sequences=True), batch_input_shape=(None, timesteps,data_dim)))
+        #Model.model.add(Dense(160, activation='sigmoid'))
         
         # compile settings
         Model.model.compile(loss='binary_crossentropy', 
                       optimizer='adam', 
                       metrics=['accuracy'])
-#        print(Model.model.summary())
+        print(Model.model.summary())
         return Model.model
 
     def build_CNN_model(dataSize):

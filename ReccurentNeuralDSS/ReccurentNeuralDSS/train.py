@@ -34,7 +34,7 @@ def BiDirectionalLSTMRNN(*args):
     yreshapeValue = [conf.Xsize,conf.Ysize*5] # for LSTMRNN
     x_train = x_train.reshape(x_train.shape[0], xreshapeValue[0],xreshapeValue[1])
     x_train = x_train.astype('float32') / 255
-    y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0],yreshapeValue[1])
+    y_train = y_train.reshape(y_train.shape[0],yreshapeValue[0]*yreshapeValue[1])
     if(loadModel ==""):
         model = Model.build_BI_LSTM_model(x_train[0].shape)
     else:
@@ -234,7 +234,7 @@ def Train(*args):
     del GTPredictPicturesCB55
     GTPredictPicturesCB55 = []
     [PredictPicturesCS,GTPredictPicturesCS]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureCS,conf.PredictionPictureResultCS,[1, conf.Xsize, conf.Ysize],False)
-    for eachPicture in PredictionPictureCS:
+    for eachPicture in PredictPicturesCS:
         SaveImage(False, eachPicture,i,4992,3328)
         i = i+1
     del PredictPicturesCS

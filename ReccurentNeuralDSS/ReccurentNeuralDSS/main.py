@@ -4,7 +4,7 @@ import train
 
 def main():
     #train.Train("StandardCNN")
-    train.Train("CNNBIDirectionalLstmRNN")
+    train.Train("BiDirectionalLSTMRNN")
     #train.ExperimentTraining()
     #train.Train("ReNet")
 
