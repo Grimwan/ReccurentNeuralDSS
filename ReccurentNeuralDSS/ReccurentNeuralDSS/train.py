@@ -256,5 +256,5 @@ def ExperimentTraining(*args):
         if(len(args)>1):
             Predict = args[1]
 
-    #Model.ReNet([32,32,3])
+    Model.ReNet([32,32,3])
     #Model.build_CNN_BI_LSTM_model([64,64,3])

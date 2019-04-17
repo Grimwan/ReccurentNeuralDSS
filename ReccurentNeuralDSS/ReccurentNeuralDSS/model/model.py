@@ -199,6 +199,7 @@ class Model:
         channels = args[2]
         input = args[3]
         Timestep = int(imageHeight * imageWidth*2);
+
         input = layers.Lambda(Model.rotateMatrix)(input)
         reshapedinput = layers.Reshape((Timestep,channels),name='')(input)
         xUp =   layers.CuDNNLSTM(int(channels/2),unit_forget_bias=True, return_sequences=True)(reshapedinput)
@@ -245,6 +246,24 @@ class Model:
         return [concatenate,imageHeight,imageWidth,channels]
 
 
+    def VerticalysweepUpscaleLayer(*args):
+        imageHeight = args[0]
+        imageWidth = args[1]
+        channels = args[2]
+        input = args[3]
+        Timestep = int(imageHeight * imageWidth*2);
+        reshapedinput = layers.Reshape((Timestep,channels),name='')(input)
+        xUp =   layers.CuDNNLSTM(int(channels * 2),unit_forget_bias=True, return_sequences=True)(reshapedinput)
+        xDown = layers.CuDNNLSTM(int(channels * 2),unit_forget_bias=True,go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp =   layers.Reshape((int(imageHeight*4.5),int(imageWidth*4.5),int(channels/2)),name='')(xUp)
+        xDown = layers.Reshape((int(imageHeight*4.5),int(imageWidth*4.5),int(channels/2)),name='')(xDown)
+        concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
+        channels = channels
+        imageHeight = imageHeight*4.5
+        imageWidth = imageWidth *4.5
+        return [concatenate,imageHeight,imageWidth,channels]
+
+
 
 
     def reaRangeMatrix(x):
@@ -257,13 +276,22 @@ class Model:
             transposedValues = K.permute_dimensions(x, (0,2,1))
         return transposedValues
 
-    def ReNetMiddleLayer(*args):
+    def ReNetScaleDownLayer(*args):
         imageHeight = args[0]
         imageWidth = args[1]
         channels = args[2]
         concatenate = args[3]
         [concatenate,imageHeight,imageWidth,channels]=Model.VerticalysweepLayer(imageHeight,imageWidth,channels,concatenate)
-        [concatenate,imageHeight,imageWidth,channels]=Model.HorisontalySweepLayer(imageHeight,imageWidth,channels,concatenate)
+        [concatenate,imageHeight,imageWidth,channels]=Model.HorisontalySweepLayer(imageHeight,imageWidth,channels,concatenate,0)
+        return [concatenate,imageHeight,imageWidth,channels]
+
+    def ReNetScaleUpLayer(*args):
+        imageHeight = args[0]
+        imageWidth = args[1]
+        channels = args[2]
+        concatenate = args[3]
+        [concatenate,imageHeight,imageWidth,channels]=Model.VerticalysweepUpscaleLayer(imageHeight,imageWidth,channels,concatenate)
+        [concatenate,imageHeight,imageWidth,channels]=Model.HorisontalySweepLayer(imageHeight,imageWidth,channels,concatenate,0)
         return [concatenate,imageHeight,imageWidth,channels]
 
     def ReNet(dataSize):
@@ -274,8 +302,11 @@ class Model:
         [concatenate,imageHeight,imageWidth,channels]=Model.FirstVerticalysweepLayer(imageHeight,imageWidth,channels,input)
         [concatenate,imageHeight,imageWidth,channels]=Model.HorisontalySweepLayer(imageHeight,imageWidth,channels,concatenate)
         #Enter amount of ReNetLayers from here on
-        [concatenate,imageHeight,imageWidth,channels]=Model.ReNetMiddleLayer(imageHeight,imageWidth,channels,concatenate)
-        [concatenate,imageHeight,imageWidth,channels]=Model.ReNetMiddleLayer(imageHeight,imageWidth,channels,concatenate)
+        [concatenate,imageHeight,imageWidth,channels]=Model.ReNetScaleDownLayer(imageHeight,imageWidth,channels,concatenate)
+        [concatenate,imageHeight,imageWidth,channels]=Model.ReNetScaleDownLayer(imageHeight,imageWidth,channels,concatenate)
+        [concatenate,imageHeight,imageWidth,channels]=Model.ReNetScaleUpLayer(imageHeight,imageWidth,channels,concatenate)
+        [concatenate,imageHeight,imageWidth,channels]=Model.ReNetScaleUpLayer(imageHeight,imageWidth,channels,concatenate)
+
         #end of amount of ReNetLayers
         out = layers.Flatten()(concatenate)
         out = (layers.Dense(int(32*32*5), activation='sigmoid'))(out)
