@@ -65,6 +65,47 @@ class Unet:
         Unet.model = keras.models.Model(inputs, outputs)
         return Unet.model
 
+
+
+class ReDeaNet:
+    model = 0
+
+    def verticalSweepLayer(input,filter,Scale,Down):
+        height = input._keras_shape[1]
+        width = input._keras_shape[2]
+        Channels = input._keras_shape[3]
+        Scale = Scale * 2
+        Timestep = int(width * height*(1/Scale));
+        reshapedinput = layers.Reshape((int(Timestep),int(Channels*Scale)),name='')(input)
+        if(Down):
+            xUp =   layers.CuDNNLSTM(int(filter/2),unit_forget_bias=True, return_sequences=True)(reshapedinput)
+            xDown = layers.CuDNNLSTM(int(filter/2),unit_forget_bias=True,go_backwards = True, return_sequences=True)(reshapedinput)
+            xUp =   layers.Reshape((int(height*(2/Scale)),int(width*(2/Scale)),int(filter/2)),name='')(xUp)
+            xDown = layers.Reshape((int(height*(2/Scale)),int(width*(2/Scale)),int(filter/2)),name='')(xDown)
+        else:
+            xUp =   layers.CuDNNLSTM(int(filter*Scale*2),unit_forget_bias=True, return_sequences=True)(reshapedinput)
+            xDown = layers.CuDNNLSTM(int(filter*Scale*2),unit_forget_bias=True,go_backwards = True, return_sequences=True)(reshapedinput)
+            xUp =   layers.Reshape((int(height*(Scale/2)),int(width*(Scale/2)),int(filter/2)),name='')(xUp)
+            xDown = layers.Reshape((int(height*(Scale/2)),int(width*(Scale/2)),int(filter/2)),name='')(xDown)
+        concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
+        return concatenate
+    def down_layer(input,filter,Scale):
+        input = ReDeaNet.verticalSweepLayer(input,filter,Scale,True)
+        input = ReDeaNet.verticalSweepLayer(input,filter,Scale,True)
+        input = ReDeaNet.verticalSweepLayer(input,filter,Scale,True)
+        return input
+    def BuildDeaNet(dataSize):
+        imageHeight = dataSize[0]
+        imageWidth = dataSize[1]
+        channels = dataSize[2]
+        """Create ReDeaNet."""
+        inputs = Input((imageHeight, imageWidth, channels))
+        down1 = ReDeaNet.down_layer(inputs, 32,2)
+        outputs = layers.Flatten()(down1)
+        Unet.model = keras.models.Model(inputs, outputs)
+        return Unet.model
+
+
 #lstm: For example, say your input sequences look like X = [[0.54, 0.3], [0.11, 0.2], [0.37, 0.81]]. We can see that this sequence has a timestep of 3 and a data_dim of 2.
 class Model:
     """Utility class to represent a model."""
@@ -135,6 +176,14 @@ class Model:
                       optimizer='adam', 
                       metrics=['accuracy'])
         return Model.model
+    def build_ReDeaNet_model(dataSize):
+        Model.model = ReDeaNet.BuildDeaNet(dataSize)
+        print(Model.model.summary())
+        Model.model.compile(loss='binary_crossentropy', 
+                      optimizer='adam', 
+                      metrics=['accuracy'])
+        return Model.model
+
     def save_model(*args):
         if len(args) == 0:
             Name = "model"
