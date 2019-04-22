@@ -70,6 +70,29 @@ class Unet:
 class ReDeaNet:
     model = 0
 
+    def reaRangeMatrix(x):
+        Whatisthis = K.all(x)
+        return Whatisthis
+    def rotateMatrix(x):
+        if(x.shape.ndims==4):
+            transposedValues = K.permute_dimensions(x, (0,2,1,3))
+        elif(x.shape.ndims ==3):
+            transposedValues = K.permute_dimensions(x, (0,2,1))
+        return transposedValues
+    def HorisontalySweepLayer(input,filter):
+        height = input._keras_shape[1]
+        width = input._keras_shape[2]
+        Channels = input._keras_shape[3]
+        Timestep = int(width * height);
+        input = layers.Lambda(Model.rotateMatrix)(input)
+        reshapedinput = layers.Reshape((int(Timestep),int(Channels)),name='')(input)
+        xUp =   layers.CuDNNLSTM(int(filter/2),unit_forget_bias=True, return_sequences=True)(reshapedinput)
+        xDown = layers.CuDNNLSTM(int(filter/2),unit_forget_bias=True,go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp =   layers.Reshape((int(height),int(width),int(filter/2)),name='')(xUp)
+        xDown = layers.Reshape((int(height),int(width),int(filter/2)),name='')(xDown)
+        concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
+        concatenate = layers.Lambda(Model.rotateMatrix)(concatenate)
+        return concatenate
     def verticalSweepLayer(input,filter,Scale,Down):
         height = input._keras_shape[1]
         width = input._keras_shape[2]
@@ -91,8 +114,11 @@ class ReDeaNet:
         return concatenate
     def down_layer(input,filter,Scale):
         input = ReDeaNet.verticalSweepLayer(input,filter,Scale,True)
-        input = ReDeaNet.verticalSweepLayer(input,filter,Scale,True)
-        input = ReDeaNet.verticalSweepLayer(input,filter,Scale,True)
+        input = ReDeaNet.HorisontalySweepLayer(input,filter)
+        return input
+    def up_layer(input,filter,Scale):
+        input = ReDeaNet.verticalSweepLayer(input,filter,Scale,False)
+        input = ReDeaNet.HorisontalySweepLayer(input,filter)
         return input
     def BuildDeaNet(dataSize):
         imageHeight = dataSize[0]
@@ -100,8 +126,11 @@ class ReDeaNet:
         channels = dataSize[2]
         """Create ReDeaNet."""
         inputs = Input((imageHeight, imageWidth, channels))
-        down1 = ReDeaNet.down_layer(inputs, 32,2)
-        outputs = layers.Flatten()(down1)
+        down1 = ReDeaNet.down_layer(inputs, 4,2)
+        down2 = ReDeaNet.down_layer(down1, 64,2)
+        up1 = ReDeaNet.up_layer(down2, 64,2)
+        up2 = ReDeaNet.up_layer(up1, 4,2)
+        outputs = layers.Flatten()(up2)
         Unet.model = keras.models.Model(inputs, outputs)
         return Unet.model
 
@@ -266,7 +295,6 @@ class Model:
         channels = args[2]
         input = args[3]
         Timestep = int(imageHeight * imageWidth*2);
-
         input = layers.Lambda(Model.rotateMatrix)(input)
         reshapedinput = layers.Reshape((Timestep,channels),name='')(input)
         xUp =   layers.CuDNNLSTM(int(channels/2),unit_forget_bias=True, return_sequences=True)(reshapedinput)
