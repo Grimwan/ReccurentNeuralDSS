@@ -193,6 +193,24 @@ class Model:
 
         return Model.model
 
+    def HorisontalySweepUpLayer(*args):
+        imageHeight = args[0]
+        imageWidth = args[1]
+        channels = args[2]
+        input = args[3]
+        Timestep = int(imageHeight * imageWidth);
+
+        input = layers.Lambda(Model.rotateMatrix)(input)
+        reshapedinput = layers.Reshape((Timestep,channels),name='')(input)
+        xUp =   layers.CuDNNLSTM(int(channels/2),unit_forget_bias=True, return_sequences=True)(reshapedinput)
+        xDown = layers.CuDNNLSTM(int(channels/2),unit_forget_bias=True,go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp =   layers.Reshape((int(imageHeight),int(imageWidth),int(channels/2)),name='')(xUp)
+        xDown = layers.Reshape((int(imageHeight),int(imageWidth),int(channels/2)),name='')(xDown)
+        concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
+        concatenate = layers.Lambda(Model.rotateMatrix)(concatenate)
+        channels = channels/2
+        return [concatenate,imageHeight,imageWidth,channels]
+
     def HorisontalySweepLayer(*args):
         imageHeight = args[0]
         imageWidth = args[1]
@@ -251,16 +269,16 @@ class Model:
         imageWidth = args[1]
         channels = args[2]
         input = args[3]
-        Timestep = int(imageHeight * imageWidth*2);
-        reshapedinput = layers.Reshape((Timestep,channels),name='')(input)
-        xUp =   layers.CuDNNLSTM(int(channels * 2),unit_forget_bias=True, return_sequences=True)(reshapedinput)
-        xDown = layers.CuDNNLSTM(int(channels * 2),unit_forget_bias=True,go_backwards = True, return_sequences=True)(reshapedinput)
-        xUp =   layers.Reshape((int(imageHeight*4.5),int(imageWidth*4.5),int(channels/2)),name='')(xUp)
-        xDown = layers.Reshape((int(imageHeight*4.5),int(imageWidth*4.5),int(channels/2)),name='')(xDown)
+        Timestep = int(imageHeight * imageWidth);
+        reshapedinput = layers.Reshape((Timestep,int(channels*2)),name='')(input)
+        xUp =   layers.CuDNNLSTM(int(channels),unit_forget_bias=True, return_sequences=True)(reshapedinput)
+        xDown = layers.CuDNNLSTM(int(channels),unit_forget_bias=True,go_backwards = True, return_sequences=True)(reshapedinput)
+        xUp =   layers.Reshape((int(imageHeight*2),int(imageWidth*2),int(channels/4)),name='')(xUp)
+        xDown = layers.Reshape((int(imageHeight*2),int(imageWidth*2),int(channels/4)),name='')(xDown)
         concatenate = layers.concatenate(inputs = [xUp,xDown],axis=-1)
-        channels = channels
-        imageHeight = imageHeight*4.5
-        imageWidth = imageWidth *4.5
+        channels = int(channels/2)
+        imageHeight = imageHeight*2
+        imageWidth = imageWidth *2
         return [concatenate,imageHeight,imageWidth,channels]
 
 
@@ -291,7 +309,7 @@ class Model:
         channels = args[2]
         concatenate = args[3]
         [concatenate,imageHeight,imageWidth,channels]=Model.VerticalysweepUpscaleLayer(imageHeight,imageWidth,channels,concatenate)
-        [concatenate,imageHeight,imageWidth,channels]=Model.HorisontalySweepLayer(imageHeight,imageWidth,channels,concatenate,0)
+        [concatenate,imageHeight,imageWidth,channels]=Model.HorisontalySweepUpLayer(imageHeight,imageWidth,channels,concatenate,0)
         return [concatenate,imageHeight,imageWidth,channels]
 
     def ReNet(dataSize):
