@@ -212,19 +212,19 @@ def Train(*args):
     [x_train,y_train] = ImageLoader.read_Images(conf.DATADIR,["CB55/img/training"],  ["CB55/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)    
     #[x_trainCB55,y_trainCB55] = ImageLoader.augment_Images(x_trainCB55,y_trainCB55);
     TrainNetwork(NN,x_train,y_train)
-    Model.save_model("CNNBID")
+    Model.save_model(WhereToSave)
     Model.model = None
     tf.keras.backend.clear_session()
     K.backend.clear_session()
     [x_train,y_train] = ImageLoader.read_Images(conf.DATADIR,["CS18/img/training"],  ["CS18/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    TrainNetwork(NN,x_train,y_train,"CNNBID")
-    Model.save_model("CNNBID")
+    TrainNetwork(NN,x_train,y_train,WhereToSave)
+    Model.save_model(WhereToSave)
     [x_train,y_train] = ImageLoader.read_Images(conf.DATADIR,["CS863/img/training"],  ["CS863/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)
-    TrainNetwork(NN,x_train,y_train,"CNNBID")
+    TrainNetwork(NN,x_train,y_train,WhereToSave)
 
     #Model.model = Model.load_model("CNNBID")
     i = 0
-    Model.save_model("CNNBID")
+    Model.save_model(WhereToSave)
     [PredictionPictureCB55,GTPredictPicturesCB55]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureCB55,conf.PredictionPictureResultCB55,[1, conf.Xsize, conf.Ysize],False)
     for eachPicture in PredictionPictureCB55:
         SaveImage(False, eachPicture,i,6496,4872)
@@ -261,6 +261,26 @@ def ExperimentTraining(*args):
     #Model.build_CNN_BI_LSTM_model([64,64,3])
 
 
+
+def PredictImages(Load,boolstate):
+    i = 0
+    Model.model=Model.load_model(Load)
+    [PredictionPictureCB55,GTPredictPicturesCB55]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureCB55,conf.PredictionPictureResultCB55,[1, conf.Xsize, conf.Ysize],False)
+    for eachPicture in PredictionPictureCB55:
+        SaveImage(boolstate, eachPicture,i,6496,4872)
+        i = i+1
+    del PredictionPictureCB55
+    PredictionPictureCB55 = []
+    del GTPredictPicturesCB55
+    GTPredictPicturesCB55 = []
+    [PredictPicturesCS,GTPredictPicturesCS]=ImageLoader.read_Images(conf.DATADIR,conf.PredictionPictureCS,conf.PredictionPictureResultCS,[1, conf.Xsize, conf.Ysize],False)
+    for eachPicture in PredictPicturesCS:
+        SaveImage(boolstate, eachPicture,i,4992,3328)
+        i = i+1
+    del PredictPicturesCS
+    del GTPredictPicturesCS
+    PredictPicturesCS =  []
+    GTPredictPicturesCS = []
 
 def ImageLoaderTest():
     [x_train,y_train] = ImageLoader.read_Images(conf.DATADIR,["DeansTestmap/img/training"],  ["DeansTestmap/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)   
