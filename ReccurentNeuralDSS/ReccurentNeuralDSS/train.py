@@ -259,3 +259,32 @@ def ExperimentTraining(*args):
     Model.build_ReDeaNet_model([32,32,32])
     #Model.ReNet([32,32,3])
     #Model.build_CNN_BI_LSTM_model([64,64,3])
+
+
+
+def ImageLoaderTest():
+    [x_train,y_train] = ImageLoader.read_Images(conf.DATADIR,["DeansTestmap/img/training"],  ["DeansTestmap/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)   
+
+
+    x = 6496
+    y = 4872
+    # show result
+    #x = 4992
+    #y = 3328
+    predictionorignalshape = y_train.shape[0]
+    i = 0
+    newPrediction = []
+    for eachprediction in y_train:
+        newPrediction.append(ImageLoader.turnLabeltoColorvalues(eachprediction))
+        i = i+1
+        #if(i%1000 == 0):
+        print(i)
+
+
+    newPrediction = ImageLoader.convert_list_to_np(newPrediction)
+    newPrediction = newPrediction.reshape(predictionorignalshape, conf.Xsize,conf.Ysize, 3)    
+
+    img = ImageLoader.combine_images(newPrediction,x, y)
+    img = ImageLoader.adjust_colors(img)
+    Number = "Tessstss"
+    ImageLoader.save_image(conf.WhereTosaveTestImage,img,conf.NameOfTestImage + str(Number))

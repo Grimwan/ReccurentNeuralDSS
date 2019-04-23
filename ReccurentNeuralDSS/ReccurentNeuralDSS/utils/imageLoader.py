@@ -46,7 +46,7 @@ def turnlabeltoColorSingleCuda(label_data, arraySize, array):
     elif(((label_data == [0,0,1,1,0])).all()):
         array = relabel_colors(array, 0, 0, 6)
     elif(((label_data == [0,0,0,0,1])).all()):
-        array = relabel_colors(array, 0, 0, 7)
+        array = relabel_colors(array, 0, 0, 8)
     elif(((label_data == [0,1,0,0,1])).all()):
         array = relabel_colors(array, 0, 0, 9)
     elif(((label_data == [0,0,1,0,1])).all()):
