@@ -1,0 +1,41 @@
+#!/bin/bash
+# my first script
+set -e
+ArrayNNIMage=()
+for entry in NNImage/*
+do
+	ArrayNNIMage+=("$entry")
+#	echo "$entry"
+done
+#echo ${ArrayNNIMage[1]}
+#echo ${#ArrayNNIMage[@]}
+
+ArrayCorrectIoUImage=()
+for entry in CorrectIoUImage/*
+do
+	ArrayCorrectIoUImage+=("$entry")
+#	echo "$entry"
+done
+if [ "${#ArrayNNIMage[@]}" -eq "${#ArrayCorrectIoUImage[@]}" ];
+then
+	echo it checks out
+else
+ echo  the folders have different amount of pictures in them 
+	exit 1
+fi
+
+#storedvalue="$2"
+#echo "$storedvalue"
+for i in `seq 1 "${#ArrayNNIMage[@]}"`;
+do
+Ivalue=$(( $i-1 ))
+#echo ${ArrayNNIMage[$Ivalue]}
+#echo ${ArrayCorrectIoUImage[$Ivalue]}
+	java -jar LayoutAnalysisEvaluator.jar -gt ${ArrayNNIMage[$Ivalue]} -p ${ArrayCorrectIoUImage[$Ivalue]} --outputPath ../outputImage --json textfiles/TextTest$Ivalue
+#echo "$Ivalue"
+done
+#FILE="textfiles/JavaLayoutAnalysis"
+#/bin/cat <<EOM >$FILE
+#text1
+#text2
+#EOM

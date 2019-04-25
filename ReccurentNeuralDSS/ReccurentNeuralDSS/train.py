@@ -7,7 +7,7 @@ import numpy as np
 from keras.callbacks import TensorBoard
 import tensorflow as tf
 import keras as K
-
+import cv2
 
 
 def BiDirectionalLSTMRNN(*args):
@@ -182,11 +182,11 @@ def SaveImage(*args):
     prediction = ImageLoader.convert_list_to_np(prediction)
     prediction = prediction.reshape(predictionorignalshape, conf.Xsize,conf.Ysize, 3)    
     # show result
-
     img = ImageLoader.combine_images(prediction, args[3], args[4])
     img = ImageLoader.adjust_colors(img)
     Number = str(args[2])
     ImageLoader.save_image(conf.WhereTosaveTestImage,img,conf.NameOfTestImage + str(Number))
+    ImageLoader.MovePicture(conf.WhereTosaveTestImage,conf.NameOfTestImage + str(Number),-12,0)
 #    plt.imshow(img)
 #    plt.show()
     return 0

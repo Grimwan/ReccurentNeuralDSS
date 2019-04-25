@@ -333,6 +333,15 @@ class ImageLoader():
         returnThisArray.append(turnlabeltoColorSingleCuda(Array,b))
         return returnThisArray
 
+    def MovePicture(Folder,ImageTOFix,moveRow,moveCols):
+        img = cv2.imread(Folder+"/"+ImageTOFix+".png")
+        num_cols,num_rows= img.shape[:2]
+        translate_matrix = np.float32([ [1,0,moveRow], [0,1,moveCols] ])
+        img = ImageLoader.convert_list_to_np(img)
+        img = cv2.warpAffine(img, translate_matrix, (num_rows+abs(moveRow), num_cols+abs(moveCols)))
+        #img = ImageLoader.adjust_colors(img)
+        ImageLoader.save_image(Folder,img,ImageTOFix+"fixedImage")
+
     def read_Images(*args):
         dataDir = args[0]
         trainingDir = args[1]
