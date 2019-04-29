@@ -308,3 +308,4 @@ def ImageLoaderTest():
     img = ImageLoader.adjust_colors(img)
     Number = "Tessstss"
     ImageLoader.save_image(conf.WhereTosaveTestImage,img,conf.NameOfTestImage + str(Number))
+    ImageLoader.MovePicture(conf.WhereTosaveTestImage,conf.NameOfTestImage + str(Number),-12,0)

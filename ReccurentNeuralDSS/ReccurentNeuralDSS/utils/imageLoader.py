@@ -32,7 +32,7 @@ def turnlabeltoColorSingleCuda(label_data, arraySize, array):
         elif(((label_data == [1,0,0,1,1])).all()):
             array = relabel_colors(array, 128, 0, 12)
     elif(((label_data == [0,0,0,0,0])).all()):
-        array = relabel_colors(array, 0, 0, 0)
+        array = relabel_colors(array, 0, 0, 1)
     elif((label_data == [0,1,0,0,0]).all()):
         array = relabel_colors(array, 0, 0, 1)
     elif(((label_data == [0,0,1,0,0])).all()):
@@ -205,7 +205,8 @@ class ImageLoader():
     """Load dataset images, split them inte chunks and write them to pickle files."""
     
     def combine_images(imageArray, max_y: int, max_x: int) -> np.array:
-        image = np.zeros((max_y,max_x,3),np.int)
+        image = np.full((max_y,max_x,3),[0,0,1])
+        #image = np.zeros((max_y,max_x,3),np.int)
         #np.array(x).reshape(-1,resize[1],resize[2],3)
         size_y, size_x,Nope = imageArray[0].shape
         curr_y = 0
@@ -338,9 +339,10 @@ class ImageLoader():
         num_cols,num_rows= img.shape[:2]
         translate_matrix = np.float32([ [1,0,moveRow], [0,1,moveCols] ])
         img = ImageLoader.convert_list_to_np(img)
-        img = cv2.warpAffine(img, translate_matrix, (num_rows+abs(moveRow), num_cols+abs(moveCols)))
+        img = cv2.warpAffine(img, translate_matrix, (num_rows+abs(moveRow), num_cols+abs(moveCols)),cv2.INTER_LINEAR, cv2.BORDER_CONSTANT,borderValue=(1, 0, 0))
+
         #img = ImageLoader.adjust_colors(img)
-        ImageLoader.save_image(Folder,img,ImageTOFix+"fixedImage")
+        ImageLoader.save_image(Folder,img,ImageTOFix)
 
     def read_Images(*args):
         dataDir = args[0]
@@ -376,7 +378,8 @@ class ImageLoader():
                     imgTraining_array = ImageLoader.adjust_colors(imgTraining_array)
                     imgResult_array = ImageLoader.adjust_colors(imgResult_array)
                     b = [[1,2,3,4,5]]
-                    imgResult_array=reEachLabelGtCuda(imgResult_array,b)
+                    if crop[0] == 0:
+                        imgResult_array=reEachLabelGtCuda(imgResult_array,b)
                     #first Resize
                     if resize[0] != 0:
                         imgTraining_array = cv2.resize(imgTraining_array, (resize[1], resize[2]))
@@ -385,9 +388,10 @@ class ImageLoader():
                         #First Try to add a boarder
                         max_y, max_x = imgTraining_array.shape[:2] # this value is taken out from the original picture and used later for setting the max values
                         imgTraining_array = ImageLoader.add_border(imgTraining_array, crop[1], 
-                                                                  crop[2], [0,0,0], max_x, max_y)
+                                                                  crop[2], [0,0,1], max_x, max_y)
                         imgResult_array = ImageLoader.add_border(imgResult_array, crop[1], 
-                                                                crop[2], [0,0,0], max_x, max_y)
+                                                                crop[2], [0,0,1], max_x, max_y)
+                        imgResult_array=reEachLabelGtCuda(imgResult_array,b)
                         #Lets Split the images
                         imgTraining_array = ImageLoader.split_image(imgTraining_array, crop[1], crop[2], 
                                                                    max_x, max_y)
