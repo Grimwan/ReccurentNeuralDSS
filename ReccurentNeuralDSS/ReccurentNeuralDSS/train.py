@@ -186,7 +186,8 @@ def SaveImage(*args):
     img = ImageLoader.adjust_colors(img)
     Number = str(args[2])
     ImageLoader.save_image(conf.WhereTosaveTestImage,img,conf.NameOfTestImage + str(Number))
-    ImageLoader.MovePicture(conf.WhereTosaveTestImage,conf.NameOfTestImage + str(Number),-12,0)
+    if(args[3] == 6496):
+        ImageLoader.MovePicture(conf.WhereTosaveTestImage,conf.NameOfTestImage + str(Number),-12,0)
 #    plt.imshow(img)
 #    plt.show()
     return 0
