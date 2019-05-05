@@ -398,10 +398,6 @@ class Model:
         [concatenate,imageHeight,imageWidth,channels]=Model.HorisontalySweepLayer(imageHeight,imageWidth,channels,concatenate)
         #Enter amount of ReNetLayers from here on
         [concatenate,imageHeight,imageWidth,channels]=Model.ReNetScaleDownLayer(imageHeight,imageWidth,channels,concatenate)
-        [concatenate,imageHeight,imageWidth,channels]=Model.ReNetScaleDownLayer(imageHeight,imageWidth,channels,concatenate)
-        [concatenate,imageHeight,imageWidth,channels]=Model.ReNetScaleUpLayer(imageHeight,imageWidth,channels,concatenate)
-        [concatenate,imageHeight,imageWidth,channels]=Model.ReNetScaleUpLayer(imageHeight,imageWidth,channels,concatenate)
-
         #end of amount of ReNetLayers
         out = layers.Flatten()(concatenate)
         out = (layers.Dense(int(32*32*5), activation='sigmoid'))(out)

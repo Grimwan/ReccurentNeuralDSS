@@ -1,3 +1,93 @@
-Mean IU (Jaccard index) = 0,40859
-EM=0,00 HS=0,87 IU=0,41,0,17[0,01|0,06|0,38|0,19|0,66|0,66|0,66|0,66] F1=0,52,0,21[0,01|0,11|0,55|0,32|0,79|0,79|0,79|0,79] P=0,59,0,24[0,01|0,06|0,47|0,21|1,00|1,00|1,00|1,00] R=0,59,0,28[0,08|0,66|0,66|0,66|0,66|0,66|0,66|0,66]Freq:[0,65|0,05|0,05|0,05|0,05|0,05|0,05|0,05]
-Visualization image written in: predictionImages\prediction_image.visualization.png
+CB55 Predictions
+Mean IU (Jaccard index) = 0.68678
+EM=0,92 HS=0,96 IU=0,69,0,89[0,95|0,44|0,76|0,60] F1=0,80,0,93[0,98|0,61|0,86|0,75] P=0,78,0,94[0,99|0,60|0,79|0,76] R=0,82,0,93[0,97|0,62|0,94|0,75]Freq:[0,84|0,06|0,01|0,09]
+Visualization image written in: predictionImages\CB55\..\..\visualisation\testimage0.visualization.png
+Mean IU (Jaccard index) = 0.61591
+EM=0,93 HS=0,96 IU=0,62,0,89[0,96|0,39|0,51|0,61] F1=0,74,0,93[0,98|0,57|0,67|0,76] P=0,71,0,94[0,99|0,54|0,56|0,77] R=0,79,0,93[0,97|0,60|0,85|0,74]Freq:[0,85|0,05|0,00|0,10]
+Visualization image written in: predictionImages\CB55\..\..\visualisation\testimage1.visualization.png
+Mean IU (Jaccard index) = 0.57787
+EM=0,87 HS=0,93 IU=0,58,0,81[0,91|0,53|0,40|0,47] F1=0,71,0,88[0,95|0,69|0,58|0,64] P=0,69,0,90[0,97|0,79|0,44|0,57] R=0,78,0,87[0,94|0,62|0,83|0,73]Freq:[0,75|0,17|0,00|0,09]
+Visualization image written in: predictionImages\CB55\..\..\visualisation\testimage2.visualization.png
+Mean IU (Jaccard index) = 0.58389
+EM=0,91 HS=0,96 IU=0,58,0,87[0,94|0,44|0,39|0,56] F1=0,72,0,92[0,97|0,61|0,56|0,71] P=0,70,0,93[0,98|0,66|0,45|0,69] R=0,75,0,91[0,96|0,57|0,74|0,74]Freq:[0,83|0,08|0,00|0,09]
+Visualization image written in: predictionImages\CB55\..\..\visualisation\testimage3.visualization.png
+Mean IU (Jaccard index) = 0.60204
+EM=0,90 HS=0,95 IU=0,60,0,85[0,94|0,44|0,48|0,54] F1=0,73,0,91[0,97|0,61|0,65|0,70] P=0,72,0,92[0,98|0,74|0,54|0,62] R=0,78,0,90[0,96|0,52|0,83|0,80]Freq:[0,81|0,10|0,00|0,09]
+Visualization image written in: predictionImages\CB55\..\..\visualisation\testimage4.visualization.png
+Mean IU (Jaccard index) = 0.55288
+EM=0,82 HS=0,91 IU=0,55,0,76[0,89|0,48|0,44|0,41] F1=0,69,0,85[0,94|0,64|0,61|0,58] P=0,70,0,89[0,96|0,83|0,56|0,46] R=0,73,0,83[0,92|0,53|0,68|0,78]Freq:[0,70|0,20|0,00|0,09]
+Visualization image written in: predictionImages\CB55\..\..\visualisation\testimage5.visualization.png
+Mean IU (Jaccard index) = 0.58878
+EM=0,91 HS=0,96 IU=0,59,0,86[0,94|0,46|0,39|0,57] F1=0,72,0,92[0,97|0,63|0,56|0,72] P=0,70,0,93[0,98|0,72|0,44|0,67] R=0,77,0,91[0,96|0,56|0,76|0,79]Freq:[0,82|0,09|0,00|0,09]
+Visualization image written in: predictionImages\CB55\..\..\visualisation\testimage6.visualization.png
+Mean IU (Jaccard index) = 0.62162
+EM=0,92 HS=0,96 IU=0,62,0,88[0,95|0,54|0,42|0,57] F1=0,75,0,93[0,97|0,70|0,60|0,73] P=0,72,0,94[0,99|0,74|0,45|0,69] R=0,82,0,92[0,96|0,67|0,87|0,76]Freq:[0,82|0,09|0,00|0,09]
+Visualization image written in: predictionImages\CB55\..\..\visualisation\testimage7.visualization.png
+Mean IU (Jaccard index) = 0.63307
+EM=0,89 HS=0,95 IU=0,63,0,85[0,94|0,49|0,61|0,50] F1=0,76,0,90[0,97|0,66|0,75|0,67] P=0,75,0,92[0,98|0,78|0,68|0,58] R=0,79,0,89[0,95|0,57|0,85|0,79]Freq:[0,79|0,12|0,00|0,08]
+Visualization image written in: predictionImages\CB55\..\..\visualisation\testimage8.visualization.png
+Mean IU (Jaccard index) = 0.62031
+EM=0,95 HS=0,98 IU=0,62,0,93[0,97|0,49|0,71|0,31] F1=0,74,0,96[0,99|0,66|0,83|0,48] P=0,73,0,97[0,99|0,80|0,79|0,36] R=0,78,0,95[0,98|0,56|0,87|0,72]Freq:[0,92|0,05|0,01|0,02]
+Visualization image written in: predictionImages\CB55\..\..\visualisation\testimage9.visualization.png
+CS18 
+Mean IU (Jaccard index) = 0.49911
+EM=0,93 HS=0,96 IU=0,50,0,92[0,97|0,01|0,79|0,23] F1=0,56,0,94[0,99|0,01|0,88|0,38] P=0,69,0,99[1,00|0,01|0,85|0,90] R=0,65,0,92[0,97|0,48|0,92|0,24]Freq:[0,93|0,00|0,00|0,07]
+Visualization image written in: predictionImages\CS18\..\..\visualisation\testimage09.visualization.png
+Mean IU (Jaccard index) = 0.51854
+EM=0,94 HS=0,96 IU=0,52,0,92[0,97|0,00|0,84|0,26] F1=0,58,0,94[0,98|0,01|0,91|0,42] P=0,70,0,99[1,00|0,00|0,91|0,90] R=0,63,0,92[0,97|0,37|0,91|0,27]Freq:[0,92|0,00|0,01|0,07]
+Visualization image written in: predictionImages\CS18\..\..\visualisation\testimage10.visualization.png
+Mean IU (Jaccard index) = 0.74373
+EM=0,93 HS=0,97 IU=0,74,0,89[0,95|0,62|0,84|0,57] F1=0,84,0,94[0,98|0,77|0,91|0,72] P=0,85,0,95[0,98|0,78|0,93|0,73] R=0,83,0,93[0,97|0,75|0,89|0,72]Freq:[0,82|0,10|0,02|0,06]
+Visualization image written in: predictionImages\CS18\..\..\visualisation\testimage11.visualization.png
+Mean IU (Jaccard index) = 0.70127
+EM=0,90 HS=0,95 IU=0,70,0,86[0,93|0,55|0,83|0,49] F1=0,81,0,92[0,97|0,71|0,91|0,66] P=0,83,0,92[0,96|0,76|0,90|0,68] R=0,80,0,91[0,97|0,66|0,91|0,64]Freq:[0,81|0,12|0,01|0,06]
+Visualization image written in: predictionImages\CS18\..\..\visualisation\testimage12.visualization.png
+Mean IU (Jaccard index) = 0.59467
+EM=0,96 HS=0,98 IU=0,59,0,95[0,98|0,01|0,80|0,59] F1=0,66,0,97[0,99|0,02|0,89|0,74] P=0,70,0,99[1,00|0,01|0,87|0,94] R=0,79,0,96[0,98|0,65|0,91|0,61]Freq:[0,92|0,00|0,01|0,07]
+Visualization image written in: predictionImages\CS18\..\..\visualisation\testimage13.visualization.png
+Mean IU (Jaccard index) = 0.52630
+EM=0,91 HS=0,96 IU=0,53,0,86[0,94|0,47|0,16|0,53] F1=0,65,0,92[0,97|0,64|0,28|0,69] P=0,65,0,92[0,97|0,67|0,24|0,74] R=0,65,0,91[0,97|0,62|0,34|0,65]Freq:[0,84|0,09|0,00|0,08]
+Visualization image written in: predictionImages\CS18\..\..\visualisation\testimage14.visualization.png
+Mean IU (Jaccard index) = 0.66804
+EM=0,91 HS=0,96 IU=0,67,0,87[0,95|0,49|0,78|0,46] F1=0,78,0,92[0,97|0,66|0,88|0,63] P=0,81,0,93[0,98|0,60|0,85|0,82] R=0,78,0,91[0,97|0,73|0,91|0,51]Freq:[0,84|0,08|0,00|0,07]
+Visualization image written in: predictionImages\CS18\..\..\visualisation\testimage15.visualization.png
+Mean IU (Jaccard index) = 0.64436
+EM=0,90 HS=0,95 IU=0,64,0,85[0,93|0,44|0,79|0,41] F1=0,76,0,90[0,97|0,61|0,88|0,58] P=0,79,0,91[0,97|0,62|0,89|0,67] R=0,74,0,90[0,96|0,61|0,88|0,51]Freq:[0,83|0,09|0,01|0,07]
+Visualization image written in: predictionImages\CS18\..\..\visualisation\testimage16.visualization.png
+Mean IU (Jaccard index) = 0.72146
+EM=0,93 HS=0,97 IU=0,72,0,89[0,95|0,52|0,77|0,65] F1=0,83,0,94[0,97|0,68|0,87|0,79] P=0,85,0,94[0,98|0,79|0,89|0,74] R=0,82,0,93[0,97|0,59|0,85|0,85]Freq:[0,84|0,08|0,01|0,07]
+Visualization image written in: predictionImages\CS18\..\..\visualisation\testimage17.visualization.png
+Mean IU (Jaccard index) = 0.66608
+EM=0,88 HS=0,94 IU=0,67,0,83[0,92|0,57|0,78|0,41] F1=0,78,0,90[0,96|0,72|0,88|0,58] P=0,80,0,91[0,96|0,79|0,89|0,55] R=0,77,0,89[0,95|0,67|0,86|0,61]Freq:[0,78|0,15|0,01|0,06]
+Visualization image written in: predictionImages\CS18\..\..\visualisation\testimage18.visualization.png
+CS863 
+Mean IU (Jaccard index) = 0.84114
+EM=0,96 HS=0,98 IU=0,84,0,94[0,97|0,76|0,77|0,86] F1=0,91,0,97[0,98|0,87|0,87|0,93] P=0,90,0,97[1,00|0,85|0,84|0,91] R=0,93,0,96[0,97|0,89|0,91|0,94]Freq:[0,77|0,08|0,00|0,15]
+Visualization image written in: predictionImages\CS863\..\..\visualisation\testimage19.visualization.png
+Mean IU (Jaccard index) = 0.78096
+EM=0,93 HS=0,97 IU=0,78,0,91[0,95|0,66|0,71|0,80] F1=0,87,0,95[0,97|0,79|0,83|0,89] P=0,85,0,96[0,99|0,75|0,79|0,88] R=0,90,0,94[0,96|0,84|0,88|0,91]Freq:[0,77|0,07|0,00|0,16]
+Visualization image written in: predictionImages\CS863\..\..\visualisation\testimage20.visualization.png
+Mean IU (Jaccard index) = 0.84484
+EM=0,94 HS=0,97 IU=0,84,0,91[0,96|0,77|0,84|0,81] F1=0,91,0,95[0,98|0,87|0,91|0,90] P=0,91,0,96[0,99|0,85|0,92|0,89] R=0,92,0,95[0,96|0,89|0,91|0,90]Freq:[0,73|0,13|0,00|0,14]
+Visualization image written in: predictionImages\CS863\..\..\visualisation\testimage21.visualization.png
+Mean IU (Jaccard index) = 0.55260
+EM=0,97 HS=0,99 IU=0,55,0,96[0,98|0,36|0,00|0,87] F1=0,61,0,98[0,99|0,53|0,00|0,93] P=0,58,0,98[1,00|0,40|0,00|0,93] R=0,90,0,97[0,98|0,77|NaN|0,94]Freq:[0,85|0,01|0,00|0,15]
+Visualization image written in: predictionImages\CS863\..\..\visualisation\testimage22.visualization.png
+Mean IU (Jaccard index) = 0.45915
+EM=0,94 HS=0,97 IU=0,46,0,93[0,97|0,11|0,00|0,76] F1=0,51,0,96[0,98|0,19|0,00|0,87] P=0,51,0,98[0,99|0,11|0,00|0,94] R=0,86,0,95[0,97|0,79|NaN|0,80]Freq:[0,85|0,00|0,00|0,15]
+Visualization image written in: predictionImages\CS863\..\..\visualisation\testimage23.visualization.png
+Mean IU (Jaccard index) = 0.69862
+EM=0,98 HS=0,99 IU=0,70,0,97[0,98|0,07|0,82|0,92] F1=0,75,0,99[0,99|0,13|0,90|0,96] P=0,74,0,99[1,00|0,07|0,93|0,95] R=0,84,0,98[0,99|0,54|0,88|0,97]Freq:[0,84|0,00|0,00|0,16]
+Visualization image written in: predictionImages\CS863\..\..\visualisation\testimage24.visualization.png
+Mean IU (Jaccard index) = 0.70195
+EM=0,98 HS=0,99 IU=0,70,0,97[0,98|0,06|0,87|0,89] F1=0,75,0,98[0,99|0,12|0,93|0,94] P=0,74,0,99[1,00|0,07|0,92|0,97] R=0,87,0,98[0,99|0,64|0,94|0,92]Freq:[0,85|0,00|0,00|0,15]
+Visualization image written in: predictionImages\CS863\..\..\visualisation\testimage25.visualization.png
+Mean IU (Jaccard index) = 0.76487
+EM=0,98 HS=0,99 IU=0,76,0,96[0,98|0,33|0,85|0,90] F1=0,84,0,98[0,99|0,50|0,92|0,95] P=0,85,0,98[1,00|0,55|0,93|0,92] R=0,83,0,98[0,98|0,45|0,91|0,98]Freq:[0,83|0,01|0,00|0,16]
+Visualization image written in: predictionImages\CS863\..\..\visualisation\testimage26.visualization.png
+Mean IU (Jaccard index) = 0.77714
+EM=0,99 HS=0,99 IU=0,78,0,98[0,99|0,37|0,82|0,94] F1=0,85,0,99[0,99|0,54|0,90|0,97] P=0,82,0,99[1,00|0,49|0,86|0,95] R=0,88,0,99[0,99|0,59|0,94|0,99]Freq:[0,83|0,00|0,00|0,16]
+Visualization image written in: predictionImages\CS863\..\..\visualisation\testimage27.visualization.png
+Mean IU (Jaccard index) = 0.77516
+EM=0,97 HS=0,99 IU=0,78,0,95[0,98|0,41|0,84|0,88] F1=0,85,0,97[0,99|0,58|0,91|0,93] P=0,88,0,98[1,00|0,72|0,90|0,89] R=0,84,0,97[0,98|0,48|0,93|0,98]Freq:[0,82|0,01|0,00|0,16]
+Visualization image written in: predictionImages\CS863\..\..\visualisation\testimage28.visualization.png

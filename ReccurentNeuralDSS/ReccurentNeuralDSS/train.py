@@ -196,7 +196,7 @@ def SaveImage(*args):
 def Train(*args):
     NN = 0
     Predict = True
-    WhereToSave = "CNNBID"
+    WhereToSave = args[0]
     if(len(args)>0):
         if(args[0] == "BiDirectionalLSTMRNN"):
             NN = 0
@@ -283,30 +283,32 @@ def PredictImages(Load,boolstate):
     PredictPicturesCS =  []
     GTPredictPicturesCS = []
 
-def ImageLoaderTest():
+def ImageLoaderTest(Load,boolstate):
+    Model.model=Model.load_model(Load)
     [x_train,y_train] = ImageLoader.read_Images(conf.DATADIR,["DeansTestmap/img/training"],  ["DeansTestmap/pixel-level-gt/training"], [1, conf.Xsize, conf.Ysize],True,True)   
 
+    SaveImage(boolstate, x_train,9,6496,4872)
 
-    x = 6496
-    y = 4872
+    #x = 6496
+    #y = 4872
     # show result
     #x = 4992
     #y = 3328
-    predictionorignalshape = y_train.shape[0]
-    i = 0
-    newPrediction = []
-    for eachprediction in y_train:
-        newPrediction.append(ImageLoader.turnLabeltoColorvalues(eachprediction))
-        i = i+1
+    #predictionorignalshape = y_train.shape[0]
+    #i = 0
+    #newPrediction = []
+    #for eachprediction in y_train:
+    #    newPrediction.append(ImageLoader.turnLabeltoColorvalues(eachprediction))
+    #    i = i+1
         #if(i%1000 == 0):
-        print(i)
+    #    print(i)
 
 
-    newPrediction = ImageLoader.convert_list_to_np(newPrediction)
-    newPrediction = newPrediction.reshape(predictionorignalshape, conf.Xsize,conf.Ysize, 3)    
+    #newPrediction = ImageLoader.convert_list_to_np(newPrediction)
+    #newPrediction = newPrediction.reshape(predictionorignalshape, conf.Xsize,conf.Ysize, 3)    
 
-    img = ImageLoader.combine_images(newPrediction,x, y)
-    img = ImageLoader.adjust_colors(img)
-    Number = "Tessstss"
-    ImageLoader.save_image(conf.WhereTosaveTestImage,img,conf.NameOfTestImage + str(Number))
-    ImageLoader.MovePicture(conf.WhereTosaveTestImage,conf.NameOfTestImage + str(Number),-12,0)
+    #img = ImageLoader.combine_images(newPrediction,x, y)
+    #img = ImageLoader.adjust_colors(img)
+    #Number = "Tessstss"
+    #ImageLoader.save_image(conf.WhereTosaveTestImage,img,conf.NameOfTestImage + str(Number))
+    #ImageLoader.MovePicture(conf.WhereTosaveTestImage,conf.NameOfTestImage + str(Number),-12,0)
